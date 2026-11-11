@@ -1183,7 +1183,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
   /* Nav-Link hervorheben, solange man im passenden Abschnitt ist */
   (function(){
     var navLinks={};
-    [].slice.call(nav.querySelectorAll('a[href^="#"]')).forEach(function(a){
+    [].slice.call(nav.querySelectorAll('a[href^="#"]:not(.brand)')).forEach(function(a){
       var id=a.getAttribute('href').slice(1);
       if(document.getElementById(id)) navLinks[id]=a;
     });
