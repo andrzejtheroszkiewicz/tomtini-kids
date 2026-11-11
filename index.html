@@ -524,6 +524,16 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 .magie-hinweis.sichtbar{opacity:1}
 @media (prefers-reduced-motion:reduce){.magie-hinweis{display:none}}
 
+.magie-knopf{position:fixed;right:18px;bottom:18px;z-index:42;display:none;
+  align-items:center;gap:7px;border:1.5px solid rgba(255,255,255,.4);
+  background:rgba(10,14,34,.55);color:#fff;font-family:var(--body);
+  font-size:13px;font-weight:600;letter-spacing:.01em;padding:11px 18px;
+  border-radius:999px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.magie-knopf.sichtbar{display:inline-flex}
+.magie-knopf:hover{background:rgba(10,14,34,.75)}
+.magie-knopf:active{background:rgba(10,14,34,.9);transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){.magie-knopf{display:none!important}}
+
 /* Textauswahl/Copy-Callout sitzweit aus, damit der Finger-ruht-Reveal auf Touch
    nicht mit dem System-Kontextmenü kollidiert. Ausnahme: das Plan-Link-Feld bleibt kopierbar. */
 body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -543,6 +553,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
   </div>
 </div>
 <div class="magie-hinweis" id="magieHinweis" aria-hidden="true"></div>
+<button class="magie-knopf" id="magieKnopf" type="button">✦ Blick in Tomtes Welt</button>
 
 <nav class="nav" id="nav" aria-label="Hauptmenü">
   <div class="wrap nav-in">
@@ -988,54 +999,41 @@ html.greift-magie, html.greift-magie body{touch-action:none}
     schicht.style.setProperty('--wy', py);
   }
 
-  /* leiser Hinweis: taucht erst auf, wenn nach ein paar Sekunden noch nichts entdeckt wurde,
-     und verschwindet für immer, sobald sich der Kreis einmal geöffnet hat */
+  /* leiser Hinweis auf Touch: taucht erst auf, wenn nach ein paar Sekunden noch nichts entdeckt
+     wurde, und verschwindet für immer, sobald sich der Kreis einmal geöffnet hat. Auf Desktop
+     übernimmt der sichtbare Knopf diese Rolle, kein zusätzlicher Hinweistext nötig. */
   var hinweis = document.getElementById('magieHinweis');
   function hinweisVerstecken(){
     if (hinweis) hinweis.classList.remove('sichtbar');
   }
-  if (hinweis){
-    hinweis.textContent = kannHover ? 'Maus stillhalten' : 'Zwei Finger halten';
+  if (hinweis && !kannHover){
+    hinweis.textContent = 'Zwei Finger halten';
     setTimeout(function(){
       if (!schonGeoeffnet) hinweis.classList.add('sichtbar');
     }, 5000);
   }
 
-  function istInteraktiv(el){
-    return !!(el && el.closest && el.closest(
-      'a,button,input,textarea,select,summary,label,[role="button"],.btn,.nav,.cal,.notfall-grid,.wortfeld,.seg,details,.day-head,.done-btn'
-    ));
-  }
-
   if (kannHover){
-    /* Maus, Variante 1 – Ruhe-Wechselspiel: Ruhe öffnet, bleibt offen und folgt der Maus,
-       und erst eine erneute Ruhephase (bei bereits offenem Kreis) schließt ihn wieder. */
-    var offen = false, ziehtMaus = false;
-    function ruheUmschalten(){
-      if (ziehtMaus) return;
-      if (offen){ offen = false; schliessen(); }
-      else { offen = true; ruhtJetzt(); }
+    /* Maus: kein automatisches Öffnen mehr bei Ruhe – das störte beim Lesen. Stattdessen ein
+       sichtbarer Knopf: gedrückt halten öffnet sofort, Maus bei gehaltenem Knopf frei bewegen
+       zum Umsehen, loslassen schließt wieder. Volle Kontrolle liegt beim Benutzer. */
+    var knopf = document.getElementById('magieKnopf');
+    var ziehtMaus = false;
+    if (knopf){
+      knopf.classList.add('sichtbar');
+      knopf.addEventListener('mousedown', function(e){
+        e.preventDefault();
+        ziehtMaus = true;
+        setPos(e.clientX, e.clientY);
+        ruhtJetzt('.35s');
+      });
     }
     window.addEventListener('mousemove', function(e){
-      setPos(e.clientX, e.clientY);
-      if (!ziehtMaus){
-        clearTimeout(timer);
-        timer = setTimeout(ruheUmschalten, 650);
-      }
+      if (ziehtMaus) setPos(e.clientX, e.clientY);
     }, { passive: true });
-
-    /* Variante 2 – Klicken+Ziehen: sofort offen, solange gedrückt gehalten wird, zum gezielten
-       Umsehen. Nur außerhalb von Buttons/Links/Formularfeldern, damit die Seite normal bedienbar bleibt. */
-    window.addEventListener('mousedown', function(e){
-      if (e.button !== 0 || istInteraktiv(e.target)) return;
-      ziehtMaus = true; offen = true;
-      clearTimeout(timer);
-      setPos(e.clientX, e.clientY);
-      ruhtJetzt('.15s');
-    });
     function ziehenBeenden(){
       if (!ziehtMaus) return;
-      ziehtMaus = false; offen = false;
+      ziehtMaus = false;
       schliessen('.4s');
     }
     window.addEventListener('mouseup', ziehenBeenden);
@@ -1044,9 +1042,12 @@ html.greift-magie, html.greift-magie body{touch-action:none}
     /* Touch: zwei Finger gemeinsam ruhen lassen (Mitte der beiden), bis sich der Kreis öffnet.
        Ein-Finger-Scrollen bleibt dabei die ganze Zeit völlig unberührt - keine Kollision mit
        der nativen Wisch-Geste, da Safari Scrollen nur über einen einzelnen Finger erkennt.
-       Ist der Kreis einmal offen, folgt er den beiden Fingern weiter, solange sie gehalten werden. */
+       Ist der Kreis einmal offen, folgt er den beiden Fingern weiter, solange sie gehalten werden.
+       Der Ausschnitt öffnet sich versetzt nach links-oben der Fingermitte, sonst verdecken die
+       Finger selbst den größten Teil der Aussicht. */
     var startX = 0, startY = 0, offen = false;
     var SCHWELLE = 10, WARTEN = 750;
+    var VERSATZ_X = -70, VERSATZ_Y = -100;
     function mitte(touches){
       var x = 0, y = 0;
       for (var i = 0; i < touches.length; i++){ x += touches[i].clientX; y += touches[i].clientY; }
@@ -1056,7 +1057,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
       if (e.touches.length !== 2){ clearTimeout(timer); schliessen(); offen = false; return; }
       var m = mitte(e.touches);
       startX = m.x; startY = m.y; offen = false;
-      setPos(startX, startY);
+      setPos(startX + VERSATZ_X, startY + VERSATZ_Y);
       schliessen();
       clearTimeout(timer);
       timer = setTimeout(function(){ offen = true; ruhtJetzt(); }, WARTEN);
@@ -1065,7 +1066,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
       if (e.touches.length !== 2){ clearTimeout(timer); schliessen(); offen = false; return; }
       var m = mitte(e.touches);
       if (offen){
-        setPos(m.x, m.y);
+        setPos(m.x + VERSATZ_X, m.y + VERSATZ_Y);
         return;
       }
       if (Math.abs(m.x - startX) > SCHWELLE || Math.abs(m.y - startY) > SCHWELLE){
