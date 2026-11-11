@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tomtini Typo-Seite</title>
 <meta name="description" content="Tomtini ist ein Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief, jede Nacht eine neue Zahl auf seiner Tafel. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
+<script>
+/* So früh wie möglich setzen, damit die Seite nicht erst hell aufblitzt und dann umschaltet. */
+(function(){
+  try{
+    var g=localStorage.getItem('tomtiniModus');
+    var dunkel=g?g==='dunkel':(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if(dunkel) document.documentElement.classList.add('dunkel');
+  }catch(e){}
+})();
+</script>
 <style>
 /* Layout: weiße Seite, fette Switzer, vollflächige Farbblöcke (Rot, Gelb, Nachtblau), dicke Linien zwischen Zeilen.
    Links ausgerichtet, alles eckig, nur Knöpfe sind Pillen. Tomtes Briefe bleiben Handschrift auf Papier. */
@@ -32,6 +42,16 @@
   --font:var(--body); --glow:var(--lamp); --dim:var(--mist); --muted:var(--mist);
   color-scheme:light;
 }
+/* Dunkelmodus: schont abends die Augen. Betrifft nur die ruhigen Grundflächen
+   (Hintergrund, Fließtext) - Tomtes Briefpapier und die farbigen Themenblöcke
+   (Hero, Zahlentafel, Kalender) bleiben bewusst wie sie sind. */
+html.dunkel{color-scheme:dark}
+html.dunkel body{
+  --night:#12172f; --deep:#1b2346; --dusk:#1b2346;
+  --line:rgba(242,240,234,.16); --snow:#f2f0ea; --mist:#aab0cf; --lamp:#ff7a5c;
+}
+body{transition:background-color .3s ease,color .3s ease}
+@media (prefers-reduced-motion:reduce){body{transition:none}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 html,body{margin:0}
@@ -65,6 +85,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .nav a.brand{font-family:var(--display);font-size:26px;font-weight:700;padding-left:0;margin-right:auto;letter-spacing:-.01em}
 .nav a.brand:hover{background:none}
 .nav a.to-gen{border:1.5px solid var(--line)}
+.modus-knopf{border:1.5px solid var(--line);background:transparent;color:var(--snow);
+  width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;flex:none;
+  display:inline-flex;align-items:center;justify-content:center}
+.modus-knopf:hover{background:rgba(242,235,219,.08)}
+html.dunkel .nav{background:rgba(18,23,47,.92)}
+html.dunkel .nav a:hover{background:rgba(242,240,234,.08)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
 
 /* Hero */
@@ -565,6 +591,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
     <a href="#aufbau">Aufbau</a>
     <a href="#notfall">Notfall</a>
     <a class="to-gen" href="#generator">Generator</a>
+    <button type="button" class="modus-knopf" id="modusKnopf" aria-label="Dunkelmodus umschalten" title="Dunkelmodus umschalten">☽</button>
   </div>
 </nav>
 
@@ -1137,6 +1164,20 @@ html.greift-magie, html.greift-magie body{touch-action:none}
   window.addEventListener('hashchange',fromHash); fromHash();
 
   var nav=$('#nav'); function stuck(){ nav.classList.toggle('stuck',window.scrollY>8); } window.addEventListener('scroll',stuck,{passive:true}); stuck();
+
+  /* Dunkelmodus umschalten */
+  (function(){
+    var knopf=$('#modusKnopf'); if(!knopf) return;
+    function stand(){ return document.documentElement.classList.contains('dunkel'); }
+    function beschriften(){ knopf.textContent=stand()?'☀':'☽'; }
+    beschriften();
+    knopf.addEventListener('click',function(){
+      var neu=!stand();
+      document.documentElement.classList.toggle('dunkel',neu);
+      try{ localStorage.setItem('tomtiniModus',neu?'dunkel':'hell'); }catch(e){}
+      beschriften();
+    });
+  })();
 
   /* Nav-Link hervorheben, solange man im passenden Abschnitt ist */
   (function(){
