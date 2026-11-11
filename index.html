@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tomtini Typo-Seite</title>
+<meta name="description" content="Tomtini ist ein Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief, jede Nacht eine neue Zahl auf seiner Tafel. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
+<style>
+/* Layout: weiße Seite, fette Switzer, vollflächige Farbblöcke (Rot, Gelb, Nachtblau), dicke Linien zwischen Zeilen.
+   Links ausgerichtet, alles eckig, nur Knöpfe sind Pillen. Tomtes Briefe bleiben Handschrift auf Papier. */
+@font-face{font-family:"Switzer";src:url("fonts/switzer.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Caveat";src:url("fonts/caveat-latin-wght-normal.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Caveat";src:url("fonts/caveat-latin-ext-wght-normal.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0}
+
+:root{
+  --night:#ffffff;      /* Seite */
+  --deep:#f2f0ea;       /* ruhige Fläche, Eingabefelder */
+  --dusk:#ffffff;       /* Karten */
+  --line:#0f1430;       /* Linien */
+  --snow:#0f1430;       /* Schrift: Nachtblau statt Schwarz */
+  --mist:#555b73;       /* leise Schrift */
+  --lamp:#db3820;       /* Akzent: Rubis Rot */
+  --red:#db3820; --yellow:#ffd23f; --ink-night:#0f1430;
+  --paper:#fffdf6;      /* Tomtes Briefpapier */
+  --ink:#27306b;        /* Tomtes Tinte, dunkelblau */
+  --pine:#1f7a55;
+  --rubi:#e23d25;
+  --mimi:#8a5a2b;
+  --display:"Switzer","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --body:"Switzer","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+  --font:var(--body); --glow:var(--lamp); --dim:var(--mist); --muted:var(--mist);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0}
+body{background:var(--night);color:var(--snow);font-family:var(--body);font-size:17px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{margin:0;font-family:var(--display);font-weight:700;text-wrap:balance;letter-spacing:-.02em}
+p{margin:0}
+a{color:var(--lamp);text-underline-offset:.18em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--lamp);outline-offset:3px;border-radius:0}
+[hidden]{display:none!important}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(18px,4.5vw,44px)}
+.eyebrow{font-size:14px;color:var(--mist);font-weight:500}
+
+.btn{border:0;border-radius:999px;padding:13px 22px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;min-height:48px;text-decoration:none;font-size:16px;line-height:1.2}
+.btn-primary,.btn-night{background:var(--lamp);color:var(--deep)}
+.btn-primary:hover,.btn-night:hover{background:#ffd486}
+.btn-ghost{background:transparent;border:1.5px solid var(--line);color:var(--snow)}
+.btn-ghost:hover{border-color:var(--mist)}
+.btn-mini{min-height:34px;padding:5px 12px;font-size:13px}
+.btn[aria-pressed="true"]{background:var(--snow);color:var(--deep);border-color:var(--snow)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Navigation */
+.nav{position:sticky;top:0;z-index:30;background:rgba(18,25,53,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid transparent}
+.nav.stuck{border-bottom-color:var(--line)}
+.nav-in{display:flex;align-items:center;gap:6px;min-height:58px;overflow-x:auto;scrollbar-width:none}
+.nav-in::-webkit-scrollbar{display:none}
+.nav a{color:var(--snow);text-decoration:none;font-size:15px;font-weight:500;padding:9px 12px;border-radius:999px;white-space:nowrap}
+.nav a:hover{background:rgba(242,235,219,.08)}
+.nav a.brand{font-family:var(--display);font-size:26px;font-weight:700;padding-left:0;margin-right:auto;letter-spacing:-.01em}
+.nav a.brand:hover{background:none}
+.nav a.to-gen{border:1.5px solid var(--line)}
+@media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
+
+/* Hero */
+.hero{position:relative;padding:clamp(28px,6vw,72px) 0 0;}
+.hero h1{font-size:clamp(50px,13vw,164px);line-height:.9;font-weight:700;letter-spacing:-.012em;margin-left:-.03em}
+.hero h1 .ln{display:block}
+.unseen{display:inline-block;cursor:default;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.unseen i{display:inline-block;font-style:normal;text-shadow:0 0 .32em rgba(245,191,98,.5);transition:opacity .28s ease,filter .28s ease;will-change:opacity,filter}
+.hero-foot{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(20px,4vw,56px);align-items:end;margin-top:clamp(22px,3.4vw,40px)}
+.hero .lead{font-size:clamp(18px,1.75vw,22px);line-height:1.5;max-width:34em}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.rubi-note{font-family:var(--hand);font-size:clamp(24px,2.4vw,31px);line-height:1.15;color:var(--lamp);transform:rotate(-2.5deg);transform-origin:left bottom;max-width:13em;justify-self:end}
+.rubi-note small{display:block;font-family:var(--body);font-size:14px;color:var(--mist);margin-top:6px}
+.facts{margin-top:18px;color:var(--mist);font-size:15px}
+@media (max-width:760px){.hero-foot{grid-template-columns:1fr}.rubi-note{justify-self:start;order:-1}}
+@media (max-width:560px){.hero h1{font-size:16.4vw}}
+
+/* Zahlentafel */
+.tafel{margin-top:clamp(34px,5vw,64px);border-top:2px solid var(--line);position:relative}
+.tafel::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:linear-gradient(90deg,rgba(245,191,98,0),var(--lamp) 30%,var(--lamp) 70%,rgba(245,191,98,0));box-shadow:0 0 22px 2px rgba(245,191,98,.45);transform-origin:50% 50%;animation:spalt 1.6s .15s cubic-bezier(.2,.7,.2,1) both}
+@keyframes spalt{from{transform:scaleX(.04);opacity:.2}to{transform:scaleX(1);opacity:1}}
+.tafel-in{padding:18px 0 24px;display:grid;gap:12px}
+.tafel-text{font-size:16px;color:var(--snow)}
+.tafel-text b{font-family:var(--display);font-weight:700;font-size:1.25em;color:var(--lamp);font-variant-numeric:tabular-nums}
+.zahlen{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(24,minmax(0,1fr));gap:2px;font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums;font-size:clamp(13px,1.9vw,26px);color:#55619a;text-align:center}
+.zahlen li.war{color:var(--mist)}
+.zahlen li.heute{color:var(--lamp);text-shadow:0 0 14px rgba(245,191,98,.6);font-weight:700}
+@media (max-width:620px){.zahlen{grid-template-columns:repeat(12,minmax(0,1fr));row-gap:6px;font-size:18px}}
+
+/* Abschnitte */
+section.block{padding:clamp(60px,9vw,128px) 0;scroll-margin-top:58px}
+section.quiet{background:var(--deep)}
+.split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,72px);align-items:start}
+@media (max-width:860px){.split{grid-template-columns:1fr}}
+.block h2{font-size:clamp(34px,5.2vw,68px);line-height:.98;letter-spacing:-.03em;}
+.block .sub{color:var(--mist);font-size:18px;max-width:38em;margin-top:18px}
+.stack{display:grid;gap:22px}
+
+/* Brief-Probe */
+.probe{display:grid;gap:18px;max-width:560px}
+.probe label{font-size:15px;font-weight:600}
+.probe input{width:100%;padding:13px 15px;border-radius:0;border:1.5px solid var(--line);background:var(--deep);min-height:50px;font-size:18px}
+.probe input::placeholder{color:#6f7aa6}
+.probe .letter{transform:rotate(-.8deg);box-shadow:0 30px 60px -30px rgba(0,0,0,.8),0 0 70px -20px rgba(245,191,98,.28)}
+
+/* Schritte */
+.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:0}
+.step{counter-increment:s;display:grid;grid-template-columns:clamp(54px,8vw,96px) minmax(0,1fr);gap:8px 18px;padding:24px 0;border-top:2px solid var(--line)}
+.step:last-child{border-bottom:2px solid var(--line)}
+.step::before{content:counter(s);font-family:var(--display);font-size:clamp(46px,6.5vw,84px);line-height:.8;color:var(--lamp);font-weight:700;grid-row:1 / span 2}
+.step h3{font-size:clamp(22px,2.4vw,28px);font-weight:700;align-self:end}
+.step p{color:var(--mist);max-width:36em;grid-column:2}
+
+/* Aufbau */
+.abende{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.abende li{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr);gap:6px 22px;padding:18px 0;border-top:2px solid var(--line)}
+.abende li:last-child{border-bottom:2px solid var(--line)}
+.abende .wann{font-family:var(--display);font-size:21px;font-weight:700;line-height:1.25}
+.abende .wann small{display:block;font-family:var(--body);font-size:14px;color:var(--mist);font-weight:400;margin-top:2px}
+.abende p{color:var(--mist);max-width:36em}
+.abende p b{color:var(--snow);font-weight:600}
+@media (max-width:560px){.abende li{grid-template-columns:1fr}}
+.leiste{margin-top:clamp(36px,5vw,64px)}
+.leiste-titel{font-size:15px;color:var(--mist);margin-bottom:14px}
+.zonen{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-bottom:10px solid var(--dusk);box-shadow:0 1px 0 var(--line)}
+.zone{padding:0 16px 20px 0;display:grid;gap:8px;align-content:start;border-left:1px solid var(--line);padding-left:16px}
+.zone:first-child{border-left:0;padding-left:0}
+.zone h3{font-size:clamp(22px,2.5vw,32px);font-weight:700;line-height:1.05;hyphens:auto}
+.zone p{font-size:15px;line-height:1.45;color:var(--mist)}
+.zone.tuer h3{color:var(--lamp);text-shadow:0 0 18px rgba(245,191,98,.45)}
+.leiste-fuss{font-size:14px;color:var(--mist);margin-top:12px}
+@media (max-width:900px){.zonen{grid-template-columns:1fr;border-bottom:0;box-shadow:none}.zone,.zone:first-child{border-left:0;padding:16px 0;border-top:2px solid var(--line)}.zone:last-child{border-bottom:2px solid var(--line)}.leiste-fuss{display:none}}
+
+/* Drei Wege zum Vorgarten */
+.wege{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:clamp(28px,4vw,48px)}
+.weg{border-top:4px solid var(--line);border-left:2px solid var(--line);padding:22px 22px 26px;display:grid;gap:10px;align-content:start}
+.weg:first-child{border-left:0;padding-left:0}
+.weg:last-child{padding-right:0}
+.weg h3{font-size:clamp(24px,2.8vw,36px);line-height:1;letter-spacing:-.04em}
+.weg .eyebrow{color:var(--mist);font-weight:700}
+.weg p{font-size:17px;color:var(--snow)}
+.weg .wann{font-weight:700;font-size:16px}
+.weg .folgt{font-size:15px;color:var(--mist);border-top:2px solid var(--line);padding-top:10px;margin-top:4px}
+@media (max-width:860px){
+  .wege{grid-template-columns:1fr}
+  .weg,.weg:first-child{border-left:0;padding:20px 0 24px}
+  .weg:not(:first-child){border-top-width:2px}
+}
+
+/* Mimi und Rubi */
+.zwei{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px)}
+@media (max-width:760px){.zwei{grid-template-columns:1fr}}
+.wesen{display:grid;gap:12px;align-content:start}
+.wesen h3{font-size:clamp(30px,4vw,48px);font-weight:700;}
+.wesen p{color:var(--mist);max-width:30em}
+.wesen blockquote{margin:6px 0 0;font-family:var(--hand);font-size:clamp(28px,3.2vw,40px);line-height:1.1;transform:rotate(-1.2deg);transform-origin:left}
+.wesen.mimi blockquote{color:var(--mimi)}
+.wesen.rubi blockquote{color:var(--rubi);transform:rotate(1deg)}
+
+/* Geschichte */
+.kapitel-liste{display:grid;gap:0;margin-top:6px}
+details.kap-item{border-top:2px solid var(--line)}
+details.kap-item:last-child{border-bottom:2px solid var(--line)}
+details.kap-item>summary{list-style:none;cursor:pointer;padding:16px 0;display:flex;align-items:baseline;gap:14px;font-family:var(--display);font-size:clamp(20px,2.2vw,26px);font-weight:700;line-height:1.2}
+details.kap-item>summary::-webkit-details-marker{display:none}
+details.kap-item>summary .num{color:var(--lamp);min-width:1.1em;font-variant-numeric:tabular-nums}
+details.kap-item>summary .wann{margin-left:auto;font-family:var(--body);font-weight:400;font-size:14px;color:var(--mist);white-space:nowrap}
+details.kap-item>summary::after{content:"+";font-family:var(--body);font-weight:400;color:var(--mist);margin-left:8px}
+details.kap-item[open]>summary::after{content:"–"}
+.kap-text{padding:2px 0 22px;font-size:18px;line-height:1.7}
+.kap-text p{margin:0 0 13px;max-width:36em}
+.kap-text p:last-child{margin-bottom:0}
+@media (max-width:560px){details.kap-item>summary{flex-wrap:wrap}details.kap-item>summary .wann{margin-left:calc(1.1em + 14px);flex-basis:100%;order:3}}
+
+/* Generator */
+.gen{display:grid;grid-template-columns:370px minmax(0,1fr);gap:28px;align-items:start;margin-top:36px}
+@media (max-width:940px){.gen{grid-template-columns:minmax(0,1fr)}}
+.form{background:var(--dusk);border:1px solid var(--line);border-radius:0;padding:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:941px){.form{position:sticky;top:74px;max-height:calc(100vh - 90px);overflow:auto}}
+.field{display:grid;gap:8px}
+.field>label,.field>.lbl{font-size:15px;font-weight:700}
+input[type=text],input[type=date],textarea,select.inp{padding:11px 13px;border-radius:0;border:1.5px solid var(--line);background:var(--deep);width:100%;min-height:48px}
+input::placeholder,textarea::placeholder{color:#6f7aa6}
+textarea{min-height:64px;resize:vertical}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{cursor:pointer;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:inline-flex;align-items:center;min-height:42px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);font-size:15px;font-weight:500;background:var(--deep)}
+.seg input:checked+span{background:var(--snow);color:var(--deep);border-color:var(--snow);font-weight:700}
+.seg input:focus-visible+span{outline:3px solid var(--lamp);outline-offset:2px}
+.help{font-size:14px;line-height:1.5;color:var(--mist)}
+.help .wer{display:block;margin-top:2px}
+.cal{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.cal button{border:1.5px solid var(--line);background:var(--deep);border-radius:0;min-height:46px;font-weight:700;font-size:14px;cursor:pointer;display:grid;line-height:1.1;padding:4px 2px;font-variant-numeric:tabular-nums}
+.cal button small{font-weight:400;font-size:11px;color:var(--mist)}
+.cal button[data-mode="wenig"]{background:#4a3c1c;border-color:var(--lamp)}
+.cal button[data-mode="reise"]{background:#1f3d38;border-color:var(--pine)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--mist);flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px;border:1.5px solid var(--line)}
+.legend .w{background:#4a3c1c;border-color:var(--lamp)}.legend .r{background:#1f3d38;border-color:var(--pine)}
+
+.out{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;min-width:0;scroll-margin-top:74px}
+.out>.empty{border:1.5px dashed var(--line);border-radius:0;padding:44px 26px;color:var(--mist);font-family:var(--display);font-weight:700;font-size:clamp(22px,2.6vw,30px);line-height:1.2;max-width:22em}
+.out-head{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:end}
+.out-head h3{font-size:clamp(26px,3.2vw,38px)}
+.out-head .actions{display:flex;gap:8px;flex-wrap:wrap}
+.heute{background:var(--dusk);border:1.5px solid var(--lamp);border-radius:0;padding:22px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;box-shadow:0 0 60px -24px rgba(245,191,98,.5)}
+.heute .eyebrow{color:var(--lamp)}
+.heute h3{font-size:clamp(24px,3vw,32px)}
+.kap{margin-top:18px}
+.kap h3{font-size:clamp(22px,2.6vw,30px);color:var(--lamp);margin:8px 0 12px}
+.day{background:var(--dusk);border:1px solid var(--line);border-radius:0;padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-bottom:12px}
+.day.reise{border-color:var(--pine)}
+.day.done{opacity:.66}
+.day-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.day-head .num{font-family:var(--display);font-weight:700;font-size:36px;line-height:1;color:var(--lamp);font-variant-numeric:tabular-nums;min-width:1.2em}
+.day-head .date{font-size:14px;color:var(--mist)}
+.day-head h4{font-size:22px;font-weight:700;flex:1 1 200px}
+.day-head .mode{display:flex;gap:4px}
+.day-head .mode button{border:1.5px solid var(--line);background:var(--deep);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.day-head .mode button[aria-pressed="true"]{background:var(--snow);color:var(--deep);border-color:var(--snow)}
+.letter{background:var(--paper);border-radius:4px;padding:18px 20px;font-family:var(--hand);font-size:23px;line-height:1.3;color:var(--ink);display:grid;gap:9px}
+.ps{font-family:var(--hand);font-size:20px;color:var(--ink);background:#e9dfc8;border-radius:4px;padding:8px 14px}
+.zettel{display:flex;gap:10px;align-items:baseline;font-size:15px}
+.zettel .who{flex:none;font-size:13px;font-weight:700;padding:2px 9px;border-radius:999px;color:var(--deep)}
+.zettel .who.mimi{background:var(--mimi)}.zettel .who.rubi{background:var(--rubi)}.zettel .who.tomte{background:var(--lamp)}
+.zettel em{font-family:var(--hand);font-size:22px;font-style:normal;line-height:1.2}
+.zug{border-top:1px dashed var(--line);padding-top:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;font-size:15.5px}
+.zug .t{font-weight:700}
+.zug .m{color:var(--mist);font-size:14px}
+.minbadge{font-size:12.5px;font-weight:600;color:var(--pine);border:1px solid rgba(143,196,166,.45);border-radius:0;padding:1px 9px;font-variant-numeric:tabular-nums;display:inline-block;line-height:1.35}
+.tipp{font-size:14.5px;line-height:1.5;color:var(--mist);background:rgba(11,16,38,.6);border-radius:0;padding:9px 13px}
+.tipp b{color:var(--snow)}
+.done-btn{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:8px 15px;font-weight:600;cursor:pointer;min-height:42px;font-size:14px;justify-self:start}
+.done-btn[aria-pressed="true"]{background:var(--pine);color:var(--deep);border-color:var(--pine)}
+.antwort{display:grid;gap:5px}
+.antwort label{font-size:14px;font-weight:600}
+.antwort textarea{min-height:48px;font-size:15px}
+
+/* Hören */
+.medien-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0 28px}
+.med{border-top:2px solid var(--line);padding:18px 0 22px;display:flex;flex-direction:column;gap:8px}
+.med h4{font-size:23px;font-weight:700}
+.med .typ{font-size:14px;color:var(--mist)}
+.med p{font-size:15.5px;color:var(--mist)}
+.med .wann{font-size:14px;color:var(--lamp)}
+.med .acts{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-top:6px}
+.med .tag{font-size:13px;color:var(--mist)}
+.skript{background:var(--deep);border:1px solid var(--line);border-radius:0;padding:13px 15px;font-size:15px;line-height:1.65;white-space:pre-line;margin-top:8px}
+
+
+/* Drei Textstücke */
+.stuecke{display:grid;gap:0;margin-top:8px}
+.stueck{border-top:2px solid var(--line);padding:30px 0 34px;display:grid;gap:14px}
+.stueck:last-child{border-bottom:2px solid var(--line)}
+.stueck h3{font-size:clamp(28px,3.4vw,46px);letter-spacing:-.045em;line-height:1}
+.stueck .eyebrow{color:var(--mist);font-weight:700}
+.stueck-sub{color:var(--snow);max-width:40em;font-size:18px}
+.stueck-status{font-weight:700;min-height:1.5em}
+.fenster-box{border:2px solid var(--line);background:var(--ink-night);padding:clamp(20px,3.2vw,36px);--snow:#fff;--line:#fff;--night:var(--ink-night)}
+.fenster-box ol{list-style:none;margin:0;padding:0;display:grid;gap:9px;font-size:clamp(18px,2vw,25px);line-height:1.22;letter-spacing:-.015em}
+.fenster-box li{color:#fff;opacity:.62;transition:opacity .5s ease;position:relative;padding-left:1.1em}
+.fenster-box li.an{opacity:1;font-weight:700}
+.fenster-box li.an::before{content:"";position:absolute;left:0;top:.52em;width:.5em;height:.5em;background:var(--yellow)}
+.fenster-box button.zeile{display:block;width:100%;text-align:left;background:none;border:0;border-radius:0;padding:0;font:inherit;color:inherit;cursor:pointer;min-height:0}
+.fenster-ende{border:2px solid var(--yellow);background:var(--ink-night);color:#fff;padding:18px 20px;display:grid;gap:12px;justify-items:start;font-size:19px;line-height:1.3}
+.stueck-knoepfe{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.wortfeld{display:flex;flex-wrap:wrap;gap:8px 24px;border:2px solid var(--line);background:#fff;padding:clamp(18px,3vw,32px);font-size:clamp(17px,1.9vw,23px);line-height:1.3}
+.wortfeld button{background:none;border:0;border-radius:0;padding:10px 6px;margin:-4px 0;font:inherit;color:var(--snow);cursor:pointer;min-height:44px}
+.wortfeld button:hover{text-decoration:underline}
+.wortfeld button.gefunden{color:var(--lamp);text-decoration:line-through;cursor:default}
+.wortfeld.fertig button{cursor:default;text-decoration:none}
+.notiz{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px;border:2px solid var(--line);background:var(--paper);padding:clamp(20px,3.2vw,32px);font-family:var(--hand);color:var(--ink)}
+.notiz h4{font-family:var(--hand);font-weight:700;font-size:26px;letter-spacing:0;line-height:1.15}
+.notiz .tomte-zeile{font-size:20px;line-height:1.2;margin-top:8px;opacity:.78}
+.notiz-vorweg{font-family:var(--body);font-size:15px;line-height:1.5;color:var(--snow);background:var(--deep);border:2px solid var(--line);padding:12px 15px;max-width:52em}
+.notiz ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:9px;font-size:23px;line-height:1.2}
+.notiz input[type=text]{font-family:var(--hand);font-size:22px;color:var(--ink);background:none;border:0;border-bottom:2px solid #c9bfa8;border-radius:0;width:100%;min-height:34px;padding:0 2px}
+.notiz input[type=text]::placeholder{color:#bdb09a}
+.notiz input[type=text]:focus-visible{outline-offset:1px}
+.notiz-fuss{grid-column:1/-1;font-family:var(--body);font-size:14px;color:var(--mist)}
+
+/* Notfall */
+.notfall-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.notfall-grid button{text-align:left;background:var(--dusk);border:1px solid var(--line);border-radius:0;padding:15px 17px;cursor:pointer;font-weight:600;display:grid;gap:3px;min-height:48px}
+.notfall-grid button:hover{border-color:var(--lamp)}
+.notfall-grid button small{font-weight:400;color:var(--mist);font-size:14px}
+.unter{margin-top:44px;display:grid;gap:10px}
+.unter h3{font-size:clamp(24px,2.8vw,34px)}
+.unter .sub{margin-top:0;margin-bottom:8px;font-size:16.5px}
+
+/* Kodex */
+.kodex-liste{list-style:none;margin:0;padding:0;display:grid}
+.kodex-liste li{padding:18px 0;border-top:2px solid var(--line);color:var(--mist);max-width:40em}
+.kodex-liste li:last-child{border-bottom:2px solid var(--line)}
+.kodex-liste b{display:block;font-family:var(--display);font-size:clamp(22px,2.4vw,28px);font-weight:700;color:var(--snow);line-height:1.2;margin-bottom:4px}
+
+footer{background:var(--deep);border-top:2px solid var(--line);color:var(--mist);padding:44px 0 64px;font-size:15px}
+footer .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+footer .brand{font-family:var(--display);font-weight:700;color:var(--snow);font-size:32px;line-height:1.1;margin-bottom:6px}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+footer strong{color:var(--snow)}
+
+/* Impressum, Datenschutz */
+.legal{padding:clamp(36px,6vw,80px) 0 clamp(60px,9vw,120px)}
+.legal article{max-width:42em;display:grid;gap:14px}
+.legal h1{font-size:clamp(40px,7vw,84px);line-height:.95;letter-spacing:-.035em;margin:18px 0 10px}
+.legal h2{font-size:24px;font-weight:700;margin-top:18px}
+.legal p,.legal li{color:#d5d0c4}
+.legal ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.legal address{font-style:normal;font-size:19px;line-height:1.5;color:var(--snow)}
+.legal .offen{border:1.5px dashed var(--lamp);border-radius:0;padding:10px 14px;color:var(--snow);font-size:15px}
+
+/* Dialoge */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(6,9,22,.72);display:none;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.dialog{background:var(--dusk);border:1px solid var(--line);border-radius:0;padding:24px;max-width:580px;width:100%;max-height:92vh;overflow:auto;display:grid;gap:14px}
+.dialog h3{font-size:28px}
+.dialog .acts{display:flex;gap:8px;flex-wrap:wrap}
+.dialog .letter .tipp{font-family:var(--body);font-size:14px;background:#e9dfc8;color:#4a4f6e}
+.dialog .letter .tipp b{color:var(--ink)}
+.dialog .letter .btn-ghost{color:var(--ink);border-color:#b8ad92}
+.dialog .letter .btn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--snow);color:var(--deep);padding:10px 18px;border-radius:999px;font-weight:700;font-size:15px;z-index:80;display:none}
+
+
+/* ---- Blockstil ---- */
+body{font-size:18px;line-height:1.45}
+h1,h2,h3,h4{letter-spacing:-.035em}
+.on-red{background:var(--red);--snow:#fff;--mist:#fff;--line:#fff;--lamp:#fff;--dusk:var(--red);color:#fff}
+.on-yellow{background:var(--yellow);--mist:#0f1430;--lamp:#0f1430;--deep:#fff;--dusk:#fff}
+.on-night{background:var(--ink-night);--snow:#fff;--mist:#cfd3e6;--line:#fff;--lamp:var(--yellow);--dusk:var(--ink-night);--deep:#1d2450;color:#fff}
+section.quiet{background:var(--deep)}
+section.on-red,section.on-yellow,section.on-night{color:var(--snow)}
+.btn{font-size:17px;padding:14px 24px;min-height:52px}
+.btn-primary,.btn-night{background:var(--ink-night);color:#fff}
+.btn-primary:hover,.btn-night:hover{background:#2a3270}
+.btn-ghost{border:2px solid var(--snow);color:var(--snow)}
+.btn-ghost:hover{background:var(--snow);color:var(--night);border-color:var(--snow)}
+.on-night .btn-primary{background:var(--yellow);color:var(--ink-night)}
+.on-night .btn-ghost:hover,.on-red .btn-ghost:hover{background:#fff;color:var(--ink-night)}
+.btn[aria-pressed="true"]{background:var(--snow);color:var(--night)}
+.btn-mini{min-height:34px;padding:5px 12px;font-size:13px}
+.nav{background:rgba(255,255,255,.94);border-bottom:2px solid transparent}
+.nav.stuck{border-bottom-color:var(--line)}
+.nav a{font-size:16px}
+.nav a:hover{background:rgba(15,20,48,.07)}
+.nav a.brand{font-size:28px;letter-spacing:-.05em}
+.nav a.to-gen{border:2px solid var(--line)}
+.hero{background:var(--red);padding-top:clamp(36px,6vw,84px)}
+.hero h1{font-size:clamp(40px,9.4vw,150px);line-height:.86;letter-spacing:-.055em;text-transform:uppercase;margin-left:-.05em}
+.unseen i{text-shadow:none}
+.hero .lead{font-size:clamp(20px,2.1vw,28px);line-height:1.22;letter-spacing:-.015em}
+.hero .btn-primary{background:var(--ink-night);color:#fff}
+.facts{font-size:16px}
+.rubi-note{color:#fff}
+.rubi-note small{color:#fff}
+.tafel{border-top:0}
+.tafel::before{top:0;height:3px;background:#fff;box-shadow:none;transform-origin:0 50%}
+.tafel-text{font-size:18px}
+.tafel-text b{color:#fff;font-size:1.3em}
+.zahlen{color:rgba(255,255,255,.5);font-weight:700}
+.zahlen li.war{color:#fff}
+.zahlen li.heute{background:var(--ink-night);color:#fff;text-shadow:none}
+.block h2{font-size:clamp(36px,5.6vw,84px);line-height:.94;letter-spacing:-.05em}
+.block .sub{color:var(--snow);font-size:clamp(19px,2vw,26px);line-height:1.25;letter-spacing:-.012em;max-width:30em}
+.unter .sub{font-size:18px;line-height:1.4;letter-spacing:0;max-width:40em}
+.probe label{font-size:17px;font-weight:700}
+.probe input{border:2px solid var(--ink-night);background:#fff}
+.letter{border:2px solid var(--ink-night)}
+.probe .letter{box-shadow:10px 10px 0 var(--ink-night)}
+.step::before{letter-spacing:-.06em}
+.step h3{font-size:clamp(24px,2.8vw,36px)}
+.step p,.abende p,.wesen p,.kodex-liste li,.med p{color:var(--snow);font-size:18px}
+.abende .wann{font-size:24px;letter-spacing:-.03em}
+.abende .wann small{font-size:15px;letter-spacing:0}
+.zonen{border-bottom:12px solid var(--snow);box-shadow:none}
+.zone{border-left:2px solid var(--line)}
+.zone p{color:var(--snow);font-size:16px}
+.zone.tuer h3{text-shadow:none}
+.leiste-titel,.leiste-fuss{color:var(--snow);font-size:16px}
+.wesen h3{font-size:clamp(32px,4.4vw,60px);letter-spacing:-.05em;line-height:.95}
+.wesen blockquote{font-size:clamp(32px,3.6vw,46px)}
+details.kap-item>summary{font-size:clamp(22px,2.6vw,32px);letter-spacing:-.035em}
+.kap-text{font-size:19px;line-height:1.55}
+.form{border:2px solid var(--line)}
+input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--line);background:#fff}
+.seg span{border:2px solid var(--line);background:#fff}
+.seg input:checked+span{background:var(--snow);color:var(--night)}
+.cal button{border:2px solid var(--line);background:#fff}
+.cal button[data-mode="wenig"],.legend .w{background:var(--yellow);border-color:var(--line)}
+.cal button[data-mode="reise"],.legend .r{background:#bfe8d3;border-color:var(--line)}
+.out>.empty{border:2px dashed var(--line);color:var(--snow);letter-spacing:-.03em}
+.out-head h3{font-size:clamp(30px,4vw,52px);letter-spacing:-.05em}
+.heute{border:2px solid var(--line);background:var(--yellow);box-shadow:10px 10px 0 var(--ink-night);--mist:#0f1430;--deep:#fff}
+.heute .eyebrow{color:var(--snow);font-weight:700}
+.kap h3{color:var(--snow);font-size:clamp(26px,3.2vw,40px);letter-spacing:-.045em;border-top:4px solid var(--line);padding-top:12px;margin-top:28px}
+.day{border:2px solid var(--line)}
+.day-head .num{font-size:44px;letter-spacing:-.06em}
+.day-head h4{font-size:26px}
+.day-head .mode button{border:2px solid var(--line);background:#fff}
+.day-head .mode button[aria-pressed="true"]{background:var(--snow);color:var(--night)}
+.zug{border-top:2px solid var(--line)}
+.minbadge{border:1.5px solid var(--pine)}
+.tipp{background:var(--deep);color:var(--snow)}
+.done-btn{border:2px solid var(--line)}
+.done-btn[aria-pressed="true"]{color:#fff}
+.zettel .who{color:#fff}
+.med{border-top:2px solid var(--line)}
+.med h4{font-size:28px}
+.med .wann{color:var(--lamp);font-weight:700}
+.med .acts .btn-ghost{border-color:var(--line)}
+.skript{background:#fff;border:2px solid var(--line)}
+.notfall-grid button{border:2px solid var(--line);font-size:19px;font-weight:700;letter-spacing:-.02em;padding:18px}
+.notfall-grid button:hover{background:var(--yellow);border-color:var(--line)}
+.notfall-grid button small{font-size:15px;letter-spacing:0}
+.unter h3{font-size:clamp(28px,3.4vw,44px)}
+.kodex-liste b{font-size:clamp(24px,2.8vw,36px);letter-spacing:-.04em;line-height:1.02;margin-bottom:6px}
+footer{background:var(--ink-night);--snow:#fff;--mist:#cfd3e6;--lamp:var(--yellow);color:#cfd3e6;border-top:0}
+footer .brand{font-size:44px;letter-spacing:-.055em}
+.legal p,.legal li{color:var(--snow)}
+.legal h1{letter-spacing:-.055em;text-transform:uppercase}
+.legal .offen{border:2px dashed var(--lamp)}
+.dialog{border:2px solid var(--line)}
+.toast{background:var(--ink-night);color:#fff}
+#freunde .stack{gap:clamp(36px,5vw,64px)}
+@media (max-width:560px){.hero h1{font-size:11.2vw}}
+
+/* Druckansicht: helles Papier, eigene Farben */
+.printview{position:fixed;inset:0;z-index:60;background:#d9d2c3;display:none;flex-direction:column;color:#1f2437}
+.printview.open{display:flex}
+.pv-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px clamp(12px,3vw,24px);background:#fff;border-bottom:1px solid #e3d8c4}
+.pv-bar h2{font-size:22px;margin-right:auto;color:#1f2437}
+.pv-bar .btn-ghost{color:#1f2437;border-color:#cfc6b2}
+.pv-bar .btn-primary{background:#1f2437;color:#fff}
+.pv-bar #pvHint{flex-basis:100%;margin:0;font-size:14px;color:#5e6274;display:none}
+.pv-scroll{flex:1;overflow:auto;padding:20px 12px 60px}
+.pv-pages{display:flex;flex-direction:column;align-items:center;gap:20px}
+.sheet{width:210mm;min-height:297mm;background:#fff;color:#1f2437;box-shadow:0 10px 30px -16px rgba(0,0,0,.5);padding:10mm;flex:none;display:flex;flex-direction:column;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet .eyebrow{color:#5e6274;font-size:9.5pt}
+.sheet .cut{font-size:9pt;color:#8a8494;text-align:center;margin-bottom:3mm}
+.grid4{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0}
+.cell{border:1px dashed #b9b2c9;padding:6mm 7mm;display:flex;flex-direction:column;background:#f6efe3;min-height:0}
+.cell:nth-child(odd){border-right:none}.cell:nth-child(-n+2){border-bottom:none}
+.cell.empty{background:#fff;border-color:transparent}
+.cell .tag{font-family:var(--body);font-size:8pt;color:#8a8494;font-weight:600;margin-bottom:2mm;display:flex;justify-content:space-between}
+.cell .body{font-family:var(--hand);font-size:14.5pt;line-height:1.3;color:var(--ink);display:grid;gap:2mm;flex:1;align-content:start}
+.cell .body.small{font-size:12.5pt}
+.cell .note{margin-top:auto;padding-top:2mm;border-top:1px dashed #c9bfa8;font-family:var(--hand);font-size:12pt;color:#3a3450}
+.cell .note b{font-family:var(--body);font-size:8pt;margin-right:4px}
+.sheet h3.pt{font-size:22pt;font-weight:700;margin:0 0 1mm;color:#1f2437}
+.sheet .pt-sub{color:#5e6274;font-size:10.5pt;margin-bottom:4mm}
+.sheet table{width:100%;border-collapse:collapse;font-size:10pt}
+.sheet th{text-align:left;font-size:8.5pt;color:#5e6274;padding:1.5mm 2mm;border-bottom:1.5px solid #1f2437}
+.sheet td{padding:2.2mm 2mm;border-bottom:1px solid #e3d8c4;vertical-align:top}
+.sheet td.d{white-space:nowrap;font-weight:700}
+.sheet td.ck{width:8mm}.sheet td.ck span{display:inline-block;width:4.5mm;height:4.5mm;border:1.5px solid #1f2437;border-radius:1mm}
+.sheet .mat{color:#5e6274;font-size:9pt}
+.sheet.chron{padding:14mm}
+.sheet.chron .cl{font-family:var(--hand);font-size:14pt;line-height:1.3;color:var(--ink);background:#f6efe3;border-radius:2mm;padding:6mm;display:grid;gap:2mm}
+.sheet.chron .ca{margin-top:4mm;border:1px dashed #b9b2c9;border-radius:2mm;padding:5mm;min-height:40mm;font-size:11pt}
+.sheet.chron .ca b{display:block;font-size:8.5pt;color:#8a8494;margin-bottom:2mm}
+.sheet.chron .night{margin-top:4mm;border-radius:2mm;padding:5mm;min-height:45mm;background:#121935;color:#e9e4d8;font-size:10pt}
+.sheet.chron .night b{display:block;font-size:8.5pt;color:#f5bf62;margin-bottom:2mm}
+@media print{
+  body{background:#fff}
+  body>*:not(.printview){display:none!important}
+  .printview{position:static;display:flex!important;background:#fff}
+  .pv-bar{display:none}
+  .pv-scroll{padding:0;overflow:visible}
+  .pv-pages{gap:0}
+  .sheet{box-shadow:none;page-break-after:always;min-height:0;height:297mm}
+  @page{size:A4;margin:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .tafel::before{animation:none}
+  .unseen i{transition:none}
+  html{scroll-behavior:auto}
+}
+
+/* Die zweite Ebene: Tomtes Welt liegt unter der nüchternen Typo und öffnet sich kreisförmig,
+   wenn der Cursor ruht. Bei Bewegung schließt sie sich wieder. Nur fürs Zeigegerät, kein App-Feel. */
+.magie{position:fixed;inset:0;z-index:40;pointer-events:none;
+  clip-path:circle(0px at var(--mx,50%) var(--my,50%));
+  transition:clip-path 1.8s cubic-bezier(.19,.72,.1,1)}
+.magie.offen{clip-path:circle(min(32vw,34vh) at var(--mx,50%) var(--my,50%))}
+.magie img{width:100%;height:100%;object-fit:cover;display:block}
+.magie::after{content:"";position:absolute;inset:0;
+  box-shadow:inset 0 0 0 2px rgba(255,210,120,.35)}
+@media (prefers-reduced-motion:reduce){.magie{display:none}}
+@media (max-width:640px){.magie.offen{clip-path:circle(30vh at var(--mx,50%) var(--my,50%))}}
+
+/* Textauswahl/Copy-Callout sitzweit aus, damit der Finger-ruht-Reveal auf Touch
+   nicht mit dem System-Kontextmenü kollidiert. Ausnahme: das Plan-Link-Feld bleibt kopierbar. */
+body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* Solange der Kreis dem Finger folgt, muss Safari das native Scroll-Gesture erst gar nicht
+   starten – preventDefault() allein stoppt ein einmal begonnenes Scrollen auf iOS oft nicht. */
+html.greift-magie, html.greift-magie body{touch-action:none}
+#linkField,input,textarea{-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}
+</style>
+</head>
+<body>
+
+<div class="magie" id="magie" aria-hidden="true"><img src="bild/wichtelwelt.webp" alt=""></div>
+
+<nav class="nav" id="nav" aria-label="Hauptmenü">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">Tomtini</a>
+    <a href="#geschichte">Geschichte</a>
+    <a href="#so">So geht's</a>
+    <a href="#material">Material</a>
+    <a href="#aufbau">Aufbau</a>
+    <a href="#notfall">Notfall</a>
+    <a class="to-gen" href="#generator">Generator</a>
+  </div>
+</nav>
+
+<main id="site">
+
+<header class="hero on-red" id="top">
+  <div class="wrap">
+    <h1 aria-label="Der Wichtel, den man nicht sieht."><span aria-hidden="true"><span class="ln">Der <span class="unseen" id="unseen"><i>W</i><i>i</i><i>c</i><i>h</i><i>t</i><i>e</i><i>l</i></span>,</span><span class="ln">den man</span><span class="ln">nicht sieht.</span></span></h1>
+    <div class="hero-foot">
+      <div>
+        <p class="lead">Tomtini ist ein Wichtel-Generator für Eltern. Ihr tragt die Namen eurer Kinder ein und bekommt 24 Tage mit Tomte: jeden Morgen ein Brief, jede Nacht eine neue Zahl auf seiner Tafel. Fertig geplant, zum Ausdrucken, kostenlos.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#generator">Euren Dezember planen</a>
+          <a class="btn btn-ghost" href="#brief">Erst einen Brief lesen</a>
+        </div>
+        <p class="facts">Kein Konto. Keine App. Abends eine bis fünf Minuten.</p>
+      </div>
+      <p class="rubi-note" id="rubiNote">Zeigt mal auf ihn. Er ist schneller.<small>Rubi, das Rotkehlchen</small></p>
+    </div>
+    <div class="tafel">
+      <div class="tafel-in">
+        <p class="tafel-text" id="tafelText">Jede Nacht baut Tomte die Zahl des Tages auf seine Tafel. Das ist euer Adventskalender.</p>
+        <ol class="zahlen" id="zahlen" aria-label="Tomtes Zahlentafel, 1 bis 24"></ol>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="block quiet" id="geschichte">
+  <div class="wrap split">
+    <div>
+      <h2 id="gTitel"></h2>
+      <p class="sub" id="gUnter"></p>
+      <p style="margin-top:22px"><button type="button" class="btn btn-ghost" id="gPrint">Geschichte drucken</button></p>
+    </div>
+    <div class="stack">
+      <div id="gKapitel" class="kapitel-liste"></div>
+      <p class="tipp" id="gEltern"></p>
+    </div>
+  </div>
+</section>
+
+<section class="block on-yellow" id="brief">
+  <div class="wrap split">
+    <div>
+      <h2>So klingt Tomte.</h2>
+      <p class="sub">Das ist der Brief vom ersten Morgen. Tragt einen Namen ein, dann schreibt Tomte an euer Kind. Rubi hat den Namen leider falsch verstanden.</p>
+    </div>
+    <div class="probe">
+      <label for="demoName">Name eures Kindes</label>
+      <input type="text" id="demoName" placeholder="z. B. Lina, oder Lina, Paul" autocomplete="off">
+      <div class="letter" id="demoLetter"></div>
+      <div id="demoZettel"></div>
+      <p><a class="btn btn-ghost" href="#generator">Alle 24 Tage planen</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="so">
+  <div class="wrap split">
+    <div>
+      <h2>Eine Geschichte, die euch nicht im Stich lässt.</h2>
+      <p class="sub">Andere Wichtel-Ideen sind Listen. Tomte ist eine Geschichte mit Anfang, Bogen und Abschied. Jeder Tag hat einen Brief und das Nötige dazu. Zugaben gibt es für Wochenenden, wenn ihr Lust habt.</p>
+    </div>
+    <ol class="steps">
+      <li class="step"><h3>Ihr tragt euch ein</h3><p>Namen der Kinder, Startdatum, wie viel Zeit ihr abends habt. Dazu die Tage, an denen es eng wird oder ihr unterwegs seid. Alles bleibt in eurem Browser.</p></li>
+      <li class="step"><h3>Tomte plant 24 Tage</h3><p>Vier Kapitel: Einzug, Hilfe, die schiefgeht, Tomtes Geheimnis, Abschied. Ab Tag 15 bauen die Kinder Teile, die am 24. das Finale ergeben.</p></li>
+      <li class="step"><h3>Ihr druckt und legt hin</h3><p>Briefe in Tomtes Handschrift, vier auf einer Seite. Dazu der Elternplan für den Kühlschrank mit Material und ehrlichen Minuten pro Abend, und am Ende die Chronik als Geschenk.</p></li>
+      <li class="step"><h3>Vergessen ist eingeplant</h3><p>Mimi ist eingeschlafen, Rubi hing im Schneesturm fest. Jeder Ausweg führt die Geschichte weiter, kein Kind merkt einen Bruch.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="block quiet" id="material">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <h2>Was ihr dafür braucht.</h2>
+        <p class="sub">Tomtes Vorgarten besteht aus fünf Dingen: Tür, Zahlentafel, Bänkchen, Briefkasten, Laterne. Dafür gibt es drei Wege, und zwei davon kosten nichts außer einem Bastelabend.</p>
+      </div>
+      <p class="tipp">Entscheidet euch bis Mitte November. Wer am 28. merkt, dass die Tür fehlt, bekommt sie nicht mehr rechtzeitig.</p>
+    </div>
+    <div class="wege">
+      <article class="weg">
+        <p class="eyebrow">Gekauft · ab etwa 8 Euro</p>
+        <h3>Fertiges Set</h3>
+        <p>Wichteltüren gibt es im Handel ab etwa 8 Euro, meist mit etwas Zubehör; große Sets mit Leiter, Stiefeln und Laterne kosten mehr. Wir empfehlen kein Produkt und verdienen an keinem etwas.</p>
+        <p>Achtet nur auf das Licht: LED-Teelicht mit verschraubtem Batteriefach. Keine echte Flamme, keine losen Knopfzellen.</p>
+        <p class="wann">Bestellen bis Mitte November.</p>
+      </article>
+      <article class="weg">
+        <p class="eyebrow">Ausgedruckt · kostenlos</p>
+        <h3>Aus Papier</h3>
+        <p>Tür, Zahlenkarten 1 bis 24, Briefkasten und Laterne auf festem Papier, ausschneiden und falten. Ein Abend Arbeit, und bei Kindern, die schneiden und kleben dürfen, ist das Basteln schon der halbe Zauber.</p>
+        <p>Tomte merkt keinen Unterschied. Die Papiertür ist nicht die Sparvariante, sondern eine gleichwertige.</p>
+        <p class="folgt">Die Druckvorlagen kommen mit dem Druckpaket.</p>
+      </article>
+      <article class="weg">
+        <p class="eyebrow">Gebaut · kostenlos</p>
+        <h3>Aus Klemmbausteinen</h3>
+        <p>Tomtes Tür ist kein Holztürchen, sondern ein Portal: eine Mauer mit gezacktem Rand, ein Bogen in der Mitte, dahinter ein Lichtwirbel aus Papier. Man sieht das Licht und kommt nicht durch, damit erklärt sich von selbst, warum die Tür von außen nur gemalt ist.</p>
+        <p>Wer eine Kiste Steine hat, braucht nichts zu kaufen. Daneben steht die Zahlentafel: eine aufrechte Platte, auf der jede Nacht die Zahl des Tages aus hellen Steinen liegt. Beides an einem Abend gebaut.</p>
+        <p class="folgt">Die Bauanleitung Schritt für Schritt kommt mit dem Druckpaket.</p>
+      </article>
+    </div>
+    <p class="leiste-fuss" style="margin-top:22px">Dazu nur, was ohnehin da ist: etwas Mehl für die Fußspuren, Papier, ein Drucker. Und ein Platz an einer Fußleiste, an dem nicht ständig jemand vorbeisaugt.</p>
+  </div>
+</section>
+
+<section class="block on-night" id="aufbau">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <h2>Am ersten Morgen steht alles da.</h2>
+        <p class="sub">Kinder brauchen am 1. Dezember das ganze Bild. Danach wächst nicht mehr die Kulisse, sondern das Leben darin. Der Aufbau dauert zwei kurze Abende.</p>
+      </div>
+      <ol class="abende">
+        <li><p class="wann">29. November<small>abends, 8 Minuten</small></p><p><b>Rubi fragt an.</b> Briefkasten an die Fußleiste, Mimi schlafend darauf, Rubis Zettel davor. Er fragt, ob jemand sehr Kleines einziehen darf.</p></li>
+        <li><p class="wann">30. November<small>tagsüber</small></p><p><b>Die Kinder legen ihr JA hin.</b> Bei Nein oder Zögern baut ihr nichts auf. Rubi wartet, niemand ist beleidigt.</p></li>
+        <li><p class="wann">30. November<small>abends, 15 Minuten</small></p><p><b>Tomte zieht ein.</b> Tür, Zahlentafel mit der 1, Bänkchen. Dazu vier kleine Fußspuren aus Mehl.</p></li>
+        <li><p class="wann">1. Dezember<small>morgens</small></p><p><b>Der erste Brief liegt da.</b> Ab jetzt ändert sich jede Nacht eine Kleinigkeit. Der Elternplan nennt für jeden Abend, was und wie viele Minuten.</p></li>
+      </ol>
+    </div>
+    <div class="leiste">
+      <p class="leiste-titel">So steht es an eurer Fußleiste, von links nach rechts:</p>
+      <div class="zonen">
+        <div class="zone"><h3>Vorgarten</h3><p>Wächst mit der Geschichte: Girlande an Tag 13, Tanne an Tag 15, Licht an Tag 17, Stern an Tag 21.</p></div>
+        <div class="zone"><h3>Zahlen&shy;tafel</h3><p>Jede Nacht die neue Zahl. Das ist das Türchen eures Adventskalenders.</p></div>
+        <div class="zone tuer"><h3>Tür</h3><p>Bleibt, wie sie ist. Sie geht nur von innen auf, von außen ist sie nur gemalt.</p></div>
+        <div class="zone"><h3>Bänkchen</h3><p>Platz für das, was die Kinder Tomte hinlegen. Und für Kleinigkeiten, wenn ihr sie zuschaltet.</p></div>
+        <div class="zone"><h3>Brief&shy;kasten</h3><p>Hier liegt der Brief. Mimi schläft darauf, deshalb kommt die Post manchmal spät.</p></div>
+      </div>
+      <p class="leiste-fuss">Die dicke Linie ist eure Fußleiste.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="freunde">
+  <div class="wrap stack">
+    <div class="split">
+      <h2>Zwei, die man sehen darf.</h2>
+      <p class="sub" style="margin-top:0">Tomte zeigt sich nie. Mimi und Rubi schon. Sie sind der Beweis, dass es ihn gibt, und sie erzählen von ihm. Selten dasselbe.</p>
+    </div>
+    <div class="zwei">
+      <div class="wesen mimi"><h3>Mimi, die Haselmaus</h3><p>Soll Tomtes Post bringen und schläft dabei ständig ein. Wer sie morgens auf dem Briefkasten findet, klopft dreimal leise.</p><blockquote>„Kekse. Ich bleibe dabei.“</blockquote></div>
+      <div class="wesen rubi"><h3>Rubi, das Rotkehlchen</h3><p>Fliegt zwischen Tomtes Welt und draußen. Bringt Nachrichten vom Wetter und vom Schnee und übertreibt dabei gern.</p><blockquote>„Der Hund war so groß wie ein Bus. Ein kleiner Bus.“</blockquote></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="block" id="generator">
+  <div class="wrap">
+    <h2>Euer Dezember mit Tomte</h2>
+    <p class="sub">Tragt ein, was Tomte wissen muss. Der Plan entsteht sofort, ihr könnt ihn jederzeit ändern und neu drucken.</p>
+    <div class="gen">
+      <form class="form" id="form">
+        <div class="field"><label for="kinder">Namen der Kinder</label><input type="text" id="kinder" placeholder="z. B. Lina, Paul" autocomplete="off"><p class="help">Mit Komma trennen. Tomte spricht alle gemeinsam an.</p></div>
+        <div class="field"><span class="lbl">Alter des jüngsten Kindes</span>
+          <div class="seg">
+            <label><input type="radio" name="alter" id="alter3" value="3"><span>3–4</span></label>
+            <label><input type="radio" name="alter" id="alter5" value="5" checked><span>5–7</span></label>
+            <label><input type="radio" name="alter" id="alter8" value="8"><span>8–9</span></label>
+          </div><p class="help">Bei 3–4 schreibt Tomte kürzer, mit einem Nachsatz für ältere Geschwister. Ab 8 empfehlen wir den Helfer-Pfad (siehe Notfall „Das ältere Kind weiß Bescheid“).</p></div>
+        <div class="field"><label for="eltern">Wie Tomte die Großen nennt</label>
+          <div class="seg" id="elternChips">
+            <label><input type="radio" name="elternChip" id="ec1" value="Mama"><span>Mama</span></label>
+            <label><input type="radio" name="elternChip" id="ec2" value="Papa"><span>Papa</span></label>
+            <label><input type="radio" name="elternChip" id="ec3" value="Mama und Papa"><span>Mama und Papa</span></label>
+            <label><input type="radio" name="elternChip" id="ec4" value="Oma"><span>Oma</span></label>
+          </div>
+          <input type="text" id="eltern" placeholder="oder eigener Text, z. B. Mama und Mami"></div>
+        <div class="field"><label for="start">Einzug (erster Brief am Morgen des)</label><input type="date" id="start" value="2026-12-01"><p class="help">Für das Finale am 24. Dezember: 1. Dezember wählen.</p></div>
+        <div class="field"><span class="lbl">Aufwand</span>
+          <div class="seg">
+            <label><input type="radio" name="aufwand" id="auf1" value="briefe"><span>Nur Briefe</span></label>
+            <label><input type="radio" name="aufwand" id="auf2" value="basis" checked><span>Das Nötige</span></label>
+            <label><input type="radio" name="aufwand" id="auf3" value="we"><span>Plus Wochenend-Zugaben</span></label>
+          </div><p class="help">„Nur Briefe“: jeden Abend Brief hinlegen und Zahl umstecken, 1 Minute, keine Requisiten; die vier Bauteile sind dann freiwillig. „Das Nötige“: was der Brief braucht, meist 1–5 Minuten. Ehrliche Gesamtsumme im Dezember: etwa 2 Stunden Vorbereitung (Drucken, Tür, Kiste), dazu die Abende. Chronik-Einträge sind freiwillig.</p></div>
+        <div class="field"><span class="lbl">Bei euch</span>
+          <div class="seg">
+            <label><input type="checkbox" id="nikolaus" checked><span>Nikolaus am 6.</span></label>
+            <label><input type="checkbox" id="lego" checked><span>Klemmbausteine im Haus</span></label>
+            <label><input type="checkbox" id="figur"><span>Wir haben schon eine Wichtelfigur</span></label>
+            <label><input type="checkbox" id="haustier"><span>Haustier</span></label>
+            <label><input type="checkbox" id="klein"><span>Tomte bringt auch Kleinigkeiten</span></label>
+            <label><input type="checkbox" id="suess"><span>Tomte darf Süßes bringen</span></label>
+          </div><p class="help">„Kleinigkeiten“ macht aus Tomte einen vollen Adventskalender: pro Tag ein Vorschlag aus Haus oder Druckpaket (6-teiliges Puzzle), ehrlich etwa 15–20 € pro Kind, plus Einkaufsliste. Ohne Haken bleibt der Brief das Türchen. Die Kleinigkeit liegt unabhängig von allem, was das Kind getan hat: nie Belohnung, nie Entzug.</p></div>
+        <div class="field"><label class="lbl" for="tafel">Das tägliche Türchen: Tomtes Zahlentafel</label>
+          <select id="tafel" class="inp"></select>
+          <p class="help" id="tafelHelp"></p></div>
+        <div class="field"><span class="lbl">Wie lange bleibt Tomte?</span>
+          <div class="seg">
+            <label><input type="radio" name="bleibt" id="bl1" value="24" checked><span>Bis zum 24. Dezember</span></label>
+            <label><input type="radio" name="bleibt" id="bl2" value="6"><span>Bis Dreikönig</span></label>
+            <label><input type="radio" name="bleibt" id="bl3" value="31"><span>Den ganzen Januar</span></label>
+          </div><p class="help">Im Januar ist Tomte müde: ein Brief pro Woche, keine Streiche, am Ende ein Abschied bis November.</p></div>
+        <div class="field"><label for="essen">Lieblingsessen der Kinder (Tag 2 fragt danach)</label><input type="text" id="essen" placeholder="z. B. Pfannkuchen"></div>
+        <div class="field"><label for="ritual">Was ihr im Winter am liebsten zusammen macht</label><input type="text" id="ritual" placeholder="z. B. Plätzchen backen"><p class="help">Als Tätigkeit, kleingeschrieben. Tomte zitiert es am letzten Tag.</p></div>
+        <div class="field"><span class="lbl">Besondere Tage</span>
+          <div class="cal" id="cal" aria-label="24 Tage antippen"></div>
+          <div class="legend"><span><i class="w"></i>wenig Zeit</span><span><i class="r"></i>unterwegs (Tomte reist mit)</span></div>
+          <p class="help">Antippen zum Wechseln. An „wenig Zeit“-Tagen zeigt Tomte, welche Briefe auch ohne Requisite funktionieren.</p></div>
+        <button class="btn btn-primary" type="submit" id="go">Plan erstellen</button>
+        <p class="help">Der Plan bleibt in diesem Browser gespeichert und wird nirgendwohin gesendet. Mit dem Plan-Link öffnet ihr ihn auf jedem anderen Gerät (der Link enthält die Namen).</p>
+      </form>
+
+      <div class="out" id="out">
+        <div class="empty">Hier erscheint euer Plan: 24 Tage, jeder mit Brief, Zettel von Mimi oder Rubi und dem, was der Abend braucht.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block quiet" id="medien">
+  <div class="wrap stack">
+    <div class="split">
+      <h2>Tomte wird gehört, nie gesehen.</h2>
+      <p class="sub" style="margin-top:0">Drei Stücke zum Lesen und Mitmachen, ganz aus Schrift. Kein Brief fertig? Dann nehmt heute das Fenster. Dazu drei Hörstücke und zwei Lieder, deren Texte stehen und deren Aufnahmen folgen. Das Handy ist dabei nie das Medium, sondern das Versteck: Es liegt neben der Tür, der Bildschirm bleibt dunkel.</p>
+    </div>
+    <div class="stuecke">
+      <article class="stueck">
+        <p class="eyebrow">Fenster · drei Minuten</p>
+        <h3>In Tomtes Werkstatt</h3>
+        <p class="stueck-sub">Er ist gerade draußen, aber alles ist noch warm. Tippt euch durch, so langsam ihr wollt.</p>
+        <div class="fenster-box"><ol id="fensterText"></ol></div>
+        <div class="stueck-knoepfe">
+          <button class="btn btn-primary" id="fensterWeiter">Weiter</button>
+          <button class="btn btn-ghost" id="fensterKurz">Kürzere Fassung</button>
+        </div>
+      </article>
+
+      <article class="stueck">
+        <p class="eyebrow">Suchbild · für zwischendurch</p>
+        <h3>Wo ist Mimi?</h3>
+        <p class="stueck-sub">In Tomtes Werkstatt liegt viel herum. Hier stehen die Dinge als Wörter, und Mimi schläft irgendwo dazwischen.</p>
+        <div class="wortfeld" id="wortfeld"></div>
+        <p class="stueck-status" id="suchStatus" role="status"></p>
+        <div class="stueck-knoepfe" id="suchKnoepfe" hidden>
+          <button class="btn btn-primary" id="suchNochmal">Noch einmal suchen</button>
+          <button class="btn btn-ghost" id="suchFertig">Fertig</button>
+        </div>
+        <p class="tipp">Wer noch nicht liest, lässt sich die Wörter vorlesen und ruft Stopp, wenn ein Name kommt statt eines Dings.</p>
+      </article>
+
+      <article class="stueck">
+        <p class="eyebrow">Notizbuch · zum Ausdrucken</p>
+        <h3>Tomtes Notizbuch</h3>
+        <p class="stueck-sub">Er fängt Listen an und schläft darüber ein. Schreibt dazu, was fehlt.</p>
+        <p class="notiz-vorweg"><b>Für euch:</b> Getipptes bleibt nur, solange die Seite offen ist, und niemand liest es außer euch. Zum Behalten das Blatt ausdrucken und mit der Hand schreiben.</p>
+        <div class="notiz" id="notiz"></div>
+        <div class="stueck-knoepfe"><button class="btn btn-primary" id="notizDruck">Blatt ausdrucken</button></div>
+      </article>
+    </div>
+
+    <div class="medien-grid" id="medienGrid"></div>
+  </div>
+</section>
+
+<section class="block" id="notfall">
+  <div class="wrap">
+    <div class="split">
+      <h2>Es ist 23:30 und ihr habt den Wichtel vergessen.</h2>
+      <p class="sub" style="margin-top:0">Oder der Tag war anders als geplant. Tomte hat für jede Situation einen Brief, der die Geschichte weiterführt. Antippen, drucken oder abschreiben, hinlegen.</p>
+    </div>
+    <div class="notfall-grid" id="notfallGrid" style="margin-top:32px"></div>
+    <div class="unter">
+      <h3>Tagsüber: ein Zettel am Nachmittag</h3>
+      <p class="sub">Man erzählt Tomte, was im Haus passiert; er sieht nicht zu. Wenn ein Kind einen schweren Tag hatte oder einfach so, liegt am Nachmittag ein Zettel da. Nicht als Belohnung, als Gesellschaft. Bei mehreren Kindern richtet sich jeder dieser Zettel an ein einzelnes Kind.</p>
+      <div class="notfall-grid" id="tagGrid"></div>
+    </div>
+    <div class="unter">
+      <h3>Tomte erzählt</h3>
+      <p class="sub">Wut, Streit, Neues probieren, Angst vor dem ersten Mal, Einschlafen: Tomte, Mimi und Rubi erleben es selbst und erzählen davon. Sie bitten um nichts, fragen nichts nach, loben nichts. Tomte erzieht nicht. Wenn ihr etwas von euren Kindern wollt, sagt es ihnen selbst.</p>
+      <div class="notfall-grid" id="hilfeGrid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="block on-yellow" id="kodex">
+  <div class="wrap split">
+    <div>
+      <h2>Wofür Tomte steht</h2>
+      <p class="sub">Ein paar Regeln, die wir uns selbst gegeben haben. Damit der Zauber bleibt und niemand draufzahlt.</p>
+    </div>
+    <ul class="kodex-liste">
+      <li><b>Tomte wird nie gesehen.</b>Nicht in Briefen, nicht auf dieser Seite, nirgends. Kinder ergänzen ihn in ihrer Fantasie, und das ist stärker als jedes Bild.</li>
+      <li><b>Tomte ist ein guter Wichtel. Immer.</b>Er beobachtet nicht, droht nicht, erzieht nicht. Keine Liste, kein Bericht. Nachts ist er leise in der Wohnung unterwegs, in die Kinderzimmer geht er nie.</li>
+      <li><b>Ehrliche Minuten.</b>Jeder Tag sagt vorher, was der Brief braucht und wie lange das dauert, meist eine bis fünf Minuten. Was länger dauert, steht als Wochenend-Zugabe daneben.</li>
+      <li><b>Keine Sauerei, kein Einkaufszwang.</b>Spuren sind klein und in zwei Minuten weg. Alles geht mit Papier, Drucker und dem, was in einer Wohnung ist. Was ihr einmalig braucht, steht oben unter Material, und zwei der drei Wege dorthin kosten nichts.</li>
+      <li><b>Vergessen ist Teil der Geschichte.</b>Mimi schläft, Rubi hängt im Schneesturm fest. Niemand muss etwas erfinden, das Tomte nicht selbst erklärt.</li>
+      <li><b>Ein Winterwichtel.</b>Tomte funktioniert in Familien mit und ohne Weihnachten. Süßes gibt es nur, wenn ihr es einschaltet. Keine Daten von Kindern verlassen euer Gerät.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<div id="legal" hidden>
+  <div class="wrap legal">
+    <p><a class="btn btn-ghost" href="#top">Zurück zu Tomtini</a></p>
+    <article id="impressum" hidden>
+      <h1>Impressum</h1>
+      <h2>Angaben gemäß § 5 DDG</h2>
+      <address>Andrzej Roszkiewicz<br>Sürther Str. 14<br>50996 Köln</address>
+      <h2>Kontakt</h2>
+      <p>E-Mail: <a href="mailto:hallo@tomtini.kids">hallo@tomtini.kids</a></p>
+      <h2>Verantwortlich für den Inhalt</h2>
+      <p>Andrzej Roszkiewicz, Anschrift wie oben (§ 18 Abs. 2 MStV).</p>
+      <h2>Über das Projekt</h2>
+      <p>Tomtini ist ein privates, kostenloses Projekt und ein Schwesterprojekt von <a href="https://fundini.kids">Fundini</a>. Es gibt keine Werbung und keinen Verkauf.</p>
+    </article>
+    <article id="datenschutz" hidden>
+      <h1>Datenschutz</h1>
+      <p>Kurz gesagt: kein Konto, keine Cookies, kein Tracking, keine Werbung. Was ihr eintragt, bleibt auf eurem Gerät.</p>
+      <h2>Verantwortlich</h2>
+      <p>Andrzej Roszkiewicz, Sürther Str. 14, 50996 Köln. E-Mail: <a href="mailto:hallo@tomtini.kids">hallo@tomtini.kids</a></p>
+      <h2>Was ihr in den Generator eintragt</h2>
+      <p>Namen der Kinder, Anrede, Lieblingsessen, euer Winterritual, die gewählten Tage und eure Notizen für die Chronik werden nur im Speicher eures Browsers abgelegt (Local Storage), damit der Plan beim nächsten Besuch noch da ist. Diese Angaben werden nicht an uns oder an Dritte übertragen. Ihr könnt sie jederzeit löschen:</p>
+      <p><button type="button" class="btn btn-ghost" id="planLoeschen">Gespeicherten Plan auf diesem Gerät löschen</button></p>
+      <h2>Der Plan-Link</h2>
+      <p>Der Plan-Link enthält eure Eingaben im Link selbst, hinter dem Zeichen #. Dieser Teil wird beim Öffnen nicht an den Server gesendet. Wer den Link bekommt, kann die Angaben darin lesen. Gebt ihn also nur an Menschen weiter, die den Plan sehen dürfen.</p>
+      <h2>Aufruf der Seite</h2>
+      <p>Beim Aufruf verarbeitet der Hosting-Anbieter die technisch nötigen Daten, um die Seite auszuliefern: IP-Adresse, Datum und Uhrzeit, abgerufene Datei, Browser-Kennung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO, das Interesse an einem sicheren Betrieb.</p>
+      <p class="offen">Offen bis zum Livegang: Name und Sitz des Hosting-Anbieters und die Speicherdauer der Server-Protokolle.</p>
+      <h2>Schriften</h2>
+      <p>Die Schriften liegen auf demselben Server wie die Seite. Es wird keine Verbindung zu Google Fonts oder anderen Diensten aufgebaut.</p>
+      <h2>E-Mail</h2>
+      <p>Wenn ihr uns schreibt, verwenden wir eure Nachricht und eure Adresse nur, um zu antworten.</p>
+      <h2>Kinder</h2>
+      <p>Diese Seite richtet sich an Eltern. Kinder sollen sie nicht bedienen, und wir erheben keine Daten von Kindern.</p>
+      <h2>Eure Rechte</h2>
+      <ul>
+        <li>Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung</li>
+        <li>Widerspruch gegen die Verarbeitung</li>
+        <li>Beschwerde bei einer Datenschutz-Aufsichtsbehörde, zum Beispiel bei der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen</li>
+      </ul>
+      <p>Stand: November 2026</p>
+    </article>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap cols">
+    <div><p class="brand">Tomtini</p><p>Der Wichtel, den man nicht sieht. Ein Schwesterprojekt von <a href="https://fundini.kids">Fundini</a>.</p></div>
+    <div><p><strong>Im Dezember 2026 für alle kostenlos.</strong></p><p>Wer Tomte einen Kaffee ausgeben möchte: Eine Spendenmöglichkeit folgt.</p></div>
+    <ul>
+      <li><a href="#impressum">Impressum</a></li>
+      <li><a href="#datenschutz">Datenschutz</a></li>
+      <li><a href="mailto:hallo@tomtini.kids">hallo@tomtini.kids</a></li>
+    </ul>
+  </div>
+</footer>
+
+<!-- Notfall-Dialog -->
+<div class="overlay" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovTitle">
+  <div class="dialog">
+    <h3 id="ovTitle"></h3>
+    <div class="letter" id="ovLetter"></div>
+    <p class="tipp" id="ovTipp"></p>
+    <div class="acts"><button class="btn btn-primary" id="ovPrint">Drucken</button><button class="btn btn-ghost" id="ovClose">Schließen</button></div>
+  </div>
+</div>
+
+<!-- Plan-Link -->
+<div class="overlay" id="linkDlg" role="dialog" aria-modal="true" aria-labelledby="linkTitle">
+  <div class="dialog">
+    <h3 id="linkTitle">Euer Plan-Link</h3>
+    <p class="help">Mit diesem Link öffnet ihr den Plan auf einem anderen Gerät. Er enthält die Namen, gebt ihn nur an Menschen weiter, die den Plan sehen dürfen.</p>
+    <input type="text" id="linkField" readonly aria-label="Plan-Link">
+    <div class="acts"><button class="btn btn-primary" id="linkCopy">Link kopieren</button><button class="btn btn-ghost" id="linkClose">Schließen</button></div>
+  </div>
+</div>
+
+<!-- Druckansicht -->
+<div class="printview" id="pv">
+  <div class="pv-bar"><h2 id="pvTitle">Druckansicht</h2><button class="btn btn-primary" id="pvPrint">Drucken oder als PDF sichern</button><button class="btn btn-ghost" id="pvClose">Zurück</button><p id="pvHint">In dieser Vorschau ist Drucken gesperrt. Auf tomtini.kids öffnet sich hier der Druckdialog.</p></div>
+  <div class="pv-scroll"><div class="pv-pages" id="pvPages"></div></div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<script>
+/* Tomtes Welt unter der Oberfläche: öffnet sich kreisförmig, wenn der Cursor (oder der Finger) ruht. */
+(function(){
+  var schicht = document.getElementById('magie');
+  if (!schicht) return;
+  var willRuhe = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches);
+  if (!willRuhe) return;
+  var kannHover = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+  var timer = null;
+  var offenstehenIstEinDialog = function(){
+    var el = document.getElementById('ov'); if (el && el.classList.contains('open')) return true;
+    var pv = document.getElementById('pv'); if (pv && pv.classList.contains('open')) return true;
+    var ld = document.getElementById('linkDlg'); if (ld && ld.classList.contains('open')) return true;
+    return false;
+  };
+  function ruhtJetzt(){
+    if (offenstehenIstEinDialog()) return;
+    schicht.style.transitionDuration = '1.8s';
+    schicht.classList.add('offen');
+    document.documentElement.classList.add('greift-magie');
+  }
+  function schliessen(){
+    schicht.style.transitionDuration = '.6s';
+    schicht.classList.remove('offen');
+    document.documentElement.classList.remove('greift-magie');
+  }
+  function setPos(x,y){
+    schicht.style.setProperty('--mx', x + 'px');
+    schicht.style.setProperty('--my', y + 'px');
+  }
+
+  if (kannHover){
+    /* Maus: jede Bewegung schließt und setzt den Ruhe-Timer neu, wie am Anfang festgelegt. */
+    window.addEventListener('mousemove', function(e){
+      setPos(e.clientX, e.clientY);
+      schliessen();
+      clearTimeout(timer);
+      timer = setTimeout(ruhtJetzt, 650);
+    }, { passive: true });
+  } else {
+    /* Touch: Finger ruht an einer Stelle, bis sich der Kreis öffnet. Bewegt er sich vorher
+       mehr als ein paar Pixel, ist es ein Wisch/Scroll, kein Ruhen, und der Reveal bleibt aus.
+       Ist der Kreis einmal offen, folgt er dem Finger, und das Scrollen pausiert so lange. */
+    var startX = 0, startY = 0, verschoben = false, offen = false;
+    var SCHWELLE = 8, WARTEN = 750;
+    window.addEventListener('touchstart', function(e){
+      if (e.touches.length !== 1) return;
+      var t = e.touches[0];
+      startX = t.clientX; startY = t.clientY; verschoben = false; offen = false;
+      setPos(startX, startY);
+      schliessen();
+      clearTimeout(timer);
+      timer = setTimeout(function(){ offen = true; ruhtJetzt(); }, WARTEN);
+    }, { passive: true });
+    window.addEventListener('touchmove', function(e){
+      if (e.touches.length !== 1) return;
+      var t = e.touches[0];
+      if (offen){
+        e.preventDefault();
+        setPos(t.clientX, t.clientY);
+        return;
+      }
+      if (Math.abs(t.clientX - startX) > SCHWELLE || Math.abs(t.clientY - startY) > SCHWELLE){
+        if (!verschoben){ verschoben = true; clearTimeout(timer); schliessen(); }
+      }
+    }, { passive: false });
+    function fingerWeg(){
+      offen = false;
+      clearTimeout(timer);
+      schliessen();
+    }
+    window.addEventListener('touchend', fingerWeg, { passive: true });
+    window.addEventListener('touchcancel', fingerWeg, { passive: true });
+  }
+  window.addEventListener('scroll', function(){ schliessen(); clearTimeout(timer); }, { passive: true });
+  window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
+})();
+</script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s);};
+  var calm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function toast(t){ var el=$('#toast'); el.textContent=t; el.style.display='block'; clearTimeout(el._t); el._t=setTimeout(function(){el.style.display='none';},2400); }
+
+  /* ---- Wege: Abschnitte, Impressum, Datenschutz ---- */
+  var LEGAL={impressum:1,datenschutz:1};
+  function showLegal(id){
+    $('#site').hidden=true; $('#legal').hidden=false;
+    $('#impressum').hidden=id!=='impressum'; $('#datenschutz').hidden=id!=='datenschutz';
+    window.scrollTo(0,0);
+  }
+  function go(id,jump){
+    if(LEGAL[id]){ showLegal(id); return; }
+    var wasLegal=!$('#legal').hidden;
+    $('#legal').hidden=true; $('#site').hidden=false;
+    var t=document.getElementById(id);
+    if(id==='top'||!t){ window.scrollTo({top:0,behavior:(calm||wasLegal||jump)?'auto':'smooth'}); return; }
+    t.scrollIntoView({behavior:(calm||wasLegal||jump)?'auto':'smooth',block:'start'});
+  }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href^="#"]'); if(!a) return;
+    var id=a.getAttribute('href').slice(1); if(!id) return;
+    e.preventDefault(); go(id);
+    try{ history.replaceState(null,'','#'+id); }catch(err){}
+  });
+  function fromHash(){ var h=(location.hash||'').slice(1); if(LEGAL[h]) showLegal(h); else if(h&&h.indexOf('p=')!==0&&document.getElementById(h)) go(h,true); }
+  window.addEventListener('hashchange',fromHash); fromHash();
+
+  var nav=$('#nav'); function stuck(){ nav.classList.toggle('stuck',window.scrollY>8); } window.addEventListener('scroll',stuck,{passive:true}); stuck();
+
+  /* ---- Der Wichtel, den man nicht ansehen kann ---- */
+  var word=$('#unseen'), letters=[].slice.call(word.querySelectorAll('i')), hero=$('#top'), raf=0, px=0, py=0, hideT=0;
+  function paint(){ raf=0;
+    var R=Math.max(150,word.getBoundingClientRect().height*1.5);
+    letters.forEach(function(l){ var b=l.getBoundingClientRect(); var dx=px-(b.left+b.width/2), dy=py-(b.top+b.height/2);
+      var t=Math.max(0,1-Math.sqrt(dx*dx+dy*dy)/R); t=t*t*(3-2*t);
+      l.style.opacity=(1-t*.97).toFixed(3); l.style.filter=calm?'none':'blur('+(t*.16).toFixed(3)+'em)'; });
+  }
+  function back(){ letters.forEach(function(l){ l.style.opacity=''; l.style.filter=''; }); }
+  hero.addEventListener('pointermove',function(e){
+    if(e.pointerType==='touch') return;
+    px=e.clientX; py=e.clientY;
+    var r=hero.getBoundingClientRect(); hero.style.setProperty('--mx',(px-r.left)+'px'); hero.style.setProperty('--my',(py-r.top)+'px');
+    if(!raf) raf=requestAnimationFrame(paint);
+  });
+  hero.addEventListener('pointerleave',back);
+  function vanish(){ letters.forEach(function(l,i){ l.style.transitionDelay=(i*28)+'ms'; l.style.opacity='.03'; l.style.filter=calm?'none':'blur(.16em)'; });
+    clearTimeout(hideT); hideT=setTimeout(function(){ letters.forEach(function(l,i){ l.style.transitionDelay=(i*40)+'ms'; }); back(); setTimeout(function(){ letters.forEach(function(l){ l.style.transitionDelay=''; }); },700); },1500); }
+  word.addEventListener('pointerdown',function(e){ if(e.pointerType==='touch') vanish(); });
+  if(window.matchMedia&&window.matchMedia('(hover: none)').matches){ $('#rubiNote').firstChild.nodeValue='Tippt mal auf ihn. Er ist schneller.'; }
+
+  /* ---- Zahlentafel: wie viele Nächte noch, welche Zahl heute ---- */
+  (function(){
+    var ol=$('#zahlen'), now=new Date(); now.setHours(0,0,0,0);
+    var y=now.getFullYear(), start=new Date(y,11,1), ende=new Date(y,11,24);
+    var tag=0, text;
+    if(now>=start&&now<=ende){ tag=now.getDate(); text='Heute steht die <b>'+tag+'</b> auf Tomtes Tafel. Jede Nacht baut er die nächste Zahl. Das ist euer Adventskalender.'; }
+    else { if(now>ende) start=new Date(y+1,11,1);
+      var n=Math.round((start-now)/86400000);
+      text=(n===1?'Noch <b>1</b> Nacht':'Noch <b>'+n+'</b> Nächte')+' bis zum ersten Brief am 1. Dezember. Dann baut Tomte jede Nacht die Zahl des Tages auf seine Tafel. Das ist euer Adventskalender.'; }
+    $('#tafelText').innerHTML=text;
+    var h=''; for(var i=1;i<=24;i++) h+='<li'+(i===tag?' class="heute" aria-current="date"':i<tag?' class="war"':'')+'>'+i+'</li>';
+    ol.innerHTML=h;
+  })();
+
+  /* ---- Brief-Probe: Tag 1 mit dem Namen eures Kindes ---- */
+  var A=window.TOMTINI_APP, kinder=$('#kinder'), demo=$('#demoName');
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function probe(){ if(!A) return;
+    $('#demoLetter').innerHTML=A.tag(0).map(function(p){return '<p>'+A.fill(p)+'</p>';}).join('');
+    var z=A.zettel(0); $('#demoZettel').innerHTML=z?'<div class="zettel"><span class="who '+z.von+'">Rubi</span><em>„'+A.fill(z.text)+'“</em></div>':''; }
+  demo.value=kinder.value;
+  demo.addEventListener('input',function(){ kinder.value=demo.value; kinder.dispatchEvent(new Event('input',{bubbles:true})); probe(); });
+  kinder.addEventListener('input',function(){ if(document.activeElement!==demo) demo.value=kinder.value; probe(); });
+  ['change','input'].forEach(function(ev){ $('#form').addEventListener(ev,function(){ setTimeout(probe,0); }); });
+  probe();
+
+  /* ---- Plan-Link, Löschen, Dialoge ---- */
+  $('#linkClose').onclick=function(){ $('#linkDlg').classList.remove('open'); };
+  $('#linkDlg').addEventListener('click',function(e){ if(e.target.id==='linkDlg') $('#linkDlg').classList.remove('open'); });
+  $('#linkCopy').onclick=function(){ var f=$('#linkField'); f.focus(); f.select();
+    if(navigator.clipboard) navigator.clipboard.writeText(f.value).then(function(){ toast('Plan-Link kopiert'); }).catch(function(){ toast('Bitte den markierten Link von Hand kopieren'); });
+    else toast('Bitte den markierten Link von Hand kopieren'); };
+  document.addEventListener('keydown',function(e){ if(e.key!=='Escape') return;
+    if($('#linkDlg').classList.contains('open')) $('#linkDlg').classList.remove('open');
+    else if($('#ov').classList.contains('open')) $('#ovClose').click();
+    else if($('#pv').classList.contains('open')) $('#pvClose').click(); });
+  $('#planLoeschen').onclick=function(){
+    try{ localStorage.removeItem('tomtini-plan-v3'); }catch(e){}
+    try{ history.replaceState(null,'',location.pathname); }catch(e){}
+    toast('Gelöscht. Die Seite lädt neu.');
+    setTimeout(function(){ try{ location.reload(); }catch(e){} },900);
+  };
+
+  /* ---- Drei Textstücke ---- */
+  (function(){
+    /* 1. Fenster: alle Zeilen stehen da, eine leuchtet, weiter nur auf Tippen. */
+    var LANG=[
+      "Die Kerze flackert.",
+      "Auf der Werkbank liegt ein Buch. Es ist noch nicht fertig.",
+      "Mimi schläft im Korb und dreht sich um.",
+      "Auf dem Boden liegen frische Späne.",
+      "Im Ofen knistert das Feuer.",
+      "Eine Tasse dampft noch.",
+      "Der Hobel liegt quer. So schnell ist er los.",
+      "An der Wand hängt ein Bild von Rubi. Der Schnabel ist viel zu klein geworden.",
+      "Draußen schneit es. Ganz leise.",
+      "Im Licht schweben kleine Staubflocken.",
+      "Für Mimi hat er die Decke zurechtgezogen.",
+      "Seine Mütze liegt auf dem Stuhl. Sehen wirst du ihn nicht.",
+      "Er ist gerade nicht da."
+    ];
+    var KURZ=[
+      "Auf der Werkbank liegt ein Buch. Es ist noch nicht fertig.",
+      "Mimi schläft im Korb und dreht sich um.",
+      "Eine Tasse dampft noch.",
+      "Im Licht schweben kleine Staubflocken.",
+      "Seine Mütze liegt auf dem Stuhl. Sehen wirst du ihn nicht.",
+      "Er ist gerade nicht da."
+    ];
+    var ol=$('#fensterText'), weiter=$('#fensterWeiter'), kurzBtn=$('#fensterKurz'),
+        zeilen=LANG, i=0, kurzAn=false, ende=null;
+    function zeichne(){
+      if(ende){ ende.remove(); ende=null; }
+      ol.innerHTML=zeilen.map(function(z,k){
+        return '<li'+(k===i?' class="an"':'')+'><button type="button" class="zeile" data-k="'+k+'">'+z+'</button></li>';
+      }).join('');
+      weiter.hidden=false; weiter.textContent= i>=zeilen.length-1 ? 'Fenster zumachen' : 'Weiter';
+    }
+    function setze(k){ i=Math.max(0,Math.min(zeilen.length-1,k)); zeichne(); }
+    function schluss(){
+      weiter.hidden=true;
+      ende=document.createElement('div'); ende.className='fenster-ende';
+      ende.innerHTML='<p>Das Licht in der Werkstatt geht aus. Seine Jacke fehlt am Haken: Er kommt zurück, er geht nie weit.</p><button type="button" class="btn btn-ghost" id="fensterNeu">Noch einmal schauen</button>';
+      ol.parentNode.appendChild(ende);
+      $('#fensterNeu').onclick=function(){ i=0; zeichne(); ol.parentNode.scrollIntoView({block:'nearest'}); };
+    }
+    if(ol){
+      zeichne();
+      ol.addEventListener('click',function(e){ var b=e.target.closest('button[data-k]'); if(b) setze(+b.dataset.k); });
+      weiter.onclick=function(){ if(i>=zeilen.length-1) schluss(); else setze(i+1); };
+      kurzBtn.onclick=function(){
+        kurzAn=!kurzAn; zeilen=kurzAn?KURZ:LANG; i=0;
+        kurzBtn.textContent=kurzAn?'Alle Zeilen zeigen':'Kürzere Fassung';
+        kurzBtn.setAttribute('aria-pressed',kurzAn); zeichne();
+      };
+    }
+
+    /* 2. Wo ist Mimi: keine Runden, keine Zählung, Antworten aus Tomtes Welt. */
+    var DINGE=["Kerze","Hobel","Topf","Socke","Besen","Nagel","Krug","Schale","Kiste","Schnur","Löffel","Decke","Knopf","Kissen","Stuhl","Teller","Korb","Bürste","Eimer","Leiter","Zange","Kamm","Stift","Säge","Hut","Schlüssel","Brett","Tuch","Feder","Nest","Krümel","Dose","Pinsel","Schere"];
+    var KOEDER=["Mine","Minze","Murmel","Mühle","Mandel","Mohn","Milch","Mütze"];
+    var ANTWORT={
+      "Korb":"Der Korb. Da schläft sie sonst. Heute nicht.",
+      "Besen":"Der Besen steht hinter der Tür.",
+      "Löffel":"Ein Löffel. Der schnarcht auch nicht.",
+      "Säge":"Die Säge. Die ist hellwach.",
+      "Feder":"Eine Feder von Rubi. Er verliert ständig welche.",
+      "Krümel":"Krümel. Die waren mal ein Keks.",
+      "Decke":"Die Decke. Darunter ist niemand.",
+      "Mütze":"Meine Mütze. Die brauche ich noch.",
+      "Milch":"Milch. Die ist für später.",
+      "Nest":"Das Nest ist leer, Rubi ist draußen."
+    };
+    var feld=$('#wortfeld'), status=$('#suchStatus'), knoepfe=$('#suchKnoepfe'), durchgang=0;
+    function mischen(a){ a=a.slice(); for(var k=a.length-1;k>0;k--){ var j=Math.floor(Math.random()*(k+1)); var t=a[k]; a[k]=a[j]; a[j]=t; } return a; }
+    function bauen(){
+      durchgang++;
+      var koeder=mischen(KOEDER).slice(0,Math.min(2+2*(durchgang-1),6));
+      var rest=mischen(DINGE).slice(0,20-koeder.length);
+      var w=mischen(rest.concat(koeder));
+      var stelle=durchgang>2 ? (Math.random()<.5?0:w.length) : Math.floor(w.length/4)+Math.floor(Math.random()*(w.length/2));
+      w.splice(stelle,0,"Mimi");
+      feld.className='wortfeld';
+      feld.innerHTML=w.map(function(x){ return '<button type="button" data-w="'+x+'">'+x+'</button>'; }).join('');
+      knoepfe.hidden=true;
+      status.textContent= durchgang===1 ? '' : 'Im Schlaf wandert sie. Jetzt liegt sie woanders.';
+    }
+    if(feld){
+      bauen();
+      feld.addEventListener('click',function(e){
+        var b=e.target.closest('button'); if(!b||feld.classList.contains('fertig')) return;
+        var w=b.dataset.w;
+        if(w!=='Mimi'){ status.textContent=ANTWORT[w]||('Das liegt auch bei mir herum: '+w+'.'); return; }
+        b.classList.add('gefunden'); feld.classList.add('fertig');
+        status.textContent='Da ist sie. Sie dreht sich um und schläft weiter.';
+        knoepfe.hidden=false;
+      });
+      $('#suchNochmal').onclick=function(){ bauen(); };
+      $('#suchFertig').onclick=function(){ knoepfe.hidden=true; status.textContent='Jetzt schläft sie richtig fest. Wir lassen sie.'; };
+    }
+
+    /* 3. Notizbuch: Papier zuerst, Tippen als Nebenweg. */
+    var LISTEN=[
+      {t:"Was ich noch bauen will", z:["einen Stuhl, der nicht wackelt","ein Dach für den Briefkasten"], n:2,
+       tomte:"Ich bin langsam. Der Stuhl liegt seit drei Jahren auf der Werkbank."},
+      {t:"Was Mimi mag (sagt sie)", z:["Kekse","Socken","Kekse (hat sie zweimal gesagt)"], n:2,
+       tomte:"Sie bekommt nichts davon. Sie träumt nur davon."},
+      {t:"Rubis größte Geschichten", z:["dass der Hund so groß war wie ein Bus","dass er selbst bis ans Meer geflogen ist"], n:2,
+       tomte:"Ich glaube ihm jedes Wort. Fast."}
+    ];
+    var box=$('#notiz');
+    function listeHTML(l,n,druck){
+      var zeilen=l.z.map(function(z){ return '<li>'+z+'</li>'; }).join('');
+      for(var k=0;k<l.n;k++){
+        zeilen += druck ? '<li class="leer">&nbsp;</li>'
+          : '<li><input id="nz'+n+k+'" type="text" placeholder="…" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="'+l.t+', eigene Zeile '+(k+1)+'"></li>';
+      }
+      return '<div><h4>'+l.t+'</h4><ul>'+zeilen+'</ul><p class="tomte-zeile">'+l.tomte+'</p></div>';
+    }
+    if(box){
+      box.innerHTML=LISTEN.map(function(l,n){ return listeHTML(l,n,false); }).join('');
+      $('#notizDruck').onclick=function(){
+        var A=window.TOMTINI_APP;
+        var seite='<div class="sheet" style="font-family:var(--hand);color:#27306b">'
+          +'<p class="eyebrow" style="font-family:var(--body)">Tomtini · Tomtes Notizbuch</p>'
+          +'<h3 class="pt" style="font-family:var(--body)">Was noch fehlt</h3>'
+          +'<p class="pt-sub" style="font-family:var(--body)">Er fängt Listen an und schläft darüber ein. Schreibt mit der Hand dazu, was fehlt, und legt das Blatt vor die Tür.</p>'
+          +'<div style="display:grid;gap:9mm;font-size:15pt;line-height:1.5">'
+          + LISTEN.map(function(l){
+              var leer=''; for(var k=0;k<4;k++) leer+='<div style="border-bottom:1px solid #c9bfa8;height:9mm"></div>';
+              return '<div><div style="font-weight:700;font-size:17pt;margin-bottom:2mm">'+l.t+'</div>'
+                + l.z.map(function(z){ return '<div>'+z+'</div>'; }).join('')
+                + leer
+                + '<div style="opacity:.75;margin-top:2mm">'+l.tomte+'</div></div>';
+            }).join('')
+          +'</div></div>';
+        if(A&&A.openPV) A.openPV('Tomtes Notizbuch',seite);
+      };
+    }
+  })();
+})();
+</script>
+</body>
+</html>
