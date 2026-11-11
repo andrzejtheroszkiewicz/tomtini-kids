@@ -45,10 +45,13 @@
 /* Dunkelmodus: schont abends die Augen. Betrifft nur die ruhigen Grundflächen
    (Hintergrund, Fließtext) - Tomtes Briefpapier und die farbigen Themenblöcke
    (Hero, Zahlentafel, Kalender) bleiben bewusst wie sie sind. */
+/* Route "Tannenwald bei Nacht": Grundfläche in Tannengrün statt neutralem Navy-Grau,
+   gedecktes warmes Rot als einziger Akzent - wie ein Lichtschein im dunklen Wald,
+   statt eines generisch invertierten Interfaces. */
 html.dunkel{color-scheme:dark}
 html.dunkel body{
-  --night:#12172f; --deep:#1b2346; --dusk:#1b2346;
-  --line:rgba(242,240,234,.16); --snow:#f2f0ea; --mist:#aab0cf; --lamp:#ff7a5c;
+  --night:#12201a; --deep:#1b2e22; --dusk:#1b2e22;
+  --line:rgba(242,240,234,.14); --snow:#f3efe3; --mist:#b7c4b6; --lamp:#c4573e;
 }
 body{transition:background-color .3s ease,color .3s ease}
 @media (prefers-reduced-motion:reduce){body{transition:none}}
@@ -89,8 +92,9 @@ button,input,select,textarea{font:inherit;color:inherit}
   width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;flex:none;
   display:inline-flex;align-items:center;justify-content:center}
 .modus-knopf:hover{background:rgba(242,235,219,.08)}
-html.dunkel .nav{background:rgba(18,23,47,.92)}
+html.dunkel .nav{background:rgba(18,32,26,.92)}
 html.dunkel .nav a:hover{background:rgba(242,240,234,.08)}
+html.dunkel .nav a.aktiv{text-shadow:0 0 6px rgba(255,170,120,.55)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
 
 /* Hero */
