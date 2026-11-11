@@ -1105,14 +1105,14 @@ html.greift-magie, html.greift-magie body{touch-action:none}
   }
   /* Eigene, weich ein- und ausschwingende Scroll-Animation statt dem browser-nativen
      "smooth" (das je nach Browser abrupt oder ruckelig wirkt). */
-  function easeInOutCubic(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+  function easeInOutSine(t){ return -(Math.cos(Math.PI*t)-1)/2; }
   function weichScrollenZu(zielY,dauer){
     var startY=window.scrollY||window.pageYOffset, diff=zielY-startY, startZeit=null;
     if (Math.abs(diff)<1) return;
     function schritt(zeit){
       if (startZeit===null) startZeit=zeit;
       var t=Math.min(1,(zeit-startZeit)/dauer);
-      window.scrollTo(0, startY+diff*easeInOutCubic(t));
+      window.scrollTo(0, startY+diff*easeInOutSine(t));
       if (t<1) requestAnimationFrame(schritt);
     }
     requestAnimationFrame(schritt);
@@ -1124,7 +1124,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
     var t=document.getElementById(id);
     var zielY = (id==='top'||!t) ? 0 : (t.getBoundingClientRect().top+window.scrollY-(parseFloat(getComputedStyle(t).scrollMarginTop)||0));
     if (calm||wasLegal||jump){ window.scrollTo(0,zielY); return; }
-    weichScrollenZu(zielY,650);
+    weichScrollenZu(zielY,900);
   }
   document.addEventListener('click',function(e){
     var a=e.target.closest&&e.target.closest('a[href^="#"]'); if(!a) return;
