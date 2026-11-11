@@ -75,10 +75,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .hero-foot{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(20px,4vw,56px);align-items:end;margin-top:clamp(22px,3.4vw,40px)}
 .hero .lead{font-size:clamp(18px,1.75vw,22px);line-height:1.5;max-width:34em}
 .hero .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
-.rubi-note{font-family:var(--hand);font-size:clamp(24px,2.4vw,31px);line-height:1.15;color:var(--lamp);transform:rotate(-2.5deg);transform-origin:left bottom;max-width:13em;justify-self:end}
+.rubi-note{font-family:var(--hand);font-size:clamp(24px,2.4vw,31px);line-height:1.15;color:var(--lamp);transform:rotate(-2.5deg);transform-origin:left bottom;max-width:13em}
 .rubi-note small{display:block;font-family:var(--body);font-size:14px;color:var(--mist);margin-top:6px}
 .facts{margin-top:18px;color:var(--mist);font-size:15px}
-@media (max-width:760px){.hero-foot{grid-template-columns:1fr}.rubi-note{justify-self:start;order:-1}}
+@media (max-width:760px){.hero-foot{grid-template-columns:1fr}}
 @media (max-width:560px){.hero h1{font-size:16.4vw}}
 
 /* Zahlentafel */
@@ -524,15 +524,16 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 .magie-hinweis.sichtbar{opacity:1}
 @media (prefers-reduced-motion:reduce){.magie-hinweis{display:none}}
 
-.magie-knopf{position:fixed;right:18px;bottom:18px;z-index:42;display:none;
-  align-items:center;gap:7px;border:1.5px solid rgba(255,255,255,.4);
-  background:rgba(10,14,34,.55);color:#fff;font-family:var(--body);
-  font-size:13px;font-weight:600;letter-spacing:.01em;padding:11px 18px;
+.magie-knopf{display:none;align-items:center;gap:7px;border:1.5px solid var(--line);
+  background:transparent;color:var(--snow);font-family:var(--body);
+  font-size:13px;font-weight:600;letter-spacing:.01em;padding:10px 17px;
   border-radius:999px;cursor:pointer;-webkit-user-select:none;user-select:none}
 .magie-knopf.sichtbar{display:inline-flex}
-.magie-knopf:hover{background:rgba(10,14,34,.75)}
-.magie-knopf:active{background:rgba(10,14,34,.9);transform:scale(.97)}
+.magie-knopf:hover{border-color:var(--mist)}
+.magie-knopf:active{transform:scale(.97)}
 @media (prefers-reduced-motion:reduce){.magie-knopf{display:none!important}}
+.hero-magie{display:flex;flex-direction:column;align-items:end;gap:14px;justify-self:end}
+@media (max-width:760px){.hero-magie{align-items:start;order:-1}}
 
 /* Textauswahl/Copy-Callout sitzweit aus, damit der Finger-ruht-Reveal auf Touch
    nicht mit dem System-Kontextmenü kollidiert. Ausnahme: das Plan-Link-Feld bleibt kopierbar. */
@@ -553,7 +554,6 @@ html.greift-magie, html.greift-magie body{touch-action:none}
   </div>
 </div>
 <div class="magie-hinweis" id="magieHinweis" aria-hidden="true"></div>
-<button class="magie-knopf" id="magieKnopf" type="button">✦ Blick in Tomtes Welt</button>
 
 <nav class="nav" id="nav" aria-label="Hauptmenü">
   <div class="wrap nav-in">
@@ -581,7 +581,10 @@ html.greift-magie, html.greift-magie body{touch-action:none}
         </div>
         <p class="facts">Kein Konto. Keine App. Abends eine bis fünf Minuten.</p>
       </div>
-      <p class="rubi-note" id="rubiNote">Zeigt mal auf ihn. Er ist schneller.<small>Rubi, das Rotkehlchen</small></p>
+      <div class="hero-magie">
+        <button class="magie-knopf" id="magieKnopf" type="button">✦ Blick in Tomtes Welt</button>
+        <p class="rubi-note" id="rubiNote">Zeigt mal auf ihn. Er ist schneller.<small>Rubi, das Rotkehlchen</small></p>
+      </div>
     </div>
     <div class="tafel">
       <div class="tafel-in">
