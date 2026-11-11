@@ -61,6 +61,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .nav-in::-webkit-scrollbar{display:none}
 .nav a{color:var(--snow);text-decoration:none;font-size:15px;font-weight:500;padding:9px 12px;border-radius:999px;white-space:nowrap}
 .nav a:hover{background:rgba(242,235,219,.08)}
+.nav a.aktiv{color:var(--lamp);font-weight:700}
 .nav a.brand{font-family:var(--display);font-size:26px;font-weight:700;padding-left:0;margin-right:auto;letter-spacing:-.01em}
 .nav a.brand:hover{background:none}
 .nav a.to-gen{border:1.5px solid var(--line)}
@@ -1136,6 +1137,30 @@ html.greift-magie, html.greift-magie body{touch-action:none}
   window.addEventListener('hashchange',fromHash); fromHash();
 
   var nav=$('#nav'); function stuck(){ nav.classList.toggle('stuck',window.scrollY>8); } window.addEventListener('scroll',stuck,{passive:true}); stuck();
+
+  /* Nav-Link hervorheben, solange man im passenden Abschnitt ist */
+  (function(){
+    var navLinks={};
+    [].slice.call(nav.querySelectorAll('a[href^="#"]')).forEach(function(a){
+      var id=a.getAttribute('href').slice(1);
+      if(document.getElementById(id)) navLinks[id]=a;
+    });
+    var ids=Object.keys(navLinks);
+    if(!ids.length || !('IntersectionObserver' in window)) return;
+    function aktivSetzen(id){
+      ids.forEach(function(k){ navLinks[k].classList.toggle('aktiv', k===id); });
+    }
+    var sichtbar={};
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ sichtbar[e.target.id]=e.isIntersecting; });
+      var oben=ids.filter(function(id){ return sichtbar[id]; })
+        .map(function(id){ return {id:id, top:document.getElementById(id).getBoundingClientRect().top}; })
+        .sort(function(a,b){ return Math.abs(a.top)-Math.abs(b.top); });
+      if(oben.length) aktivSetzen(oben[0].id);
+      else if(window.scrollY<80) aktivSetzen(null);
+    }, {rootMargin:'-35% 0px -55% 0px'});
+    ids.forEach(function(id){ obs.observe(document.getElementById(id)); });
+  })();
 
   /* ---- Der Wichtel, den man nicht ansehen kann ---- */
   var word=$('#unseen'), letters=[].slice.call(word.querySelectorAll('i')), hero=$('#top'), raf=0, px=0, py=0, hideT=0;
