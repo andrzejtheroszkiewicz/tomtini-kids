@@ -940,32 +940,37 @@ html.greift-magie, html.greift-magie body{touch-action:none}
       timer = setTimeout(ruhtJetzt, 650);
     }, { passive: true });
   } else {
-    /* Touch: Finger ruht an einer Stelle, bis sich der Kreis öffnet. Bewegt er sich vorher
-       mehr als ein paar Pixel, ist es ein Wisch/Scroll, kein Ruhen, und der Reveal bleibt aus.
-       Ist der Kreis einmal offen, folgt er dem Finger, und das Scrollen pausiert so lange. */
-    var startX = 0, startY = 0, verschoben = false, offen = false;
-    var SCHWELLE = 8, WARTEN = 750;
+    /* Touch: zwei Finger gemeinsam ruhen lassen (Mitte der beiden), bis sich der Kreis öffnet.
+       Ein-Finger-Scrollen bleibt dabei die ganze Zeit völlig unberührt - keine Kollision mit
+       der nativen Wisch-Geste, da Safari Scrollen nur über einen einzelnen Finger erkennt.
+       Ist der Kreis einmal offen, folgt er den beiden Fingern weiter, solange sie gehalten werden. */
+    var startX = 0, startY = 0, offen = false;
+    var SCHWELLE = 10, WARTEN = 750;
+    function mitte(touches){
+      var x = 0, y = 0;
+      for (var i = 0; i < touches.length; i++){ x += touches[i].clientX; y += touches[i].clientY; }
+      return { x: x / touches.length, y: y / touches.length };
+    }
     window.addEventListener('touchstart', function(e){
-      if (e.touches.length !== 1) return;
-      var t = e.touches[0];
-      startX = t.clientX; startY = t.clientY; verschoben = false; offen = false;
+      if (e.touches.length !== 2){ clearTimeout(timer); schliessen(); offen = false; return; }
+      var m = mitte(e.touches);
+      startX = m.x; startY = m.y; offen = false;
       setPos(startX, startY);
       schliessen();
       clearTimeout(timer);
       timer = setTimeout(function(){ offen = true; ruhtJetzt(); }, WARTEN);
     }, { passive: true });
     window.addEventListener('touchmove', function(e){
-      if (e.touches.length !== 1) return;
-      var t = e.touches[0];
+      if (e.touches.length !== 2){ clearTimeout(timer); schliessen(); offen = false; return; }
+      var m = mitte(e.touches);
       if (offen){
-        e.preventDefault();
-        setPos(t.clientX, t.clientY);
+        setPos(m.x, m.y);
         return;
       }
-      if (Math.abs(t.clientX - startX) > SCHWELLE || Math.abs(t.clientY - startY) > SCHWELLE){
-        if (!verschoben){ verschoben = true; clearTimeout(timer); schliessen(); }
+      if (Math.abs(m.x - startX) > SCHWELLE || Math.abs(m.y - startY) > SCHWELLE){
+        clearTimeout(timer); schliessen();
       }
-    }, { passive: false });
+    }, { passive: true });
     function fingerWeg(){
       offen = false;
       clearTimeout(timer);
