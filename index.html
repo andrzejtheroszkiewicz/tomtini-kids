@@ -46,9 +46,10 @@
    (Hintergrund, Fließtext) - Tomtes Briefpapier und die farbigen Themenblöcke
    (Hero, Zahlentafel, Kalender) bleiben bewusst wie sie sind. */
 html.dunkel{color-scheme:dark}
+/* "Olive Grove" (colours.cafe): 2A3A1E, 667439, AFB171, F2EEE1, F0C76A - 1:1 übernommen */
 html.dunkel body{
-  --night:#12172f; --deep:#1b2346; --dusk:#1b2346;
-  --line:rgba(242,240,234,.16); --snow:#f2f0ea; --mist:#aab0cf; --lamp:#ff7a5c;
+  --night:#2a3a1e; --deep:#667439; --dusk:#667439;
+  --line:rgba(242,238,225,.22); --snow:#f2eee1; --mist:#afb171; --lamp:#f0c76a;
 }
 body{transition:background-color .3s ease,color .3s ease}
 @media (prefers-reduced-motion:reduce){body{transition:none}}
@@ -89,7 +90,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;flex:none;
   display:inline-flex;align-items:center;justify-content:center}
 .modus-knopf:hover{background:rgba(242,235,219,.08)}
-html.dunkel .nav{background:rgba(18,23,47,.92)}
+html.dunkel .nav{background:rgba(42,58,30,.92)}
 html.dunkel .nav a:hover{background:rgba(242,240,234,.08)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
 
