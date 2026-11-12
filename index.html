@@ -98,6 +98,33 @@ button,input,select,textarea{font:inherit;color:inherit}
 html.dunkel .nav{background:rgba(5,22,26,.92)}
 html.dunkel .nav a:hover{background:rgba(12,112,117,.3)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
+/* Mobiles Menü (unter 600 px): Wort statt Burger, Vollbild-Panel in der Hero-Typo */
+.menue-knopf{display:none;border:2px solid var(--line);background:transparent;color:var(--snow);
+  font:500 16px/1 var(--body);padding:0 13px;min-height:45px;border-radius:999px;cursor:pointer;flex:none}
+.menue>.wrap{width:100%}
+@media (max-width:600px){
+  .menue-knopf{display:inline-flex;align-items:center}
+  .nav-in{gap:5px}
+  .nav a.to-gen{padding:9px 11px}
+}
+.menue{position:fixed;inset:0;z-index:70;background:var(--night);color:var(--snow);display:none;flex-direction:column;
+  padding:0 0 max(24px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain}
+.menue.offen{display:flex;animation:menueAuf .22s ease-out both}
+@keyframes menueAuf{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.menue.offen{animation:none}}
+.menue-kopf{display:flex;align-items:center;justify-content:space-between;min-height:58px;border-bottom:2px solid var(--line)}
+.menue-marke{font:700 28px/1 var(--display);letter-spacing:-.05em}
+.menue-zu{border:2px solid var(--line);background:transparent;color:var(--snow);font:700 16px/1 var(--display);
+  padding:0 14px;min-height:45px;border-radius:999px;cursor:pointer}
+.menue ul{list-style:none;margin:0;padding:0}
+.menue li{border-bottom:2px solid var(--line)}
+.menue li a{display:block;padding:14px 0 12px;color:var(--snow);text-decoration:none;font:700 clamp(36px,11.5vw,56px)/.95 var(--display);
+  letter-spacing:-.055em;text-transform:uppercase}
+.menue li a.aktiv{color:var(--lamp)}
+.menue li a.ziel{background:var(--lamp);color:#fff;margin:18px 0 0;padding:16px 16px 14px}
+html.dunkel .menue li a.ziel{color:#05161a}
+.menue li:last-child{border-bottom:0}
+html.menue-offen,html.menue-offen body{overflow:hidden}
 
 /* Hero */
 .hero{position:relative;padding:clamp(28px,6vw,72px) 0 0;}
@@ -644,9 +671,27 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
     <a href="#streiche">Streiche</a>
     <a href="#notfall">Notfall</a>
     <a class="to-gen" href="#generator">Generator</a>
+    <button type="button" class="menue-knopf" id="menueKnopf" aria-expanded="false" aria-controls="menue">Menü</button>
     <button type="button" class="modus-knopf" id="modusKnopf" aria-label="Dunkelmodus umschalten" title="Dunkelmodus umschalten">☽</button>
   </div>
 </nav>
+<div class="menue" id="menue" role="dialog" aria-modal="true" aria-label="Menü" hidden>
+  <div class="wrap">
+    <div class="menue-kopf">
+      <span class="menue-marke">Tomtini</span>
+      <button type="button" class="menue-zu" id="menueZu">Schließen</button>
+    </div>
+    <ul>
+      <li><a href="#geschichte">Geschichte</a></li>
+      <li><a href="#so">So geht's</a></li>
+      <li><a href="#material">Material</a></li>
+      <li><a href="#aufbau">Aufbau</a></li>
+      <li><a href="#streiche">Streiche</a></li>
+      <li><a href="#notfall">Notfall</a></li>
+      <li><a class="ziel" href="#generator">Generator</a></li>
+    </ul>
+  </div>
+</div>
 
 <main id="site">
 
@@ -1083,6 +1128,7 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
     var el = document.getElementById('ov'); if (el && el.classList.contains('open')) return true;
     var pv = document.getElementById('pv'); if (pv && pv.classList.contains('open')) return true;
     var ld = document.getElementById('linkDlg'); if (ld && ld.classList.contains('open')) return true;
+    var mn = document.getElementById('menue'); if (mn && mn.classList.contains('offen')) return true;
     return false;
   };
   function ruhtJetzt(dauer){
@@ -1254,6 +1300,39 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
       try{ localStorage.setItem('tomtiniModus',neu?'dunkel':'hell'); }catch(e){}
       beschriften();
     });
+  })();
+
+  /* Mobiles Menü */
+  (function(){
+    var knopf=$('#menueKnopf'), panel=$('#menue'), zu=$('#menueZu'); if(!knopf||!panel) return;
+    var links=[].slice.call(panel.querySelectorAll('a'));
+    function auf(){
+      panel.hidden=false; panel.classList.add('offen');
+      document.documentElement.classList.add('menue-offen');
+      knopf.setAttribute('aria-expanded','true');
+      var akt=nav.querySelector('a.aktiv'), id=akt?akt.getAttribute('href'):null;
+      links.forEach(function(a){ a.classList.toggle('aktiv', !a.classList.contains('ziel') && a.getAttribute('href')===id); });
+      zu.focus();
+    }
+    function zuMachen(fokus){
+      panel.classList.remove('offen'); panel.hidden=true;
+      document.documentElement.classList.remove('menue-offen');
+      knopf.setAttribute('aria-expanded','false');
+      if(fokus) knopf.focus();
+    }
+    knopf.addEventListener('click',auf);
+    zu.addEventListener('click',function(){ zuMachen(true); });
+    links.forEach(function(a){ a.addEventListener('click',function(){ zuMachen(false); }); });
+    document.addEventListener('keydown',function(e){
+      if(panel.hidden) return;
+      if(e.key==='Escape'){ zuMachen(true); return; }
+      if(e.key==='Tab'){
+        var f=[zu].concat(links), i=f.indexOf(document.activeElement);
+        if(e.shiftKey&&i<=0){ e.preventDefault(); f[f.length-1].focus(); }
+        else if(!e.shiftKey&&i===f.length-1){ e.preventDefault(); f[0].focus(); }
+      }
+    });
+    window.addEventListener('resize',function(){ if(!panel.hidden&&window.innerWidth>600) zuMachen(false); });
   })();
 
   /* Nav-Link hervorheben, solange man im passenden Abschnitt ist */
