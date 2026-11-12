@@ -170,7 +170,7 @@
     $('#pLink').onclick=()=>{ const l=planLink(); showLink(l); if(navigator.clipboard) navigator.clipboard.writeText(l).then(()=>toast("Plan-Link kopiert")).catch(()=>{}); };
     save(); }
   function showLink(l){ $('#linkField').value=l; $('#linkDlg').classList.add('open'); $('#linkField').focus(); $('#linkField').select(); }
-  function rerender(){ buildNotfall(); if($('#out').dataset.built) render(); else save(); }
+  function rerender(){ buildNotfall(); buildStreiche(); if($('#out').dataset.built) render(); else save(); }
   $('#form').addEventListener('submit',e=>{ e.preventDefault(); render(); $('#out').scrollIntoView({behavior:"smooth",block:"start"}); });
   document.querySelectorAll('input[name=aufwand],input[name=alter],input[name=bleibt],input[name=elternChip],#nikolaus,#lego,#figur,#haustier,#klein,#suess,#tafel').forEach(el=>el.addEventListener('change',()=>{ if(el.name==="elternChip") $('#eltern').value=""; rerender(); }));
   ['kinder','eltern','ritual','essen'].forEach(id=>$('#'+id).addEventListener('input',()=>{ if(id==="eltern"&&$('#eltern').value) document.querySelectorAll('input[name=elternChip]').forEach(r=>r.checked=false); rerender(); }));
@@ -185,6 +185,16 @@
     const mk=(id,list)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); g.appendChild(b); }); };
     mk('#tagGrid',C.tagsueber); mk('#hilfeGrid',C.hilfe);
   C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
+  let streichStufe=1;
+  function buildStreiche(){ const tabs=$('#streichTabs'), grid=$('#streichGrid'); if(!tabs||!C.streiche) return;
+    $('#streichZahl').textContent=C.streiche.length; const tier=$('#haustier').checked;
+    tabs.innerHTML=C.streicheStufen.map(st=>`<label><input type="radio" name="streichStufe" value="${st.s}" ${st.s===streichStufe?"checked":""}><span>${st.s} · ${st.kurz}</span></label>`).join("");
+    tabs.querySelectorAll('input').forEach(r=>r.onchange=()=>{ streichStufe=+r.value; buildStreiche(); });
+    const st=C.streicheStufen.find(x=>x.s===streichStufe); const list=C.streiche.filter(x=>x.s===streichStufe).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0)));
+    $('#streichStufe').innerHTML=`Stufe ${st.s}. ${st.t}<small>${list.length} Streiche</small>`;
+    const badge=x=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
+    grid.innerHTML=list.map(x=>`<article class="streich"><h4><span>${x.t}</span><span class="minbadge">${badge(x)}</span></h4><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</article>`).join(""); }
+  buildStreiche();
   function nfParas(n){ return kurz()&&n.kurz?n.kurz:n.brief; }
   function openNotfall(n,who){ const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;
     $('#ovTitle').textContent=n.titel;

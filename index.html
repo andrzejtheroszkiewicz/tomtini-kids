@@ -570,6 +570,25 @@ body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
    starten – preventDefault() allein stoppt ein einmal begonnenes Scrollen auf iOS oft nicht. */
 html.greift-magie, html.greift-magie body{touch-action:none}
 #linkField,input,textarea{-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}
+/* Streiche-Vorrat */
+.streich-vorher{margin-top:32px;border:2px solid var(--line);padding:14px 18px;font-size:16.5px;line-height:1.4;max-width:52em}
+.streich-tabs{margin-top:18px}
+.streich-stufe{margin:22px 0 14px;font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-.02em}
+.streich-stufe small{font-weight:400;color:var(--mist);font-size:16px;letter-spacing:0;margin-left:8px;white-space:nowrap}
+.streich-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
+.streich{background:var(--dusk);border:2px solid var(--line);padding:18px;display:grid;gap:10px;align-content:start}
+.streich .minbadge{white-space:nowrap}
+.streich h4{font-size:21px;font-weight:700;letter-spacing:-.02em;line-height:1.15;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between;margin:0}
+.streich .tun{font-size:16.5px;line-height:1.4;margin:0}
+.streich .m{font-size:14px;color:var(--mist);margin:0}
+.streich .zettel{align-items:flex-start;background:var(--paper);padding:10px 12px;border-radius:4px}
+.streich .zettel .who{margin-top:3px}
+.streich .zettel em{color:var(--ink)}
+.streich .zettel+.zettel{margin-top:-4px}
+html.dunkel .seg span{background:transparent}
+html.dunkel .seg input:checked+span{background:var(--snow);color:var(--night)}
+html.dunkel .minbadge{color:var(--lamp);border-color:var(--lamp)}
+.streich-fuss{margin-top:22px;font-size:15px;color:var(--mist);max-width:44em}
 </style>
 </head>
 <body>
@@ -590,6 +609,7 @@ html.greift-magie, html.greift-magie body{touch-action:none}
     <a href="#so">So geht's</a>
     <a href="#material">Material</a>
     <a href="#aufbau">Aufbau</a>
+    <a href="#streiche">Streiche</a>
     <a href="#notfall">Notfall</a>
     <a class="to-gen" href="#generator">Generator</a>
     <button type="button" class="modus-knopf" id="modusKnopf" aria-label="Dunkelmodus umschalten" title="Dunkelmodus umschalten">☽</button>
@@ -852,6 +872,20 @@ html.greift-magie, html.greift-magie body{touch-action:none}
     </div>
 
     <div class="medien-grid" id="medienGrid"></div>
+  </div>
+</section>
+
+<section class="block quiet" id="streiche">
+  <div class="wrap">
+    <div class="split">
+      <h2><span id="streichZahl">38</span> Streiche. Vom leichtesten zum aufwändigsten.</h2>
+      <p class="sub" style="margin-top:0">Kein Tag braucht einen, die Geschichte trägt allein. Wer an einem Abend Lust hat, nimmt einen von hier: was zu tun ist, wie lange es dauert, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Nichts macht Dreck, nichts kommt aus den Kinderzimmern. Was hoch oben passiert ist, war Rubi.</p>
+    </div>
+    <p class="streich-vorher"><b>Vorher kurz prüfen.</b> Kind unter 3, Haustier, Allergie? Dann Kleinteile und Essbares weglassen oder erst morgens hinstellen. Alles dicht an die Fußleiste, nicht in den Laufweg. Kuscheltiere und Autos nur, wenn sie abends im Wohnzimmer liegen.</p>
+    <div class="seg streich-tabs" id="streichTabs" role="radiogroup" aria-label="Aufwand"></div>
+    <h3 class="streich-stufe" id="streichStufe"></h3>
+    <div class="streich-grid" id="streichGrid"></div>
+    <p class="streich-fuss">Die Zettel von Hand abschreiben, in Druckbuchstaben mit der „anderen“ Hand, dann sieht es nicht nach euch aus. Mit dem Haken „Haustier“ im Generator stehen die Tier-Hinweise direkt am Streich.</p>
   </div>
 </section>
 
