@@ -185,15 +185,19 @@
     const mk=(id,list)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); g.appendChild(b); }); };
     mk('#tagGrid',C.tagsueber); mk('#hilfeGrid',C.hilfe);
   C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
-  let streichStufe=1;
-  function buildStreiche(){ const tabs=$('#streichTabs'), grid=$('#streichGrid'); if(!tabs||!C.streiche) return;
+  let streichStufe=1, streichFrech=0;
+  function buildStreiche(){ const tabs=$('#streichTabs'), grid=$('#streichGrid'), ft=$('#streichFrech'); if(!tabs||!C.streiche) return;
     $('#streichZahl').textContent=C.streiche.length; const tier=$('#haustier').checked;
-    tabs.innerHTML=C.streicheStufen.map(st=>`<label><input type="radio" name="streichStufe" value="${st.s}" ${st.s===streichStufe?"checked":""}><span>${st.s} · ${st.kurz}</span></label>`).join("");
+    const pass=x=>!streichFrech||x.f===streichFrech; const anz=s=>C.streiche.filter(x=>x.s===s&&pass(x)).length;
+    tabs.innerHTML=C.streicheStufen.map(st=>`<label><input type="radio" name="streichStufe" value="${st.s}" ${st.s===streichStufe?"checked":""}><span>${st.s} · ${st.kurz} <i>${anz(st.s)}</i></span></label>`).join("");
     tabs.querySelectorAll('input').forEach(r=>r.onchange=()=>{ streichStufe=+r.value; buildStreiche(); });
-    const st=C.streicheStufen.find(x=>x.s===streichStufe); const list=C.streiche.filter(x=>x.s===streichStufe).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0)));
-    $('#streichStufe').innerHTML=`Stufe ${st.s}. ${st.t}<small>${list.length} Streiche</small>`;
+    ft.innerHTML=C.streicheFrech.map(o=>`<label><input type="radio" name="streichFrech" value="${o.f}" ${o.f===streichFrech?"checked":""}><span>${o.t}</span></label>`).join("");
+    ft.querySelectorAll('input').forEach(r=>r.onchange=()=>{ streichFrech=+r.value; buildStreiche(); });
+    const fname=f=>C.streicheFrech.find(o=>o.f===f).t;
+    const st=C.streicheStufen.find(x=>x.s===streichStufe); const list=C.streiche.filter(x=>x.s===streichStufe&&pass(x)).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0))||a.f-b.f);
+    $('#streichStufe').innerHTML=`Stufe ${st.s}. ${st.t}<small>${list.length} ${list.length===1?"Streich":"Streiche"}${streichFrech?" · "+fname(streichFrech):""}</small>`;
     const badge=x=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
-    grid.innerHTML=list.map(x=>`<article class="streich"><h4><span>${x.t}</span><span class="minbadge">${badge(x)}</span></h4><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</article>`).join(""); }
+    grid.innerHTML=list.length?list.map(x=>`<article class="streich"><h4><span>${x.t}</span></h4><p class="marken"><span class="minbadge">${badge(x)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</article>`).join(""):`<p class="streich-leer">In dieser Stufe gibt es keinen Streich mit dieser Frechheit. Eine andere Stufe antippen.</p>`; }
   buildStreiche();
   function nfParas(n){ return kurz()&&n.kurz?n.kurz:n.brief; }
   function openNotfall(n,who){ const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;

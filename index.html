@@ -572,7 +572,14 @@ html.greift-magie, html.greift-magie body{touch-action:none}
 #linkField,input,textarea{-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}
 /* Streiche-Vorrat */
 .streich-vorher{margin-top:32px;border:2px solid var(--line);padding:14px 18px;font-size:16.5px;line-height:1.4;max-width:52em}
-.streich-tabs{margin-top:18px}
+.streich-tabs{margin-top:0}
+.streich-lbl{margin:18px 0 8px;font-size:15px;font-weight:700}
+.streich-tabs i{font-style:normal;font-weight:400;opacity:.6;margin-left:6px;font-variant-numeric:tabular-nums}
+.streich .marken{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.streich .frech{font-size:12.5px;font-weight:700;padding:1px 9px;line-height:1.35;border:1px solid currentColor}
+.streich .frech.f2{background:var(--yellow,#ffd23f);color:#0f1430;border-color:#0f1430}
+.streich .frech.f3{background:var(--rubi);color:#fff;border-color:var(--rubi)}
+.streich-leer{font-size:17px;color:var(--mist);padding:8px 0}
 .streich-stufe{margin:22px 0 14px;font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-.02em}
 .streich-stufe small{font-weight:400;color:var(--mist);font-size:16px;letter-spacing:0;margin-left:8px;white-space:nowrap}
 .streich-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
@@ -878,11 +885,14 @@ html.dunkel .minbadge{color:var(--lamp);border-color:var(--lamp)}
 <section class="block quiet" id="streiche">
   <div class="wrap">
     <div class="split">
-      <h2><span id="streichZahl">38</span> Streiche. Vom leichtesten zum aufwändigsten.</h2>
-      <p class="sub" style="margin-top:0">Kein Tag braucht einen, die Geschichte trägt allein. Wer an einem Abend Lust hat, nimmt einen von hier: was zu tun ist, wie lange es dauert, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Nichts macht Dreck, nichts kommt aus den Kinderzimmern. Was hoch oben passiert ist, war Rubi.</p>
+      <h2><span id="streichZahl">84</span> Streiche. Von leicht bis aufwändig, von lieb bis frech.</h2>
+      <p class="sub" style="margin-top:0">Kein Tag braucht einen, die Geschichte trägt allein. Wer an einem Abend Lust hat, nimmt einen von hier: was zu tun ist, wie lange es dauert, wie frech er ist, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Wo morgens aufzuräumen ist, steht es dabei. Nichts kommt aus den Kinderzimmern. Was hoch oben passiert ist, war Rubi.</p>
     </div>
     <p class="streich-vorher"><b>Vorher kurz prüfen.</b> Kind unter 3, Haustier, Allergie? Dann Kleinteile und Essbares weglassen oder erst morgens hinstellen. Alles dicht an die Fußleiste, nicht in den Laufweg. Kuscheltiere und Autos nur, wenn sie abends im Wohnzimmer liegen.</p>
+    <p class="streich-lbl">Aufwand</p>
     <div class="seg streich-tabs" id="streichTabs" role="radiogroup" aria-label="Aufwand"></div>
+    <p class="streich-lbl">Wie frech darf es sein?</p>
+    <div class="seg" id="streichFrech" role="radiogroup" aria-label="Frechheit"></div>
     <h3 class="streich-stufe" id="streichStufe"></h3>
     <div class="streich-grid" id="streichGrid"></div>
     <p class="streich-fuss">Die Zettel von Hand abschreiben, in Druckbuchstaben mit der „anderen“ Hand, dann sieht es nicht nach euch aus. Mit dem Haken „Haustier“ im Generator stehen die Tier-Hinweise direkt am Streich.</p>
