@@ -46,11 +46,16 @@
    (Hintergrund, Fließtext) - Tomtes Briefpapier und die farbigen Themenblöcke
    (Hero, Zahlentafel, Kalender) bleiben bewusst wie sie sind. */
 html.dunkel{color-scheme:dark}
-/* "Olive Grove" (colours.cafe): 2A3A1E, 667439, AFB171, F2EEE1, F0C76A - 1:1 übernommen */
+/* Dunkelmodus-Palette (12. Nov 2026, 1:1 aus der Vorlage): 05161A, 072E33, 0C7075, 0F969C, 6DA5C0, 294D61.
+   Grund 05161A · Flächen 072E33 · Linien 294D61 · Schrift 6DA5C0 (6,9:1 auf Grund, 5,4:1 auf Fläche) · Akzent 0F969C · Hervorhebung 0C7075 */
 html.dunkel body{
-  --night:#2a3a1e; --deep:#667439; --dusk:#667439;
-  --line:rgba(242,238,225,.22); --snow:#f2eee1; --mist:#afb171; --lamp:#f0c76a;
+  --night:#05161a; --deep:#072e33; --dusk:#072e33;
+  --line:#294d61; --snow:#6da5c0; --mist:#6da5c0; --lamp:#0f969c; --hover:#0c7075;
+  --ink-night:#294d61; /* die nachtblauen Blöcke (Aufbau, Werkstatt, Fuß) nehmen im Dunkelmodus den sechsten Palettenton */
 }
+html.dunkel .zettel .who.tomte{color:#05161a}
+html.dunkel .btn-ghost:hover,html.dunkel .notfall-grid button:hover{border-color:#0c7075;background:rgba(12,112,117,.22)}
+html.dunkel ::selection{background:#0c7075;color:#fff}
 body{transition:background-color .3s ease,color .3s ease}
 @media (prefers-reduced-motion:reduce){body{transition:none}}
 *{box-sizing:border-box}
@@ -90,8 +95,8 @@ button,input,select,textarea{font:inherit;color:inherit}
   width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;flex:none;
   display:inline-flex;align-items:center;justify-content:center}
 .modus-knopf:hover{background:rgba(242,235,219,.08)}
-html.dunkel .nav{background:rgba(42,58,30,.92)}
-html.dunkel .nav a:hover{background:rgba(242,240,234,.08)}
+html.dunkel .nav{background:rgba(5,22,26,.92)}
+html.dunkel .nav a:hover{background:rgba(12,112,117,.3)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
 
 /* Hero */
@@ -597,7 +602,24 @@ html.greift-magie, html.greift-magie body{touch-action:none}
 .streich .zettel+.zettel{margin-top:-4px}
 html.dunkel .seg span{background:transparent}
 html.dunkel .seg input:checked+span{background:var(--snow);color:var(--night)}
-html.dunkel .minbadge{color:var(--lamp);border-color:var(--lamp)}
+html.dunkel .minbadge{color:var(--snow);border-color:var(--lamp)}
+/* Dunkelmodus, zweite Lage: die Typo-Schicht setzt Weiß und Nachtblau fest, das wird hier auf die Palette gezogen. Farbige Themenblöcke (Hero, Gelb, Nachtblau) und Briefpapier bleiben. */
+html.dunkel .btn-primary,html.dunkel .btn-night{background:#0f969c;color:#05161a}
+html.dunkel .btn-primary:hover,html.dunkel .btn-night:hover{background:#6da5c0}
+html.dunkel .hero .btn-primary,html.dunkel .on-red .btn-primary,html.dunkel .on-yellow .btn-primary{background:var(--ink-night);color:#fff}
+html.dunkel .on-night .btn-primary{background:var(--yellow);color:var(--ink-night)}
+html.dunkel .pv-bar .btn-primary{background:#1f2437;color:#fff}
+html.dunkel input[type=text],html.dunkel input[type=date],html.dunkel textarea,html.dunkel select.inp{background:#05161a;color:var(--snow);border-color:#294d61}
+html.dunkel input::placeholder,html.dunkel textarea::placeholder{color:#6da5c0;opacity:.6}
+html.dunkel .probe input,html.dunkel .on-yellow input[type=text],html.dunkel .on-red input[type=text]{background:#fff;color:var(--ink-night);border-color:var(--ink-night)}
+html.dunkel .notiz input[type=text]{background:none;color:var(--ink);border-color:#c9bfa8}
+html.dunkel .cal button,html.dunkel .day-head .mode button{background:#072e33;color:var(--snow)}
+html.dunkel .day-head .mode button[aria-pressed="true"]{background:var(--snow);color:#05161a}
+html.dunkel .heute{background:#072e33;border-color:#0f969c;box-shadow:10px 10px 0 #0c7075;--mist:var(--snow);--deep:#05161a}
+html.dunkel .skript,html.dunkel .wortfeld{background:#072e33}
+html.dunkel .on-yellow{--snow:#05161a;--line:#05161a;--mist:#05161a;--lamp:#05161a;color:#05161a}
+html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
+
 .streich-fuss{margin-top:22px;font-size:15px;color:var(--mist);max-width:44em}
 </style>
 </head>
