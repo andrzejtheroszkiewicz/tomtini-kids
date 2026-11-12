@@ -12,10 +12,10 @@
 
   // ---- Zustand ----
   const F = { kinder:'#kinder', eltern:'#eltern', start:'#start', ritual:'#ritual', essen:'#essen' };
-  function formState(){ const o={}; for(const k in F) o[k]=$(F[k]).value; o.aufwand=val('aufwand'); o.alter=val('alter'); o.nikolaus=$('#nikolaus').checked; o.lego=$('#lego').checked; o.figur=$('#figur').checked; o.haustier=$('#haustier').checked; o.klein=$('#klein').checked; o.suess=$('#suess').checked; o.tafel=$('#tafel').value; o.bleibt=val('bleibt'); o.modes=state.modes; o.dayLevel=state.dayLevel; o.done=state.done; o.answers=state.answers; o.nope=state.nope||{}; return o; }
+  function formState(){ const o={}; for(const k in F) o[k]=$(F[k]).value; o.aufwand=val('aufwand'); o.alter=val('alter'); o.nikolaus=$('#nikolaus').checked; o.lego=$('#lego').checked; o.figur=$('#figur').checked; o.haustier=$('#haustier').checked; o.klein=$('#klein').checked; o.suess=$('#suess').checked; o.tafel=$('#tafel').value; o.bleibt=val('bleibt'); o.modes=state.modes; o.dayLevel=state.dayLevel; o.done=state.done; o.answers=state.answers; o.nope=state.nope||{}; o.streichPlan=val('streichPlan'); o.streichSkip=state.streichSkip||{}; o.streichOff=state.streichOff||{}; return o; }
   function val(n){ const r=document.querySelector('input[name='+n+']:checked'); return r?r.value:""; }
   function setRadio(n,v){ const r=document.querySelector('input[name='+n+'][value="'+v+'"]'); if(r) r.checked=true; }
-  function applyState(o){ if(!o) return; try{ for(const k in F) if(o[k]!=null) $(F[k]).value=o[k]; if(o.aufwand) setRadio('aufwand',o.aufwand); if(o.alter) setRadio('alter',o.alter); if(o.bleibt) setRadio('bleibt',o.bleibt); if(o.tafel) $('#tafel').value=o.tafel; ['nikolaus','lego','figur','haustier','klein','suess'].forEach(k=>{ if(typeof o[k]==="boolean") $('#'+k).checked=o[k]; }); state.modes=o.modes||{}; state.dayLevel=o.dayLevel||{}; state.done=o.done||{}; state.answers=o.answers||{}; state.nope=o.nope||{}; }catch(e){} }
+  function applyState(o){ if(!o) return; try{ for(const k in F) if(o[k]!=null) $(F[k]).value=o[k]; if(o.aufwand) setRadio('aufwand',o.aufwand); if(o.alter) setRadio('alter',o.alter); if(o.bleibt) setRadio('bleibt',o.bleibt); if(o.tafel) $('#tafel').value=o.tafel; ['nikolaus','lego','figur','haustier','klein','suess'].forEach(k=>{ if(typeof o[k]==="boolean") $('#'+k).checked=o[k]; }); state.modes=o.modes||{}; state.dayLevel=o.dayLevel||{}; state.done=o.done||{}; state.answers=o.answers||{}; state.nope=o.nope||{}; if(o.streichPlan) setRadio('streichPlan',o.streichPlan); state.streichSkip=o.streichSkip||{}; state.streichOff=o.streichOff||{}; }catch(e){} }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(formState())); }catch(e){} }
   function load(){ try{ const h=location.hash; if(h.startsWith('#p=')){ applyState(JSON.parse(decodeURIComponent(escape(atob(h.slice(3).replace(/-/g,'+').replace(/_/g,'/')))))); return true; } }catch(e){}
     try{ const o=JSON.parse(localStorage.getItem(KEY)||"null"); if(o){ applyState(o); return !!o.kinder; } }catch(e){} return false; }
@@ -79,13 +79,35 @@
     return `<div class="zug">${head}<span>${x}</span><span class="m">Material: ${lego(b.m)}</span></div>`; }
   function extraHTML(day,i){ const e=day.extra; if(!e||!wantsExtra(i)||state.modes[i]) return ""; return `<div class="zug"><span class="t">Wochenend-Zugabe: ${e.t} <span class="minbadge">${e.min} Min · tagsüber</span></span><span>${lego(e.x)}</span><span class="m">Material: ${lego(e.m)}</span></div>`; }
   function haustierHint(day){ if(!$('#haustier').checked) return ""; const h={1:"Haustier: Mehlspur auf einem Tablett oder Regalbrett, nicht auf dem Boden. Hunde lecken Mehl weg.",2:"Haustier: kein Salzteig (giftig für Hunde), keine Kleinteile auf dem Boden.",4:"Haustier: Mehlspur erhöht legen, Feder außer Reichweite.",6:"Haustier: Zapfen außer Reichweite verstecken, keine Nüsse.",7:"Haustier: Socke und Watte sofort in die Kiste, nicht liegen lassen.",8:"Haustier: Socken vor der Tür sind für Hunde eine Einladung. Hinlegen, wenn die Kinder schon wach sind.",10:"Haustier: Essbares erst morgens hinlegen, Kekse nicht vor die Tür.",15:"Haustier: Kleine Bausteine abends in die Kiste.",17:"Haustier: Laterne erhöht stellen, Katzen stoßen sie um. Nur Batterie-Licht.",20:"Haustier: Mimi nicht in Hausschuhe verstecken, die der Hund kennt.",24:"Haustier: Mimis Bett und das Geschenk erhöht, auf einem Regalbrett neben der Tür."}; return h[day.n]?`<p class="tipp"><b>Haustier:</b> ${h[day.n].replace("Haustier: ","")}</p>`:""; }
+  // ---- Streich-Vorschläge im Plan ----
+  // Pro Tag höchstens ein Vorschlag aus C.streiche. Unter der Woche schnelle (Stufe 1–2, an leichten Tagen bis 3), am Wochenende die aufwändigen.
+  // Reihenfolge hängt an den Kindernamen, damit nicht jede Familie denselben Dezember hat. Tag 1 und Tag 24 bleiben frei.
+  function streichPlan(){ const max=(C.streichePlan.find(o=>o.v===val('streichPlan'))||{max:0}).max; const res={}; if(!max||!C.streiche) return res;
+    let h=2166136261; for(const ch of ($('#kinder').value||"tomte")) h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0; const rnd=()=>{ h^=h<<13; h>>>=0; h^=h>>>17; h^=h<<5; h>>>=0; return h/4294967296; };
+    const tier=$('#haustier').checked, suess=$('#suess').checked; const skip=state.streichSkip||{}, off=state.streichOff||{};
+    let pool=C.streiche.filter(x=>x.f<=max&&(!x.suess||suess)&&(!x.ohneTier||!tier)); pool=pool.map(x=>[rnd(),x]).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
+    const used=new Set(); let folge=null;
+    C.tage.forEach((day,i)=>{ if(folge){ res[i]={x:folge,teil:2}; folge=null; return; }
+      if(day.n===1||day.n===24||state.modes[i]) return; const we=isWE(dateOf(i)); const leicht=!day.basis||day.basis.min<=3;
+      const passt=x=>{ if(used.has(x.id)||(x.ab&&day.n<x.ab)) return false; if(x.zwei) return we&&day.n<23&&!isNaN(i)&&!state.modes[i+1]; if(day.n>=22) return x.s===1&&!x.we; if(we) return true; if(x.we||x.s===4) return false; return x.s<=(leicht?3:2); };
+      let cand=pool.filter(passt); if(we){ const gross=cand.filter(x=>x.s===4||x.we); if(gross.length) cand=gross.concat(cand.filter(x=>!(x.s===4||x.we))); }
+      const wd=dateOf(i).getDay(); const gr=x=>(x.s===4||x.we)?0:1; if(max>1&&wd===5) cand=cand.slice().sort((a,b)=>b.f-a.f); else if(max>1&&we) cand=cand.slice().sort((a,b)=>gr(a)-gr(b)||b.f-a.f);
+      if(!cand.length) return; const x=cand[(skip[i]||0)%cand.length]; used.add(x.id); if(off[i]) return; res[i]={x,teil:1}; if(x.zwei) folge=x; });
+    return res; }
+  let _sp=null; function streichFuer(i){ if(!_sp) _sp=streichPlan(); return _sp[i]; }
+  function streichMin(x){ return x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`); }
+  function streichVorHTML(i){ if(val('streichPlan')==="aus") return ""; const off=(state.streichOff||{})[i]; const v=streichFuer(i);
+    if(off) return `<div class="zug streichvor"><span class="t">Streich-Vorschlag: heute keiner</span><span class="knoepfe"><button type="button" class="btn btn-ghost btn-mini" data-son="${i}">Doch einen zeigen</button></span></div>`;
+    if(!v) return ""; const x=v.x; const fname=C.streicheFrech.find(o=>o.f===x.f).t; const tier=$('#haustier').checked;
+    if(v.teil===2) return `<div class="zug streichvor"><span class="t">Streich-Vorschlag, zweiter Abend: ${x.t}</span><span>Heute Abend der zweite Teil von gestern.</span>${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</div>`;
+    return `<div class="zug streichvor"><span class="t kopf">Streich-Vorschlag: ${x.t} <span class="minbadge">${streichMin(x)}</span><span class="frech f${x.f}">${fname}</span></span><span>${x.x}</span>${x.m&&x.m!=="–"?`<span class="m">Material: ${x.m}</span>`:""}${x.auf?`<span class="m">Aufräumen am Morgen: ${x.auf}</span>`:""}${tier&&x.tier?`<span class="m"><b>Haustier:</b> ${x.tier}</span>`:""}${zettelHTML({von:x.von,text:x.z})}<span class="knoepfe"><button type="button" class="btn btn-ghost btn-mini" data-snext="${i}">Anderer Vorschlag</button><button type="button" class="btn btn-ghost btn-mini" data-soff="${i}">Heute keiner</button></span></div>`; }
   function doneBtn(i){ return `<button type="button" class="done-btn" data-done="${i}" aria-pressed="${!!state.done[i]}">${state.done[i]?"Vorbereitet ✓":"Als vorbereitet markieren"}</button>`; }
   function answerHTML(i,label){ return `<div class="antwort"><label for="a${i}">${label}</label><textarea id="a${i}" data-ans="${i}" placeholder="Für die Chronik am Ende: was die Kinder geantwortet, gemalt oder gesagt haben">${state.answers[i]||""}</textarea></div>`; }
   function dayBody(day,i){ let h=""; const mode=state.modes[i];
     if(day.brief) h+=letterHTML(briefParas(day,i),day.ps);
     if(day.zettelDoppel) h+=day.zettelDoppel.map(zettelHTML).join(""); else if(day.zettel) h+=zettelHTML(day.zettel);
     if(mode==="reise"){ const r=C.notfall.find(n=>n.id==="reise"); h+=`<div class="zug"><span class="t">Ihr seid unterwegs. Tomte reist mit.</span><span>Diesen Brief am Abend vor der Abfahrt legen. Unterwegs reicht eine kleine Spur pro Abend. Dieser Tag entfällt sonst.</span></div>`+letterHTML(kurz()&&r.kurz?r.kurz:r.brief); }
-    else { h+=zahlHTML(day)+basisHTML(day,i)+extraHTML(day,i); }
+    else { h+=zahlHTML(day)+basisHTML(day,i)+extraHTML(day,i)+streichVorHTML(i); }
     const nxt=C.tage[i+1]; if(nxt&&nxt.ohne){ h+=`<p class="tipp"><b>Keine Lust gehabt?</b> Nicht gemacht heißt: nichts passiert, Tomte erwähnt es nicht. <button type="button" class="btn btn-ghost btn-mini" data-nope="${i}">${state.nope&&state.nope[i]?"Morgen-Brief ohne Dank ✓":"Morgen-Brief ohne Dank"}</button></p>`; }
     h+=suessHTML(day); if($('#klein').checked&&C.klein[day.n]) h+=`<div class="zug"><span class="t">Kleinigkeit <span class="minbadge">Türchen ${day.n}</span></span><span>${lego(C.klein[day.n])}${plural()?" Bei mehreren Kindern: pro Kind eins.":""} Ohne Begründung hinlegen, Tomte erwähnt sie nicht.</span></div>`;
     h+=`<p class="tipp"><b>Für euch:</b> ${day.tipp}</p>`+haustierHint(day); return h; }
@@ -148,7 +170,7 @@
     const lag = ti>=0 ? `<p class="help">Heute Morgen lag: Tag ${C.tage[ti].n} · ${fill(C.tage[ti].titel)}</p>` : (ti===-1?`<p class="help">Heute Morgen lag: der Zettel von Rubi.</p>`:"");
     return `<div class="heute">${inner}${lag}</div>`; }
 
-  function render(){ buildNotfall(); const out=$("#out"); out.dataset.built="1"; 
+  function render(){ buildNotfall(); const out=$("#out"); out.dataset.built="1"; _sp=null; 
     const kapNames={1:"Kapitel 1 · Einzug",2:"Kapitel 2 · Hilfe, die schiefgeht",3:"Kapitel 3 · Tomtes Geheimnis",4:"Kapitel 4 · Abschied"};
     let html=`<div class="out-head"><div><p class="eyebrow">Euer Plan</p><h3>24 Tage für ${names()}</h3></div><div class="actions"><button class="btn btn-primary" id="pBriefe">Briefe drucken</button><button class="btn btn-ghost" id="pPlan">Elternplan</button><button class="btn btn-ghost" id="pChronik">Chronik</button><button class="btn btn-ghost" id="pLink">Plan-Link</button></div></div>`;
     html+=heuteHTML();
@@ -164,6 +186,9 @@
     out.innerHTML=html;
     out.querySelectorAll('.mode button').forEach(b=>b.onclick=()=>{ state.dayLevel[b.dataset.i]=b.dataset.l; rerender(); });
     out.querySelectorAll('[data-nope]').forEach(b=>b.onclick=()=>{ state.nope=state.nope||{}; const k=b.dataset.nope; if(state.nope[k]) delete state.nope[k]; else state.nope[k]=1; rerender(); });
+    out.querySelectorAll('[data-snext]').forEach(b=>b.onclick=()=>{ const k=b.dataset.snext; state.streichSkip=state.streichSkip||{}; state.streichSkip[k]=(state.streichSkip[k]||0)+1; rerender(); });
+    out.querySelectorAll('[data-soff]').forEach(b=>b.onclick=()=>{ state.streichOff=state.streichOff||{}; state.streichOff[b.dataset.soff]=1; rerender(); });
+    out.querySelectorAll('[data-son]').forEach(b=>b.onclick=()=>{ delete state.streichOff[b.dataset.son]; rerender(); });
     out.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{ const k=b.dataset.done; if(state.done[k]) delete state.done[k]; else state.done[k]=1; rerender(); });
     out.querySelectorAll('textarea[data-ans]').forEach(t=>t.addEventListener('input',()=>{ state.answers[t.dataset.ans]=t.value; save(); }));
     $('#pBriefe').onclick=()=>printBriefe(); $('#pPlan').onclick=()=>printPlan(); $('#pChronik').onclick=()=>printChronik();
@@ -172,7 +197,7 @@
   function showLink(l){ $('#linkField').value=l; $('#linkDlg').classList.add('open'); $('#linkField').focus(); $('#linkField').select(); }
   function rerender(){ buildNotfall(); buildStreiche(); if($('#out').dataset.built) render(); else save(); }
   $('#form').addEventListener('submit',e=>{ e.preventDefault(); render(); $('#out').scrollIntoView({behavior:"smooth",block:"start"}); });
-  document.querySelectorAll('input[name=aufwand],input[name=alter],input[name=bleibt],input[name=elternChip],#nikolaus,#lego,#figur,#haustier,#klein,#suess,#tafel').forEach(el=>el.addEventListener('change',()=>{ if(el.name==="elternChip") $('#eltern').value=""; rerender(); }));
+  document.querySelectorAll('input[name=streichPlan],input[name=aufwand],input[name=alter],input[name=bleibt],input[name=elternChip],#nikolaus,#lego,#figur,#haustier,#klein,#suess,#tafel').forEach(el=>el.addEventListener('change',()=>{ if(el.name==="elternChip") $('#eltern').value=""; rerender(); }));
   ['kinder','eltern','ritual','essen'].forEach(id=>$('#'+id).addEventListener('input',()=>{ if(id==="eltern"&&$('#eltern').value) document.querySelectorAll('input[name=elternChip]').forEach(r=>r.checked=false); rerender(); }));
   $('#start').addEventListener('change',()=>{ buildCal(); rerender(); });
 
@@ -233,7 +258,7 @@
     rows.push(row(dateOf(-1),"Vorabend · "+v.titel,v.basis,(val('aufwand')==="we"?v.extra:null),null,0));
     rows.push(row(dateOf(-1),"Nach dem JA · "+v.ja.t,v.ja,null,null,0));
     rows.push(row(dateOf(-2),"Vorlesen · "+C.geschichte.titel,{t:"Kapitel 1, 2, 3 und 6",x:"Am Abend davor vorlesen: Woher Tomte kommt, warum ihn niemand sehen darf, wie die Tür entsteht. Kapitel 4 und 5 (Mimi und Rubi) kommen an Tag 2 bis 4 dazu, Kapitel 7 an Tag 1.",m:"Ausdruck oder Bildschirm",min:8,zeit:"zwei Abende vorher"},null,null,0));
-    const kl=$('#klein').checked; C.tage.forEach((day,i)=>rows.push(row(dateOf(i),day.n+" · "+fill(day.titel),day.basis,(wantsExtra(i)&&!state.modes[i]?day.extra:null),state.modes[i],day.n)+(kl&&C.klein[day.n]?`<tr><td></td><td></td><td class="mat" colspan="3">Kleinigkeit: ${lego(C.klein[day.n])}</td></tr>`:"")));
+    const kl=$('#klein').checked; const sv=streichPlan(); C.tage.forEach((day,i)=>rows.push(row(dateOf(i),day.n+" · "+fill(day.titel),day.basis,(wantsExtra(i)&&!state.modes[i]?day.extra:null),state.modes[i],day.n)+(kl&&C.klein[day.n]?`<tr><td></td><td></td><td class="mat" colspan="3">Kleinigkeit: ${lego(C.klein[day.n])}</td></tr>`:"")+(sv[i]?`<tr><td></td><td></td><td class="mat" colspan="2">Streich-Vorschlag${sv[i].teil===2?", zweiter Abend":""}: ${sv[i].x.t}${sv[i].teil===1&&sv[i].x.m!=="–"?" · "+sv[i].x.m:""}</td><td class="mat">${sv[i].teil===1?"+"+sv[i].x.min:""}</td></tr>`:"")));
     januarList().forEach(j=>rows.push(row(janDate(j),"Januar · "+j.titel,j.basis,null,null,0)));
     const total=rows.length; const head=`<h3 class="pt">Elternplan · 24 Tage mit Tomte</h3><p class="pt-sub">Für ${names()} · Minuten sind ehrlich geschätzt, „abends vorher“ heißt: am Abend vor dem Brief. Vergessen? Notfall-Brief aus der Kiste. Kalender nie verschieben: Tag = Datum.</p>`;
     const table=r=>`<table><thead><tr><th></th><th>Datum</th><th>Brief und Vorbereitung</th><th>Material</th><th>Min</th></tr></thead><tbody>${r.join("")}</tbody></table>`;
