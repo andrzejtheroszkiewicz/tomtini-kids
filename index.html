@@ -581,11 +581,13 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
    schnell - beim Umsehen schiebt sich der Vordergrund sichtbar vor den Raum. */
 .magie-welt{position:absolute;top:50%;left:50%;width:126vw;height:126vh;
   transform:translate(calc(-50% + (0.5 - var(--wx)) * 11vw), calc(-50% + (0.5 - var(--wy)) * 11vh));
-  background:#0a0f28;display:grid;place-items:center;overflow:hidden}
+  background:#0a0f28;overflow:hidden}
 /* Das Bild sitzt in einer eigenen Flaeche mit dem Seitenverhaeltnis der Illustration. Dadurch
    deckt es wie "cover" den Raum ab, und die Lichtstrahlen darin lassen sich in Prozent des
    Bildes setzen - sie bleiben also auf jedem Bildschirm genau auf ihrer Lampe sitzen. */
-.magie-bild{position:relative;isolation:isolate;min-width:100%;min-height:100%;aspect-ratio:2048/1156;
+.magie-bild{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);isolation:isolate;
+  width:max(126vw, calc(126vh * 1.77163));
+  height:max(126vh, calc(126vw / 1.77163));
   background:url(magie/werkstatt.webp) center/100% 100% no-repeat}
 
 /* Licht aus den Quellen im Bild: additiv ueber die Illustration gelegt, damit es wirklich
