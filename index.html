@@ -285,6 +285,85 @@ textarea{min-height:64px;resize:vertical}
 .day-head .mode{display:flex;gap:4px}
 .day-head .mode button{border:1.5px solid var(--line);background:var(--deep);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
 .day-head .mode button[aria-pressed="true"]{background:var(--snow);color:var(--deep);border-color:var(--snow)}
+/* Kalender-Raster (A: aufklappen, B: Fenster) */
+.kal-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:28px 0 6px}
+.kal-kopf h3{font-family:var(--display);font-weight:700;font-size:26px}
+.kal-ansicht{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--mist)}
+.kal-ansicht span{margin-right:4px}
+.kal-ansicht button{border:1.5px solid var(--line);background:transparent;color:var(--snow);border-radius:999px;padding:5px 11px;font:600 13px/1 var(--body);min-height:34px;cursor:pointer}
+.kal-ansicht button[aria-pressed="true"]{background:var(--snow);color:var(--night);border-color:var(--snow)}
+.kal-legende{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--mist);margin:0 0 12px}
+.kal-legende i{font-style:normal}
+.kal{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;border-top:2px solid var(--line);border-left:2px solid var(--line)}
+.kal>button{appearance:none;background:var(--dusk);color:var(--snow);border:0;border-right:2px solid var(--line);border-bottom:2px solid var(--line);border-radius:0;text-align:left;cursor:pointer;font:inherit;position:relative}
+.kal>button:hover{background:var(--deep)}
+.kal>button:focus-visible{outline:3px solid var(--lamp);outline-offset:-3px}
+.kal-vor{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:10px 14px}
+.kal-vor .kn{font-family:var(--display);font-weight:700;font-size:28px;line-height:1;color:var(--lamp)}
+.kal-vor .kt{font-weight:700;font-size:16px;flex:1 1 auto}
+.kal-vor .kd{font-size:13px;color:var(--mist)}
+.kal-tag{display:flex;flex-direction:column;justify-content:space-between;gap:4px;min-height:104px;padding:10px 10px 9px}
+.kal-tag .kn{font-family:var(--display);font-weight:700;font-size:clamp(34px,4.2vw,52px);line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kal-tag .kd{font-size:12px;color:var(--mist);font-weight:500}
+.kal-tag .km{display:flex;gap:6px;align-items:baseline;font-size:12px;font-weight:700;min-height:1.2em}
+.kal-tag .km i,.kal-legende i{font-style:normal}
+.mk-min{color:var(--mist);font-weight:600}
+.mk{color:var(--lamp)}
+.kal-tag .kx{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--pine)}
+.kal-tag.m-wenig .kx{color:var(--mist)}
+.kal>button.vorbei{opacity:.45}
+.kal>button.vorbei:hover{opacity:.8}
+.kal>button.done .kn{color:var(--mist)}
+.kal-tag.heute .kd::after{content:" · heute";color:var(--lamp);font-weight:700}
+.kal>button.offen,.kal>button.offen:hover{background:var(--snow);color:var(--night);opacity:1}
+.kal>button.offen .kd,.kal>button.offen .mk-min,.kal>button.offen .kn{color:var(--night)}
+.kal>button.offen .mk{color:var(--lamp)}
+/* A: Panel unter der Reihe */
+.kal>.kd{grid-column:1/-1;margin:0;border:0;border-right:2px solid var(--line);border-bottom:2px solid var(--line);position:relative;background:var(--deep);padding:18px clamp(14px,3vw,28px) 16px;animation:kdAuf .22s ease-out both}
+.kal>.kd::before{content:"";position:absolute;top:-1px;left:var(--pfeil,50%);width:16px;height:16px;background:var(--deep);border-left:2px solid var(--line);border-top:2px solid var(--line);transform:translate(-50%,-50%) rotate(45deg)}
+@keyframes kdAuf{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.kd-kopf{display:flex;align-items:flex-start;gap:14px}
+.kd-kopf .num{font-family:var(--display);font-weight:700;font-size:44px;line-height:.9;color:var(--lamp);font-variant-numeric:tabular-nums}
+.kd-kopf>div{flex:1}
+.kd-kopf h4{font-size:22px;font-weight:700;line-height:1.2}
+.kd-kopf .date{font-size:14px;color:var(--mist)}
+.kd-zu{border:2px solid var(--line);background:transparent;color:var(--snow);width:40px;height:40px;font:700 24px/1 var(--display);cursor:pointer;flex:none}
+.kd .mode{display:flex;gap:4px}
+.kd .mode button{border:1.5px solid var(--line);background:var(--deep);color:var(--snow);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.kd .mode button[aria-pressed="true"]{background:var(--snow);color:var(--night);border-color:var(--snow)}
+.kd-mehr{border-top:2px solid var(--line);padding-top:4px}
+.kd-mehr>summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none;display:flex;gap:8px;align-items:baseline}
+.kd-mehr>summary::-webkit-details-marker{display:none}
+.kd-mehr>summary::before{content:"+";font-family:var(--display);font-size:22px;line-height:1;color:var(--lamp);width:.8em}
+.kd-mehr[open]>summary::before{content:"–"}
+.kd-mehr-in{display:grid;gap:12px;padding-bottom:6px}
+.kd-nav{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+/* B: Fenster, auf dem Handy von unten */
+.kal-sheet{position:fixed;inset:0;z-index:80;display:none}
+.kal-sheet.open{display:block}
+.ks-hinter{position:absolute;inset:0;background:rgba(5,10,20,.55);animation:ksFade .2s ease-out both}
+.ks-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(760px,calc(100vw - 32px));max-height:88vh;background:var(--deep);border:2px solid var(--line);display:flex;flex-direction:column;animation:ksPop .22s ease-out both}
+.ks-griff{display:none}
+.ks-in{overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ks-in>.kd{margin:0;border:0;background:transparent;padding:18px clamp(16px,3vw,28px) 18px}
+.ks-in .kd-nav{position:sticky;bottom:-18px;background:var(--deep);padding-bottom:14px;margin-bottom:-4px}
+html.ks-lock,html.ks-lock body{overflow:hidden}
+@keyframes ksFade{from{opacity:0}}
+@keyframes ksPop{from{opacity:0;transform:translate(-50%,-47%)}}
+@keyframes ksUp{from{transform:translateY(100%)}}
+@media (max-width:700px){
+  .kal{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .kal-tag{min-height:84px;padding:8px 8px 7px}
+  .kal-tag .kn{font-size:34px}
+  .kal-tag .kd{font-size:11px}
+  .kal-tag .kx{font-size:9px;top:6px;right:6px}
+  .kal-legende{font-size:12px;gap:2px 12px}
+  .kd-kopf .num{font-size:36px}
+  .kd-kopf h4{font-size:19px}
+  .ks-box{left:0;right:0;top:auto;bottom:0;width:auto;max-height:90vh;transform:none;border-left:0;border-right:0;border-bottom:0;animation:ksUp .28s cubic-bezier(.2,.8,.2,1) both}
+  .ks-griff{display:block;width:44px;height:5px;background:var(--line);opacity:.5;margin:8px auto 0;flex:none}
+}
+@media (prefers-reduced-motion:reduce){.kal>.kd,.ks-box,.ks-hinter{animation:none}}
 .letter{background:var(--paper);border-radius:4px;padding:18px 20px;font-family:var(--hand);font-size:23px;line-height:1.3;color:var(--ink);display:grid;gap:9px}
 .ps{font-family:var(--hand);font-size:20px;color:var(--ink);background:#e9dfc8;border-radius:4px;padding:8px 14px}
 .zettel{display:flex;gap:10px;align-items:baseline;font-size:15px}
@@ -1162,10 +1241,21 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
       <address>Andrzej Roszkiewicz<br>Sürther Str. 14<br>50996 Köln</address>
       <h2>Kontakt</h2>
       <p>E-Mail: <a href="mailto:hallo@tomtini.kids">hallo@tomtini.kids</a></p>
-      <h2>Verantwortlich für den Inhalt</h2>
-      <p>Andrzej Roszkiewicz, Anschrift wie oben (§ 18 Abs. 2 MStV).</p>
+      <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+      <p>Andrzej Roszkiewicz, Anschrift wie oben.</p>
       <h2>Über das Projekt</h2>
       <p>Tomtini ist ein privates, kostenloses Projekt und ein Schwesterprojekt von <a href="https://fundini.kids">Fundini</a>. Es gibt keine Werbung und keinen Verkauf.</p>
+      <h2>Haftung für Inhalte</h2>
+      <p>Die Inhalte dieser Seite wurden mit großer Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte wird jedoch keine Gewähr übernommen. Als Diensteanbieter bin ich für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Ich bin jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Sobald mir eine konkrete Rechtsverletzung bekannt wird, entferne ich die betreffenden Inhalte umgehend.</p>
+      <h2>Spiel- und Sicherheitshinweis</h2>
+      <p>Briefe, Streiche, Bastelideen, Bauanleitungen und Zugaben sind Anregungen für ein Spiel, das Erwachsene vorbereiten und begleiten. Bitte wählt Material und Orte so, dass sich niemand gefährden kann: keine Kleinteile in Reichweite kleiner Kinder oder Haustiere, kein offenes Feuer, nur Batterie-Licht mit verschraubtem Batteriefach, keine Knopfzellen offen liegen lassen, nichts Essbares, das für Haustiere giftig ist, und keine Streiche auf Treppen, an Steckdosen oder mit Dingen, die rutschen oder umfallen können. Für Schäden, die bei der Durchführung entstehen, wird, soweit gesetzlich zulässig, keine Haftung übernommen.</p>
+      <h2>Haftung für Links</h2>
+      <p>Diese Seite enthält Links zu externen Websites, etwa zu Fundini oder zu Bauanleitungen. Auf deren Inhalte habe ich keinen Einfluss, deshalb kann ich für diese fremden Inhalte keine Gewähr übernehmen. Verantwortlich ist stets der jeweilige Anbieter oder Betreiber der Seiten. Zum Zeitpunkt der Verlinkung waren keine Rechtsverstöße erkennbar. Bei Bekanntwerden von Rechtsverletzungen entferne ich solche Links umgehend. Die Links enthalten keine Partner- oder Affiliate-Kennung.</p>
+      <h2>Urheberrecht</h2>
+      <p>Texte, Briefe, Figuren (Tomte, Mimi, Rubi), Illustrationen, Bauanleitungen und Programmcode dieser Seite unterliegen dem deutschen Urheberrecht. Ausdrucke und Kopien sind für den privaten, nicht kommerziellen Gebrauch erlaubt, also genau dafür, wofür Tomtini gedacht ist: Briefe, Elternplan und Chronik für die eigene Familie drucken. Jede andere Vervielfältigung, Bearbeitung, Verbreitung oder kommerzielle Nutzung braucht meine schriftliche Zustimmung. Die Nutzung der Inhalte für das Training von KI-Systemen sowie Text- und Data-Mining nach § 44b UrhG ist ausdrücklich vorbehalten.</p>
+      <p>Verwendete Schriften: Switzer (Indian Type Foundry, ITF Free Font License) und Caveat (Impallari Type, SIL Open Font License 1.1), beide lokal eingebunden.</p>
+      <h2>Verbraucherstreitbeilegung</h2>
+      <p>Ich bin nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
     </article>
     <article id="datenschutz" hidden>
       <h1>Datenschutz</h1>

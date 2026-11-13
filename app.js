@@ -103,14 +103,18 @@
     return `<div class="zug streichvor"><span class="t kopf">Streich-Vorschlag: ${x.t} <span class="minbadge">${streichMin(x)}</span><span class="frech f${x.f}">${fname}</span></span><span>${x.x}</span>${x.m&&x.m!=="–"?`<span class="m">Material: ${x.m}</span>`:""}${x.auf?`<span class="m">Aufräumen am Morgen: ${x.auf}</span>`:""}${tier&&x.tier?`<span class="m"><b>Haustier:</b> ${x.tier}</span>`:""}${zettelHTML({von:x.von,text:x.z})}<span class="knoepfe"><button type="button" class="btn btn-ghost btn-mini" data-snext="${i}">Anderer Vorschlag</button><button type="button" class="btn btn-ghost btn-mini" data-soff="${i}">Heute keiner</button></span></div>`; }
   function doneBtn(i){ return `<button type="button" class="done-btn" data-done="${i}" aria-pressed="${!!state.done[i]}">${state.done[i]?"Vorbereitet ✓":"Als vorbereitet markieren"}</button>`; }
   function answerHTML(i,label){ return `<div class="antwort"><label for="a${i}">${label}</label><textarea id="a${i}" data-ans="${i}" placeholder="Für die Chronik am Ende: was die Kinder geantwortet, gemalt oder gesagt haben">${state.answers[i]||""}</textarea></div>`; }
-  function dayBody(day,i){ let h=""; const mode=state.modes[i];
-    if(day.brief) h+=letterHTML(briefParas(day,i),day.ps);
-    if(day.zettelDoppel) h+=day.zettelDoppel.map(zettelHTML).join(""); else if(day.zettel) h+=zettelHTML(day.zettel);
-    if(mode==="reise"){ const r=C.notfall.find(n=>n.id==="reise"); h+=`<div class="zug"><span class="t">Ihr seid unterwegs. Tomte reist mit.</span><span>Diesen Brief am Abend vor der Abfahrt legen. Unterwegs reicht eine kleine Spur pro Abend. Dieser Tag entfällt sonst.</span></div>`+letterHTML(kurz()&&r.kurz?r.kurz:r.brief); }
-    else { h+=zahlHTML(day)+basisHTML(day,i)+extraHTML(day,i)+streichVorHTML(i); }
-    const nxt=C.tage[i+1]; if(nxt&&nxt.ohne){ h+=`<p class="tipp"><b>Keine Lust gehabt?</b> Nicht gemacht heißt: nichts passiert, Tomte erwähnt es nicht. <button type="button" class="btn btn-ghost btn-mini" data-nope="${i}">${state.nope&&state.nope[i]?"Morgen-Brief ohne Dank ✓":"Morgen-Brief ohne Dank"}</button></p>`; }
-    h+=suessHTML(day); if($('#klein').checked&&C.klein[day.n]) h+=`<div class="zug"><span class="t">Kleinigkeit <span class="minbadge">Türchen ${day.n}</span></span><span>${lego(C.klein[day.n])}${plural()?" Bei mehreren Kindern: pro Kind eins.":""} Ohne Begründung hinlegen, Tomte erwähnt sie nicht.</span></div>`;
-    h+=`<p class="tipp"><b>Für euch:</b> ${day.tipp}</p>`+haustierHint(day); return h; }
+  // Ein Tag in zwei Ebenen: core = Brief und Abendaufgabe, more = alles Optionale
+  function dayParts(day,i){ let core="", more=""; const labels=[]; const mode=state.modes[i];
+    if(day.brief) core+=letterHTML(briefParas(day,i),day.ps);
+    if(day.zettelDoppel) core+=day.zettelDoppel.map(zettelHTML).join(""); else if(day.zettel) core+=zettelHTML(day.zettel);
+    if(mode==="reise"){ const r=C.notfall.find(n=>n.id==="reise"); core+=`<div class="zug"><span class="t">Ihr seid unterwegs. Tomte reist mit.</span><span>Diesen Brief am Abend vor der Abfahrt legen. Unterwegs reicht eine kleine Spur pro Abend. Dieser Tag entfällt sonst.</span></div>`+letterHTML(kurz()&&r.kurz?r.kurz:r.brief); }
+    else { core+=zahlHTML(day)+basisHTML(day,i); const ex=extraHTML(day,i); if(ex){ more+=ex; labels.push("Zugabe"); } const st=streichVorHTML(i); if(st){ more+=st; labels.push("Streich"); } }
+    const nxt=C.tage[i+1]; if(nxt&&nxt.ohne){ more+=`<p class="tipp"><b>Keine Lust gehabt?</b> Nicht gemacht heißt: nichts passiert, Tomte erwähnt es nicht. <button type="button" class="btn btn-ghost btn-mini" data-nope="${i}">${state.nope&&state.nope[i]?"Morgen-Brief ohne Dank ✓":"Morgen-Brief ohne Dank"}</button></p>`; }
+    const su=suessHTML(day); if(su){ more+=su; labels.push("Süßes"); }
+    if($('#klein').checked&&C.klein[day.n]){ more+=`<div class="zug"><span class="t">Kleinigkeit <span class="minbadge">Türchen ${day.n}</span></span><span>${lego(C.klein[day.n])}${plural()?" Bei mehreren Kindern: pro Kind eins.":""} Ohne Begründung hinlegen, Tomte erwähnt sie nicht.</span></div>`; labels.push("Kleinigkeit"); }
+    more+=`<p class="tipp"><b>Für euch:</b> ${day.tipp}</p>`+haustierHint(day); labels.push("Tipps");
+    return {core:core, more:more, labels:labels}; }
+  function dayBody(day,i){ const p=dayParts(day,i); return p.core+p.more; }
 
   function januarList(){ const b=val('bleibt'); if(b==="24") return []; return C.januar.filter(j=>b==="31"||j.datum<="01-06"); }
   function janDate(j){ const y=startDate().getFullYear()+1; const [m,d]=j.datum.split("-"); return new Date(y,+m-1,+d); }
@@ -164,8 +168,8 @@
     if(ti > 23) return "";
     const prep = ti+1; // -1 = Vorabend vorbereiten (am Abend davor)
     let inner="";
-    if(prep===-1){ const v=C.vorabend; inner=`<p class="eyebrow">Heute Abend vorbereiten · Vorabend, ${fmt(dateOf(-1))}</p><h3>${v.titel}</h3>${letterHTML(vorabendParas())}${basisHTML(v,-1)}<p class="tipp"><b>Für euch:</b> ${v.tipp}</p>${doneBtn("v")}`; }
-    else if(prep<=23){ const day=C.tage[prep]; inner=`<p class="eyebrow">Heute Abend vorbereiten · Brief für morgen früh, ${fmt(dateOf(prep))}</p><h3>Tag ${day.n} · ${fill(day.titel)}</h3>${dayBody(day,prep)}${doneBtn(prep)}`; }
+    if(prep===-1){ const v=C.vorabend; inner=`<p class="eyebrow">Heute Abend vorbereiten · Vorabend, ${fmt(dateOf(-1))}</p><h3>${v.titel} <span class="minbadge">${v.basis.min} Min</span></h3><p><button type="button" class="btn btn-primary btn-mini" data-openheute="-1">Im Kalender öffnen</button> ${doneBtn("v")}</p>`; }
+    else if(prep<=23){ const day=C.tage[prep]; inner=`<p class="eyebrow">Heute Abend vorbereiten · Brief für morgen früh, ${fmt(dateOf(prep))}</p><h3>Tag ${day.n} · ${fill(day.titel)} <span class="minbadge">${eveningMin(prep)} Min</span></h3><p><button type="button" class="btn btn-primary btn-mini" data-openheute="${prep}">Im Kalender öffnen</button> ${doneBtn(prep)}</p>`; }
     else { inner=`<p class="eyebrow">Heute</p><h3>Der letzte Brief lag heute Morgen da.</h3><p>Mimi schläft vor der Tür. Am 6. Januar zieht sie ins Winterquartier.</p>`; }
     const lag = ti>=0 ? `<p class="help">Heute Morgen lag: Tag ${C.tage[ti].n} · ${fill(C.tage[ti].titel)}</p>` : (ti===-1?`<p class="help">Heute Morgen lag: der Zettel von Rubi.</p>`:"");
     return `<div class="heute">${inner}${lag}</div>`; }
@@ -174,26 +178,86 @@
     const kapNames={1:"Kapitel 1 · Einzug",2:"Kapitel 2 · Hilfe, die schiefgeht",3:"Kapitel 3 · Tomtes Geheimnis",4:"Kapitel 4 · Abschied"};
     let html=`<div class="out-head"><div><p class="eyebrow">Euer Plan</p><h3>24 Tage für ${names()}</h3></div><div class="actions"><button class="btn btn-primary" id="pBriefe">Briefe drucken</button><button class="btn btn-ghost" id="pPlan">Elternplan</button><button class="btn btn-ghost" id="pChronik">Chronik</button><button class="btn btn-ghost" id="pLink">Plan-Link</button></div></div>`;
     html+=heuteHTML();
-    const v=C.vorabend; const vd=dateOf(-1);
-    html+=`<div class="kap"><h3>Vorabend · ${fmt(vd)}</h3><div class="day ${state.done.v?"done":""}"><div class="day-head"><span class="num">0</span><h4>${v.titel}</h4><span class="date">Zettel von Rubi</span></div>${letterHTML(vorabendParas())}${basisHTML(v,-1)}${wantsExtra(-1)||val('aufwand')==="we"?`<div class="zug"><span class="t">Wochenend-Zugabe: ${v.extra.t} <span class="minbadge">${v.extra.min} Min · tagsüber</span></span><span>${v.extra.x}</span><span class="m">Material: ${v.extra.m}</span></div>`:""}<div class="zug"><span class="t">${v.ja.t} <span class="minbadge">${v.ja.min} Min · ${v.ja.zeit}</span></span><span>${lego(v.ja.x)}</span><span class="m">Material: ${lego(v.ja.m)}</span></div><p class="tipp"><b>Vorher vorlesen:</b> „Wie Tomte zu euch kam“, Kapitel 1, 2, 3 und 6 (<a href="#geschichte">hier</a>). Danach weiß das Kind, wer da fragt und warum ihn niemand sehen darf.</p><p class="tipp"><b>Wenn das Kind Nein sagt oder zögert:</b> Rubis Warte-Zettel hinlegen, nichts montieren, später oder nächstes Jahr wieder fragen. Zettel: „${fill(v.nein.text)}“</p><p class="tipp"><b>Für euch:</b> ${v.tipp}</p>${doneBtn("v")}</div></div>`;
-    let kap=0;
-    C.tage.forEach((day,i)=>{ const d=dateOf(i), mode=state.modes[i];
-      if(day.kap!==kap){ kap=day.kap; html+=`<div class="kap"><h3>${kapNames[kap]}</h3></div>`; }
-      html+=`<div class="day ${mode==="reise"?"reise":""} ${state.done[i]?"done":""}"><div class="day-head"><span class="num">${day.n}</span><h4>${fill(day.titel)}</h4><span class="date">${fmt(d)}${mode==="wenig"?" · wenig Zeit":mode==="reise"?" · unterwegs":""}</span>`;
-      if(!mode && day.extra){ const on=wantsExtra(i); html+=`<span class="mode"><button type="button" data-i="${i}" data-l="basis" aria-pressed="${!on}">Nötiges</button><button type="button" data-i="${i}" data-l="we" aria-pressed="${on}">+ Zugabe</button></span>`; }
-      html+=`</div>`+dayBody(day,i)+answerHTML(i,"Antwort der Kinder (für die Chronik)")+doneBtn(i)+`</div>`; });
+    html+=kalHTML();
     html+=januarHTML();
     out.innerHTML=html;
-    out.querySelectorAll('.mode button').forEach(b=>b.onclick=()=>{ state.dayLevel[b.dataset.i]=b.dataset.l; rerender(); });
-    out.querySelectorAll('[data-nope]').forEach(b=>b.onclick=()=>{ state.nope=state.nope||{}; const k=b.dataset.nope; if(state.nope[k]) delete state.nope[k]; else state.nope[k]=1; rerender(); });
-    out.querySelectorAll('[data-snext]').forEach(b=>b.onclick=()=>{ const k=b.dataset.snext; state.streichSkip=state.streichSkip||{}; state.streichSkip[k]=(state.streichSkip[k]||0)+1; rerender(); });
-    out.querySelectorAll('[data-soff]').forEach(b=>b.onclick=()=>{ state.streichOff=state.streichOff||{}; state.streichOff[b.dataset.soff]=1; rerender(); });
-    out.querySelectorAll('[data-son]').forEach(b=>b.onclick=()=>{ delete state.streichOff[b.dataset.son]; rerender(); });
-    out.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{ const k=b.dataset.done; if(state.done[k]) delete state.done[k]; else state.done[k]=1; rerender(); });
-    out.querySelectorAll('textarea[data-ans]').forEach(t=>t.addEventListener('input',()=>{ state.answers[t.dataset.ans]=t.value; save(); }));
+    bindKal(out);
+    bindDay(out);
     $('#pBriefe').onclick=()=>printBriefe(); $('#pPlan').onclick=()=>printPlan(); $('#pChronik').onclick=()=>printChronik();
     $('#pLink').onclick=()=>{ const l=planLink(); showLink(l); if(navigator.clipboard) navigator.clipboard.writeText(l).then(()=>toast("Plan-Link kopiert")).catch(()=>{}); };
+    showDetail(false);
     save(); }
+
+  // ---- Kalender-Raster: A = klappt unter der Reihe auf, B = eigenes Fenster ----
+  let openDay=null, openInit=false;
+  const VIEWKEY="tomtini-ansicht";
+  function getView(){ try{ const q=new URLSearchParams(location.search).get('ansicht'); if(q==="a"||q==="b") return q; return localStorage.getItem(VIEWKEY)||"a"; }catch(e){ return "a"; } }
+  let kalView=getView();
+  function vorabendHTML(){ const v=C.vorabend;
+    const core=`${letterHTML(vorabendParas())}${basisHTML(v,-1)}<div class="zug"><span class="t">${v.ja.t} <span class="minbadge">${v.ja.min} Min · ${v.ja.zeit}</span></span><span>${lego(v.ja.x)}</span><span class="m">Material: ${lego(v.ja.m)}</span></div>`;
+    const more=`${wantsExtra(-1)||val('aufwand')==="we"?`<div class="zug"><span class="t">Wochenend-Zugabe: ${v.extra.t} <span class="minbadge">${v.extra.min} Min · tagsüber</span></span><span>${v.extra.x}</span><span class="m">Material: ${v.extra.m}</span></div>`:""}<p class="tipp"><b>Vorher vorlesen:</b> „Wie Tomte zu euch kam“, Kapitel 1, 2, 3 und 6 (<a href="#geschichte">hier</a>). Danach weiß das Kind, wer da fragt und warum ihn niemand sehen darf.</p><p class="tipp"><b>Wenn das Kind Nein sagt oder zögert:</b> Rubis Warte-Zettel hinlegen, nichts montieren, später oder nächstes Jahr wieder fragen. Zettel: „${fill(v.nein.text)}“</p><p class="tipp"><b>Für euch:</b> ${v.tipp}</p>`;
+    return {core:core, more:more, labels:["Vorlesen","Nein-Pfad","Tipps"]}; }
+  function eveningMin(i){ if(i<0) return C.vorabend.basis.min; const day=C.tage[i], mode=state.modes[i];
+    if(mode==="reise") return 2; if(val('aufwand')==="briefe"&&!mode) return 1;
+    let m=1+(day.basis&&mode!=="wenig"?(+day.basis.min||0):0); if(mode==="wenig"&&day.basis&&!PROPFREI.has(day.n)) m+=Math.min(+day.basis.min||0,3);
+    const s=val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i); if(s&&s.teil!==2) m+=(+s.x.min||0); return m; }
+  function kalHTML(){ const kapNames={1:"Einzug",2:"Hilfe, die schiefgeht",3:"Tomtes Geheimnis",4:"Abschied"}; const ti=todayIndex();
+    if(!openInit){ openInit=true; const p=ti+1; if(p>=-1&&p<=23) openDay=p; }
+    let h=`<div class="kal-kopf"><h3>Die 24 Tage</h3><div class="kal-ansicht" role="group" aria-label="Ansicht"><span>Ansicht</span><button type="button" data-view="a" aria-pressed="${kalView==="a"}">A · Aufklappen</button><button type="button" data-view="b" aria-pressed="${kalView==="b"}">B · Fenster</button></div></div>`;
+    h+=`<p class="kal-legende"><span><i class="mk-min">4′</i> Minuten am Abend</span><span><i class="mk">●</i> Streich</span><span><i class="mk">◆</i> Kleinigkeit</span><span><i class="mk">✓</i> vorbereitet</span></p>`;
+    h+=`<div class="kal" id="kal">`;
+    const vd=dateOf(-1);
+    h+=`<button type="button" class="kal-vor ${state.done.v?"done":""} ${ti>=0?"vorbei":""} ${openDay===-1?"offen":""}" data-open="-1" aria-expanded="${openDay===-1}"><span class="kn">0</span><span class="kt">Vorabend · ${C.vorabend.titel}</span><span class="kd">${fmt(vd)} · Zettel von Rubi${state.done.v?" · ✓":""}</span></button>`;
+    C.tage.forEach((day,i)=>{ const d=dateOf(i), mode=state.modes[i]; const s=val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i); const k=$('#klein').checked&&C.klein[day.n];
+      const cls=["kal-tag", state.done[i]?"done":"", i<ti?"vorbei":"", i===ti?"heute":"", mode?"m-"+mode:"", openDay===i?"offen":"", day.n===1||C.tage[i-1]&&C.tage[i-1].kap!==day.kap?"kap-start":""].join(" ");
+      h+=`<button type="button" class="${cls}" data-open="${i}" aria-expanded="${openDay===i}" title="Tag ${day.n} · ${fill(day.titel).replace(/"/g,"&quot;")} · Kapitel ${day.kap}: ${kapNames[day.kap]}"><span class="kn">${day.n}</span><span class="kd">${WD[d.getDay()]} ${d.getDate()}.${d.getMonth()+1}.</span><span class="km"><i class="mk-min">${eveningMin(i)}′</i>${s&&s.teil!==2?'<i class="mk" aria-label="Streich">●</i>':""}${k?'<i class="mk" aria-label="Kleinigkeit">◆</i>':""}${state.done[i]?'<i class="mk" aria-label="vorbereitet">✓</i>':""}</span>${mode==="reise"?'<span class="kx">unterwegs</span>':mode==="wenig"?'<span class="kx">wenig Zeit</span>':""}</button>`; });
+    h+=`</div>`; return h; }
+  function detailHTML(i){ const isV=i===-1; const day=isV?null:C.tage[i]; const p=isV?vorabendHTML():dayParts(day,i); const mode=isV?null:state.modes[i];
+    const titel=isV?C.vorabend.titel:fill(day.titel); const d=dateOf(i);
+    let head=`<div class="kd-kopf"><span class="num">${isV?0:day.n}</span><div><h4>${titel}</h4><p class="date">${isV?"Vorabend · ":""}${fmt(d)}${mode==="wenig"?" · wenig Zeit":mode==="reise"?" · unterwegs":""}</p></div><button type="button" class="kd-zu" data-close aria-label="Schließen">×</button></div>`;
+    if(!isV&&!mode&&day.extra){ const on=wantsExtra(i); head+=`<span class="mode"><button type="button" data-i="${i}" data-l="basis" aria-pressed="${!on}">Nötiges</button><button type="button" data-i="${i}" data-l="we" aria-pressed="${on}">+ Zugabe</button></span>`; }
+    const mehr=isV?p.labels:p.labels.concat(["Chronik"]);
+    const body=p.core+`<details class="kd-mehr" ${state.mehrOffen?"open":""}><summary>Mehr: ${mehr.join(", ")}</summary><div class="kd-mehr-in">${p.more}${isV?"":answerHTML(i,"Antwort der Kinder (für die Chronik)")}</div></details>`+doneBtn(isV?"v":i);
+    const prev=i>-1?i-1:null, next=i<23?i+1:null; const lab=j=>j===-1?"Vorabend":"Tag "+C.tage[j].n;
+    const nav=`<div class="kd-nav">${prev!==null?`<button type="button" class="btn btn-ghost btn-mini" data-go="${prev}">‹ ${lab(prev)}</button>`:"<span></span>"}${next!==null?`<button type="button" class="btn btn-ghost btn-mini" data-go="${next}">${lab(next)} ›</button>`:"<span></span>"}</div>`;
+    return `<div class="day kd ${state.done[isV?"v":i]?"done":""}">${head}${body}${nav}</div>`; }
+  function bindDay(root){
+    root.querySelectorAll('.mode button').forEach(b=>b.onclick=()=>{ state.dayLevel[b.dataset.i]=b.dataset.l; rerender(); });
+    root.querySelectorAll('[data-nope]').forEach(b=>b.onclick=()=>{ state.nope=state.nope||{}; const k=b.dataset.nope; if(state.nope[k]) delete state.nope[k]; else state.nope[k]=1; rerender(); });
+    root.querySelectorAll('[data-snext]').forEach(b=>b.onclick=()=>{ const k=b.dataset.snext; state.streichSkip=state.streichSkip||{}; state.streichSkip[k]=(state.streichSkip[k]||0)+1; rerender(); });
+    root.querySelectorAll('[data-soff]').forEach(b=>b.onclick=()=>{ state.streichOff=state.streichOff||{}; state.streichOff[b.dataset.soff]=1; rerender(); });
+    root.querySelectorAll('[data-son]').forEach(b=>b.onclick=()=>{ delete state.streichOff[b.dataset.son]; rerender(); });
+    root.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{ const k=b.dataset.done; if(state.done[k]) delete state.done[k]; else state.done[k]=1; rerender(); });
+    root.querySelectorAll('textarea[data-ans]').forEach(t=>t.addEventListener('input',()=>{ state.answers[t.dataset.ans]=t.value; save(); }));
+    root.querySelectorAll('details.kd-mehr').forEach(dt=>dt.addEventListener('toggle',()=>{ state.mehrOffen=dt.open; }));
+    root.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{ const was=openDay; openDay=null; rerender(); focusTile(was); });
+    root.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{ openDay=+b.dataset.go; rerender(); if(kalView==="a") scrollToDetail(); else { const s=$('#kalSheet .ks-in'); if(s) s.scrollTop=0; } });
+    root.querySelectorAll('.heute [data-openheute]').forEach(b=>b.onclick=()=>{ openDay=+b.dataset.openheute; rerender(); if(kalView==="a") scrollToDetail(); });
+  }
+  function bindKal(root){
+    root.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.open; openDay = (openDay===i && kalView==="a") ? null : i; rerender(); if(openDay!==null&&kalView==="a") scrollToDetail(true); });
+    root.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{ kalView=b.dataset.view; try{ localStorage.setItem(VIEWKEY,kalView); }catch(e){} rerender(); });
+  }
+  function focusTile(i){ if(i===null) return; const t=document.querySelector('#kal [data-open="'+i+'"]'); if(t) t.focus({preventScroll:true}); }
+  function scrollToDetail(soft){ const el=document.querySelector('#kal>.kd'); if(!el) return; const r=el.getBoundingClientRect(); const navH=64;
+    if(soft && r.top>navH && r.top<window.innerHeight*0.55) return; window.scrollTo({top:window.scrollY+r.top-navH-90,behavior:"smooth"}); }
+  function placeInline(){ const kal=$('#kal'); if(!kal) return; const old=kal.querySelector(':scope>.kd'); if(old) old.remove(); if(openDay===null||kalView!=="a") return;
+    const tmp=document.createElement('div'); tmp.innerHTML=detailHTML(openDay); const panel=tmp.firstElementChild;
+    if(openDay===-1){ kal.querySelector('.kal-vor').after(panel); }
+    else { const tiles=[...kal.querySelectorAll('.kal-tag')]; const cols=getComputedStyle(kal).gridTemplateColumns.split(' ').filter(Boolean).length||6; const end=Math.min(tiles.length-1, Math.floor(openDay/cols)*cols+cols-1); tiles[end].after(panel);
+      panel.style.setProperty('--pfeil', ((openDay%cols)+.5)/cols*100+'%'); }
+    bindDay(panel); }
+  function sheetEl(){ let s=$('#kalSheet'); if(s) return s; s=document.createElement('div'); s.id="kalSheet"; s.className="kal-sheet"; s.setAttribute('role','dialog'); s.setAttribute('aria-modal','true'); s.setAttribute('aria-label','Tag im Plan');
+    s.innerHTML='<div class="ks-hinter" data-ksclose></div><div class="ks-box"><div class="ks-griff" aria-hidden="true"></div><div class="ks-in"></div></div>'; document.body.appendChild(s);
+    s.querySelector('[data-ksclose]').onclick=()=>{ const was=openDay; openDay=null; rerender(); focusTile(was); };
+    return s; }
+  function showDetail(){ placeInline(); const s=$('#kalSheet');
+    if(kalView!=="b"||openDay===null){ if(s&&s.classList.contains('open')){ s.classList.remove('open'); document.documentElement.classList.remove('ks-lock'); } return; }
+    const sh=sheetEl(); const inn=sh.querySelector('.ks-in'); const keep=sh.classList.contains('open')?inn.scrollTop:0; inn.innerHTML=detailHTML(openDay); bindDay(inn); inn.scrollTop=keep;
+    if(!sh.classList.contains('open')){ sh.classList.add('open'); document.documentElement.classList.add('ks-lock'); const z=inn.querySelector('[data-close]'); if(z) z.focus({preventScroll:true}); } }
+  document.addEventListener('keydown',e=>{ if(e.key==="Escape"&&openDay!==null&&$('#out').dataset.built&&!document.querySelector('.overlay.open')){ const was=openDay; openDay=null; rerender(); focusTile(was); } });
+  let _rz; window.addEventListener('resize',()=>{ clearTimeout(_rz); _rz=setTimeout(()=>{ if(kalView==="a"&&openDay!==null) placeInline(); },120); });
+
   function showLink(l){ $('#linkField').value=l; $('#linkDlg').classList.add('open'); $('#linkField').focus(); $('#linkField').select(); }
   function rerender(){ buildNotfall(); buildStreiche(); if($('#out').dataset.built) render(); else save(); }
   $('#form').addEventListener('submit',e=>{ e.preventDefault(); render(); $('#out').scrollIntoView({behavior:"smooth",block:"start"}); });
