@@ -189,7 +189,7 @@
     save(); }
 
   // ---- Kalender-Raster: A = klappt unter der Reihe auf, B = eigenes Fenster ----
-  let openDay=null, openInit=false;
+  let openDay=null, openInit=false, prevSig=null;
   const VIEWKEY="tomtini-ansicht";
   function getView(){ try{ const q=new URLSearchParams(location.search).get('ansicht'); if(q==="a"||q==="b") return q; return localStorage.getItem(VIEWKEY)||"a"; }catch(e){ return "a"; } }
   let kalView=getView();
@@ -204,14 +204,15 @@
   function kalHTML(){ const kapNames={1:"Einzug",2:"Hilfe, die schiefgeht",3:"Tomtes Geheimnis",4:"Abschied"}; const ti=todayIndex();
     if(!openInit){ openInit=true; const p=ti+1; if(p>=-1&&p<=23) openDay=p; }
     let h=`<div class="kal-kopf"><h3>Die 24 Tage</h3><div class="kal-ansicht" role="group" aria-label="Ansicht"><span>Ansicht</span><button type="button" data-view="a" aria-pressed="${kalView==="a"}">A · Aufklappen</button><button type="button" data-view="b" aria-pressed="${kalView==="b"}">B · Fenster</button></div></div>`;
-    h+=`<p class="kal-legende"><span><i class="mk-min">4′</i> Minuten am Abend</span><span><i class="mk">●</i> Streich</span><span><i class="mk">◆</i> Kleinigkeit</span><span><i class="mk">✓</i> vorbereitet</span></p>`;
+    h+=`<p class="kal-legende"><span><i class="mk-min">4′</i> Minuten am Abend</span><span><i class="mk">●</i> lieb</span><span><i class="mk">●●</i> frech</span><span><i class="mk">●●●</i> ganz schön frech</span><span><i class="mk">○</i> Streich, 2. Abend</span><span><i class="mk">◆</i> Kleinigkeit</span><span><i class="mk">✓</i> vorbereitet</span></p>`;
     h+=`<div class="kal" id="kal">`;
     const vd=dateOf(-1);
     h+=`<button type="button" class="kal-vor ${state.done.v?"done":""} ${ti>=0?"vorbei":""} ${openDay===-1?"offen":""}" data-open="-1" aria-expanded="${openDay===-1}"><span class="kn">0</span><span class="kt">Vorabend · ${C.vorabend.titel}</span><span class="kd">${fmt(vd)} · Zettel von Rubi${state.done.v?" · ✓":""}</span></button>`;
-    C.tage.forEach((day,i)=>{ const d=dateOf(i), mode=state.modes[i]; const s=val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i); const k=$('#klein').checked&&C.klein[day.n];
-      const cls=["kal-tag", state.done[i]?"done":"", i<ti?"vorbei":"", i===ti?"heute":"", mode?"m-"+mode:"", openDay===i?"offen":"", day.n===1||C.tage[i-1]&&C.tage[i-1].kap!==day.kap?"kap-start":""].join(" ");
-      h+=`<button type="button" class="${cls}" data-open="${i}" aria-expanded="${openDay===i}" title="Tag ${day.n} · ${fill(day.titel).replace(/"/g,"&quot;")} · Kapitel ${day.kap}: ${kapNames[day.kap]}"><span class="kn">${day.n}</span><span class="kd">${WD[d.getDay()]} ${d.getDate()}.${d.getMonth()+1}.</span><span class="km"><i class="mk-min">${eveningMin(i)}′</i>${s&&s.teil!==2?'<i class="mk" aria-label="Streich">●</i>':""}${k?'<i class="mk" aria-label="Kleinigkeit">◆</i>':""}${state.done[i]?'<i class="mk" aria-label="vorbereitet">✓</i>':""}</span>${mode==="reise"?'<span class="kx">unterwegs</span>':mode==="wenig"?'<span class="kx">wenig Zeit</span>':""}</button>`; });
-    h+=`</div>`; return h; }
+    const newSig={};
+    C.tage.forEach((day,i)=>{ const d=dateOf(i), mode=state.modes[i]; const s=val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i); const k=$('#klein').checked&&C.klein[day.n]; const sig=s?s.x.id+":"+s.teil:""; const neu=prevSig!==null&&prevSig[i]!==sig; newSig[i]=sig;
+      const cls=["kal-tag", state.done[i]?"done":"", i<ti?"vorbei":"", i===ti?"heute":"", mode?"m-"+mode:"", openDay===i?"offen":"", neu?"neu":"", day.n===1||C.tage[i-1]&&C.tage[i-1].kap!==day.kap?"kap-start":""].join(" ");
+      h+=`<button type="button" class="${cls}" data-open="${i}" aria-expanded="${openDay===i}" title="Tag ${day.n} · ${fill(day.titel).replace(/"/g,"&quot;")} · Kapitel ${day.kap}: ${kapNames[day.kap]}"><span class="kn">${day.n}</span><span class="kd">${WD[d.getDay()]} ${d.getDate()}.${d.getMonth()+1}.</span><span class="km"><i class="mk-min">${eveningMin(i)}′</i>${s?`<i class="mk mk-f f${s.x.f}" aria-label="Streich, ${C.streicheFrech.find(o=>o.f===s.x.f).t}${s.teil===2?", zweiter Abend":""}">${s.teil===2?"○":"●".repeat(s.x.f)}</i>`:""}${k?'<i class="mk" aria-label="Kleinigkeit">◆</i>':""}${state.done[i]?'<i class="mk" aria-label="vorbereitet">✓</i>':""}</span>${mode==="reise"?'<span class="kx">unterwegs</span>':mode==="wenig"?'<span class="kx">wenig Zeit</span>':""}</button>`; });
+    h+=`</div>`; prevSig=newSig; return h; }
   function detailHTML(i){ const isV=i===-1; const day=isV?null:C.tage[i]; const p=isV?vorabendHTML():dayParts(day,i); const mode=isV?null:state.modes[i];
     const titel=isV?C.vorabend.titel:fill(day.titel); const d=dateOf(i);
     let head=`<div class="kd-kopf"><span class="num">${isV?0:day.n}</span><div><h4>${titel}</h4><p class="date">${isV?"Vorabend · ":""}${fmt(d)}${mode==="wenig"?" · wenig Zeit":mode==="reise"?" · unterwegs":""}</p></div><button type="button" class="kd-zu" data-close aria-label="Schließen">×</button></div>`;
@@ -274,19 +275,22 @@
     const mk=(id,list)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); g.appendChild(b); }); };
     mk('#tagGrid',C.tagsueber); mk('#hilfeGrid',C.hilfe);
   C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
-  let streichStufe=1, streichFrech=0;
-  function buildStreiche(){ const tabs=$('#streichTabs'), grid=$('#streichGrid'), ft=$('#streichFrech'); if(!tabs||!C.streiche) return;
+  const stOffen=new Set(), streichOffen=new Set();
+  function buildStreiche(){ const grid=$('#streichGrid'), ft=$('#streichFrech'); if(!grid||!C.streiche) return;
     $('#streichZahl').textContent=C.streiche.length; const tier=$('#haustier').checked;
-    const pass=x=>!streichFrech||x.f===streichFrech; const anz=s=>C.streiche.filter(x=>x.s===s&&pass(x)).length;
-    tabs.innerHTML=C.streicheStufen.map(st=>`<label><input type="radio" name="streichStufe" value="${st.s}" ${st.s===streichStufe?"checked":""}><span>${st.s} · ${st.kurz} <i>${anz(st.s)}</i></span></label>`).join("");
-    tabs.querySelectorAll('input').forEach(r=>r.onchange=()=>{ streichStufe=+r.value; buildStreiche(); });
-    ft.innerHTML=C.streicheFrech.map(o=>`<label><input type="radio" name="streichFrech" value="${o.f}" ${o.f===streichFrech?"checked":""}><span>${o.t}</span></label>`).join("");
-    ft.querySelectorAll('input').forEach(r=>r.onchange=()=>{ streichFrech=+r.value; buildStreiche(); });
+    const planV=val('streichPlan')||"lieb"; const max=(C.streichePlan.find(o=>o.v===planV)||{max:0}).max;
+    const pass=x=>!max||x.f<=max;
+    // Ein Schalter für beides: dieselben vier Werte wie im Generator, synchron
+    ft.innerHTML=C.streichePlan.map(o=>`<label><input type="radio" name="streichFrechSync" value="${o.v}" ${o.v===planV?"checked":""}><span>${o.t.charAt(0).toUpperCase()+o.t.slice(1)}</span></label>`).join("");
+    ft.querySelectorAll('input').forEach(r=>r.onchange=()=>{ setRadio('streichPlan',r.value); rerender(); });
     const fname=f=>C.streicheFrech.find(o=>o.f===f).t;
-    const st=C.streicheStufen.find(x=>x.s===streichStufe); const list=C.streiche.filter(x=>x.s===streichStufe&&pass(x)).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0))||a.f-b.f);
-    $('#streichStufe').innerHTML=`Stufe ${st.s}. ${st.t}<small>${list.length} ${list.length===1?"Streich":"Streiche"}${streichFrech?" · "+fname(streichFrech):""}</small>`;
-    const badge=x=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
-    grid.innerHTML=list.length?list.map(x=>`<article class="streich"><h4><span>${x.t}</span></h4><p class="marken"><span class="minbadge">${badge(x)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</article>`).join(""):`<p class="streich-leer">In dieser Stufe gibt es keinen Streich mit dieser Frechheit. Eine andere Stufe antippen.</p>`; }
+    const badge=(x,st)=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
+    const hinweis=max?"":`<p class="streich-leer">Im Kalender sind Streiche gerade aus. Zum Stöbern stehen hier trotzdem alle.</p>`;
+    grid.innerHTML=hinweis+C.streicheStufen.map(st=>{ const list=C.streiche.filter(x=>x.s===st.s&&pass(x)).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0))||a.f-b.f); const leer=!list.length;
+      return `<details class="st-stufe ${leer?"leer":""}" data-s="${st.s}" ${!leer&&stOffen.has(st.s)?"open":""}><summary><span class="st-n">${st.s}</span><span class="st-t">${st.kurz}<small>${st.t}</small></span><span class="st-z">${leer?"keine":list.length+" "+(list.length===1?"Streich":"Streiche")}</span></summary><div class="streich-grid">${list.map(x=>`<details class="streich" data-id="${x.id}" ${streichOffen.has(x.id)?"open":""}><summary><h4><span>${x.t}</span></h4><p class="marken"><span class="minbadge">${badge(x,st)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p></summary><div class="streich-in"><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</div></details>`).join("")}</div></details>`; }).join("");
+    grid.querySelectorAll('details.st-stufe').forEach(d=>{ const sm=d.querySelector(':scope>summary'); if(d.classList.contains('leer')){ sm.setAttribute('aria-disabled','true'); sm.onclick=e=>e.preventDefault(); return; } d.addEventListener('toggle',()=>{ const k=+d.dataset.s; d.open?stOffen.add(k):stOffen.delete(k); }); });
+    grid.querySelectorAll('details.streich').forEach(d=>d.addEventListener('toggle',()=>{ d.open?streichOffen.add(d.dataset.id):streichOffen.delete(d.dataset.id); }));
+  }
   buildStreiche();
   function nfParas(n){ return kurz()&&n.kurz?n.kurz:n.brief; }
   function openNotfall(n,who){ const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;
