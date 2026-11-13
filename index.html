@@ -581,7 +581,53 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
    schnell - beim Umsehen schiebt sich der Vordergrund sichtbar vor den Raum. */
 .magie-welt{position:absolute;top:50%;left:50%;width:126vw;height:126vh;
   transform:translate(calc(-50% + (0.5 - var(--wx)) * 11vw), calc(-50% + (0.5 - var(--wy)) * 11vh));
-  background:#0a0f28 url(magie/werkstatt.webp) center/cover no-repeat}
+  background:#0a0f28;display:grid;place-items:center;overflow:hidden}
+/* Das Bild sitzt in einer eigenen Flaeche mit dem Seitenverhaeltnis der Illustration. Dadurch
+   deckt es wie "cover" den Raum ab, und die Lichtstrahlen darin lassen sich in Prozent des
+   Bildes setzen - sie bleiben also auf jedem Bildschirm genau auf ihrer Lampe sitzen. */
+.magie-bild{position:relative;isolation:isolate;min-width:100%;min-height:100%;aspect-ratio:2048/1156;
+  background:url(magie/werkstatt.webp) center/100% 100% no-repeat}
+
+/* Licht aus den Quellen im Bild: additiv ueber die Illustration gelegt, damit es wirklich
+   leuchtet statt hell aufgemalt zu wirken. Der Staub liegt darueber und zieht durch den Kegel. */
+.strahl{position:absolute;pointer-events:none;mix-blend-mode:screen;will-change:opacity}
+.s-lampe{left:47.5%;top:40.5%;width:30%;height:50%;transform-origin:50% 0;
+  transform:translateX(-50%) rotate(29deg);
+  background:radial-gradient(ellipse 62% 100% at 50% 0,
+    rgba(255,221,158,.42),rgba(255,210,138,.14) 42%,rgba(255,200,120,0) 76%);
+  filter:blur(14px);animation:lampenlicht 7.5s ease-in-out infinite}
+/* Einzelne Strahlen im Kegel: schmal, sehr leise, mit leicht verschiedenen Winkeln und
+   Takten - zusammen ergeben sie den Eindruck von Licht, das sichtbar durch den Raum faellt. */
+.s-bahn{left:47.5%;top:41%;width:5.5%;transform-origin:50% 0;
+  background:linear-gradient(to bottom,rgba(255,228,176,.32),rgba(255,218,150,.12) 38%,rgba(255,214,140,0) 74%);
+  filter:blur(7px)}
+.s-bahn-a{height:44%;transform:translateX(-50%) rotate(17deg);animation:bahn 9s ease-in-out infinite}
+.s-bahn-b{height:50%;transform:translateX(-50%) rotate(28deg);animation:bahn 11s ease-in-out infinite;animation-delay:-3.5s}
+.s-bahn-c{height:41%;transform:translateX(-50%) rotate(39deg);animation:bahn 8s ease-in-out infinite;animation-delay:-6s}
+@keyframes bahn{0%,100%{opacity:.45}50%{opacity:.95}}
+.s-lampe-kopf{left:47.5%;top:41%;width:11%;height:19%;transform:translate(-50%,-42%);
+  background:radial-gradient(circle,rgba(255,228,170,.6),rgba(255,200,120,.18) 45%,rgba(255,200,120,0) 72%);
+  filter:blur(6px);animation:lampenlicht 7.5s ease-in-out infinite}
+.s-kerze{left:47.3%;top:47%;width:10%;height:12%;transform:translate(-50%,-52%);
+  background:radial-gradient(circle,rgba(255,226,166,.8),rgba(255,192,104,.26) 40%,rgba(255,184,92,0) 72%);
+  filter:blur(4px);animation:kerzenlicht 2.6s ease-in-out infinite}
+.s-kerze-schein{left:47.3%;top:46.4%;width:7%;height:20%;transform:translate(-50%,-82%);
+  background:radial-gradient(ellipse 38% 100% at 50% 100%,
+    rgba(255,218,150,.34),rgba(255,214,140,.1) 46%,rgba(255,214,140,0) 76%);
+  filter:blur(9px);animation:kerzenlicht 2.6s ease-in-out infinite}
+.s-kette{left:28%;top:29.5%;width:53%;height:7%;transform:translateY(-50%);
+  background:linear-gradient(to bottom,rgba(255,214,150,0),rgba(255,214,150,.4) 50%,rgba(255,214,150,0));
+  filter:blur(8px);animation:kettenlicht 5.5s ease-in-out infinite}
+.s-kette-r{left:78%;top:30%;width:16%;height:6%;transform-origin:0 50%;
+  transform:rotate(48deg);
+  background:linear-gradient(to bottom,rgba(255,214,150,0),rgba(255,214,150,.34) 50%,rgba(255,214,150,0));
+  filter:blur(8px);animation:kettenlicht 5.5s ease-in-out infinite;animation-delay:-2.2s}
+.s-drucker{left:35.5%;top:41%;width:8%;height:10%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(226,232,255,.4),rgba(200,214,255,.12) 45%,rgba(200,214,255,0) 72%);
+  filter:blur(5px);animation:kettenlicht 6.8s ease-in-out infinite;animation-delay:-3.4s}
+@keyframes lampenlicht{0%,100%{opacity:1}42%{opacity:.84}68%{opacity:.95}}
+@keyframes kerzenlicht{0%,100%{opacity:.95}28%{opacity:.58}46%{opacity:1}74%{opacity:.74}}
+@keyframes kettenlicht{0%,100%{opacity:.78}50%{opacity:1}}
 .magie-vorn{position:absolute;top:50%;left:50%;width:170vw;height:170vh;
   transform:translate(calc(-50% + (0.5 - var(--wx)) * 34vw), calc(-50% + (0.5 - var(--wy)) * 34vh))}
 .w-staub{position:absolute;inset:0}
@@ -668,7 +714,20 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
 <body>
 
 <div class="magie" id="magie" aria-hidden="true">
-  <div class="magie-welt" id="magieWelt"></div>
+  <div class="magie-welt" id="magieWelt">
+    <div class="magie-bild">
+      <span class="strahl s-lampe"></span>
+      <span class="strahl s-lampe-kopf"></span>
+      <span class="strahl s-bahn s-bahn-a"></span>
+      <span class="strahl s-bahn s-bahn-b"></span>
+      <span class="strahl s-bahn s-bahn-c"></span>
+      <span class="strahl s-kerze-schein"></span>
+      <span class="strahl s-kerze"></span>
+      <span class="strahl s-kette"></span>
+      <span class="strahl s-kette-r"></span>
+      <span class="strahl s-drucker"></span>
+    </div>
+  </div>
   <div class="magie-vorn" id="magieVorn">
     <div class="w-staub" id="wStaub"></div>
   </div>
