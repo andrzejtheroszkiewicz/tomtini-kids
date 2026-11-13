@@ -595,74 +595,52 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
   transform:translateX(-50%) rotate(29deg);
   background:radial-gradient(ellipse 62% 100% at 50% 0,
     rgba(255,221,158,.42),rgba(255,210,138,.14) 42%,rgba(255,200,120,0) 76%);
-  filter:blur(14px);animation:lampenkegel 9s ease-in-out infinite}
-/* Einzelne Strahlen im Kegel: schmal, sehr leise, mit leicht verschiedenen Winkeln und
-   Takten - zusammen ergeben sie den Eindruck von Licht, das sichtbar durch den Raum faellt. */
+  filter:blur(14px);opacity:.92}
+/* Einzelne Strahlen im Kegel: schmal, sehr leise, in leicht verschiedenen Winkeln -
+   zusammen ergeben sie den Eindruck von Licht, das sichtbar durch den Raum faellt. */
 .s-bahn{left:47.5%;top:41%;width:5.5%;transform-origin:50% 0;
   background:linear-gradient(to bottom,rgba(255,228,176,.32),rgba(255,218,150,.12) 38%,rgba(255,214,140,0) 74%);
   filter:blur(7px)}
-.s-bahn-a{height:44%;transform:translateX(-50%) rotate(17deg);animation:bahn-a 13s ease-in-out infinite}
-.s-bahn-b{height:50%;transform:translateX(-50%) rotate(28deg);animation:bahn-b 17s ease-in-out infinite;animation-delay:-5s}
-.s-bahn-c{height:41%;transform:translateX(-50%) rotate(39deg);animation:bahn-c 11s ease-in-out infinite;animation-delay:-7s}
-/* Die Strahlen blenden nicht nur auf und ab, sie wandern auch leicht im Winkel. */
-@keyframes bahn-a{0%,100%{transform:translateX(-50%) rotate(15deg);opacity:.4}
-  50%{transform:translateX(-50%) rotate(20.5deg);opacity:.95}}
-@keyframes bahn-b{0%,100%{transform:translateX(-50%) rotate(29.5deg);opacity:.95}
-  50%{transform:translateX(-50%) rotate(25.5deg);opacity:.42}}
-@keyframes bahn-c{0%,100%{transform:translateX(-50%) rotate(40.5deg);opacity:.5}
-  55%{transform:translateX(-50%) rotate(36.5deg);opacity:.9}}
+.s-bahn-a{height:44%;transform:translateX(-50%) rotate(17deg);opacity:.72}
+.s-bahn-b{height:50%;transform:translateX(-50%) rotate(28deg);opacity:.8}
+.s-bahn-c{height:41%;transform:translateX(-50%) rotate(39deg);opacity:.66}
 .s-lampe-kopf{left:47.5%;top:41%;width:11%;height:19%;transform:translate(-50%,-42%);
   background:radial-gradient(circle,rgba(255,228,170,.6),rgba(255,200,120,.18) 45%,rgba(255,200,120,0) 72%);
-  filter:blur(6px);animation:lampenlicht 7.5s ease-in-out infinite}
+  filter:blur(6px);opacity:.9}
 .s-kerze{left:47.3%;top:47%;width:10%;height:12%;transform:translate(-50%,-52%);
   background:radial-gradient(circle,rgba(255,226,166,.8),rgba(255,192,104,.26) 40%,rgba(255,184,92,0) 72%);
-  filter:blur(4px);animation:kerzenlicht 2.6s ease-in-out infinite}
+  filter:blur(4px);opacity:.92}
 .s-kerze-schein{left:47.3%;top:46.4%;width:7%;height:20%;transform:translate(-50%,-82%);
   background:radial-gradient(ellipse 38% 100% at 50% 100%,
     rgba(255,218,150,.34),rgba(255,214,140,.1) 46%,rgba(255,214,140,0) 76%);
-  filter:blur(9px);animation:kerzenschein 3.1s ease-in-out infinite}
-.s-kette-glanz{left:28%;top:29.5%;width:53%;height:7%;transform:translateY(-50%);
-  background:repeating-linear-gradient(90deg,rgba(255,228,172,.5) 0 9px,rgba(255,228,172,0) 9px 64px);
-  background-size:200% 100%;filter:blur(10px);animation:kettenglanz 9s linear infinite}
-.s-kette-glanz-r{left:78%;top:30%;width:16%;height:6%;transform-origin:0 50%;transform:rotate(48deg);
-  background:repeating-linear-gradient(90deg,rgba(255,228,172,.45) 0 8px,rgba(255,228,172,0) 8px 54px);
-  background-size:200% 100%;filter:blur(9px);animation:kettenglanz 11s linear infinite;animation-delay:-4s}
+  filter:blur(9px);opacity:.78}
 .s-kette{left:28%;top:29.5%;width:53%;height:7%;transform:translateY(-50%);
   background:linear-gradient(to bottom,rgba(255,214,150,0),rgba(255,214,150,.4) 50%,rgba(255,214,150,0));
-  filter:blur(8px);animation:kettenlicht 5.5s ease-in-out infinite}
+  filter:blur(8px);opacity:.72}
 .s-kette-r{left:78%;top:30%;width:16%;height:6%;transform-origin:0 50%;
   transform:rotate(48deg);
   background:linear-gradient(to bottom,rgba(255,214,150,0),rgba(255,214,150,.34) 50%,rgba(255,214,150,0));
-  filter:blur(8px);animation:kettenlicht 5.5s ease-in-out infinite;animation-delay:-2.2s}
+  filter:blur(8px);opacity:.66}
 .s-drucker{left:35.5%;top:41%;width:8%;height:10%;transform:translate(-50%,-50%);
   background:radial-gradient(circle,rgba(226,232,255,.4),rgba(200,214,255,.12) 45%,rgba(200,214,255,0) 72%);
-  filter:blur(5px);animation:druckerlicht 6.8s ease-in-out infinite;animation-delay:-3.4s}
-/* Der Kegel atmet in Breite und Staerke, statt nur heller und dunkler zu werden. */
-@keyframes lampenkegel{0%,100%{opacity:1;transform:translateX(-50%) rotate(29deg) scaleX(1)}
-  38%{opacity:.82;transform:translateX(-50%) rotate(27.6deg) scaleX(.93)}
-  66%{opacity:.97;transform:translateX(-50%) rotate(30.2deg) scaleX(1.07)}}
-@keyframes lampenlicht{0%,100%{opacity:1}42%{opacity:.84}68%{opacity:.95}}
-/* Unregelmaessiges Flackern mit leichtem Wackeln - eine Flamme zuckt nie im Takt. */
-@keyframes kerzenlicht{0%{opacity:.92;transform:translate(-50%,-52%) scale(1)}
-  12%{opacity:.58;transform:translate(-50.9%,-52%) scale(.93)}
-  26%{opacity:1;transform:translate(-49.3%,-53.1%) scale(1.07)}
-  41%{opacity:.7;transform:translate(-50.5%,-52%) scale(.96)}
-  58%{opacity:.98;transform:translate(-49.7%,-52.7%) scale(1.05)}
-  73%{opacity:.62;transform:translate(-50.7%,-52%) scale(.94)}
-  88%{opacity:.96;transform:translate(-50%,-52.5%) scale(1.03)}
-  100%{opacity:.92;transform:translate(-50%,-52%) scale(1)}}
-@keyframes kerzenschein{0%{opacity:.8;transform:translate(-50%,-82%) scaleY(1)}
-  18%{opacity:.45;transform:translate(-50.6%,-82%) scaleY(.88)}
-  37%{opacity:1;transform:translate(-49.5%,-83%) scaleY(1.1)}
-  62%{opacity:.6;transform:translate(-50.4%,-82%) scaleY(.94)}
-  81%{opacity:.95;transform:translate(-49.8%,-82.6%) scaleY(1.05)}
-  100%{opacity:.8;transform:translate(-50%,-82%) scaleY(1)}}
-@keyframes kettenlicht{0%,100%{opacity:.78}50%{opacity:1}}
-/* Ein Schimmer wandert die Lichterkette entlang, damit sie nicht als ganzes Band pulst. */
-@keyframes kettenglanz{0%{background-position:0 0;opacity:.3}
-  50%{opacity:.85}100%{background-position:200% 0;opacity:.3}}
-@keyframes druckerlicht{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.94)}
-  45%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+  filter:blur(5px);opacity:.8}
+/* Die Laempchen der Lichterkette: ihre Stellen sind aus dem Bild gemessen, jedes bekommt
+   seinen eigenen Takt und seine eigene Phase. Nur sie funkeln - alles andere Licht steht ruhig. */
+.lampen{position:absolute;inset:0;pointer-events:none}
+.lampen span{position:absolute;border-radius:50%;transform:translate(-50%,-50%);
+  mix-blend-mode:screen;animation-timing-function:ease-in-out;animation-iteration-count:infinite;
+  background:radial-gradient(circle,rgba(255,248,222,.95) 0 13%,
+    rgba(255,220,152,.6) 30%,rgba(255,200,116,.2) 54%,transparent 78%)}
+/* Ungleich verteilte Stuetzpunkte mit ungleichen Werten: so entsteht kein Sinus, sondern
+   ein unruhiges Glimmen, das sich erst nach Minuten wiederholt. */
+@keyframes funkeln-1{0%{opacity:.72}7%{opacity:.98}13%{opacity:.54}21%{opacity:.9}
+  29%{opacity:.44}34%{opacity:1}48%{opacity:.67}55%{opacity:.93}63%{opacity:.5}
+  71%{opacity:.86}82%{opacity:.6}91%{opacity:1}100%{opacity:.72}}
+@keyframes funkeln-2{0%{opacity:.9}11%{opacity:.58}18%{opacity:1}26%{opacity:.71}
+  31%{opacity:.95}44%{opacity:.47}52%{opacity:.88}66%{opacity:.96}73%{opacity:.54}
+  86%{opacity:1}94%{opacity:.69}100%{opacity:.9}}
+@keyframes funkeln-3{0%{opacity:.84}23%{opacity:.93}41%{opacity:.68}58%{opacity:.97}
+  77%{opacity:.78}100%{opacity:.84}}
 .magie-mitte{position:absolute;top:50%;left:50%;width:150vw;height:150vh;
   transform:translate(calc(-50% + (0.5 - var(--wx)) * 22vw), calc(-50% + (0.5 - var(--wy)) * 22vh))}
 .magie-vorn{position:absolute;top:50%;left:50%;width:170vw;height:170vh;
@@ -805,9 +783,8 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
       <span class="strahl s-kerze"></span>
       <span class="strahl s-kette"></span>
       <span class="strahl s-kette-r"></span>
-      <span class="strahl s-kette-glanz"></span>
-      <span class="strahl s-kette-glanz-r"></span>
       <span class="strahl s-drucker"></span>
+      <div class="lampen" id="lampen"></div>
       <div class="w-staub w-staub-fern" id="wStaubFern"></div>
     </div>
   </div>
@@ -1291,23 +1268,47 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
       box.appendChild(s);
     }
   }
+  /* Die Laempchen der Lichterkette, aus dem Bild gemessen (x, y in Prozent des Bildes). */
+  var laempchen=[[29.37,40.67],[30.00,32.56],[32.01,41.78],[32.32,32.08],[33.57,41.36],
+    [33.95,30.55],[35.18,28.89],[37.11,30.04],[39.04,30.72],[39.16,41.24],[41.20,30.21],
+    [43.11,28.42],[44.57,27.38],[46.66,28.90],[48.13,30.25],[50.09,31.21],[51.97,29.96],
+    [53.45,30.68],[55.76,29.37],[57.29,27.48],[57.49,28.02],[60.93,30.80],[62.89,30.48],
+    [64.42,28.64],[67.08,29.75],[68.84,30.22],[70.48,30.04],[72.39,31.86],[75.11,29.76],
+    [77.76,28.55],[81.03,29.19],[81.57,31.83],[82.60,33.59],[83.87,35.26],[84.90,51.41],
+    [85.44,53.19],[86.78,54.19],[88.18,48.26],[90.45,53.51]];
+  var lampenBox = document.getElementById('lampen');
+  if (lampenBox){
+    for (var k = 0; k < laempchen.length; k++){
+      var l = document.createElement('span');
+      var br = (1.5 + Math.random()*1.1);
+      l.style.width = br.toFixed(2) + '%';
+      l.style.height = (br * 2048 / 1156).toFixed(2) + '%';
+      l.style.left = laempchen[k][0] + '%';
+      l.style.top = laempchen[k][1] + '%';
+      l.style.animationName = 'funkeln-' + (1 + Math.floor(Math.random()*3));
+      l.style.animationDuration = (4.5 + Math.random()*7.5).toFixed(2) + 's';
+      l.style.animationDelay = (-Math.random()*12).toFixed(2) + 's';
+      lampenBox.appendChild(l);
+    }
+  }
+
   /* fern: im Bild, klein und blass, zwei Drittel davon im Kegel der Schreibtischlampe */
   streue(document.getElementById('wStaubFern'), 58, {
     klein:4, gross:9, weg:46, hell:.42, streu:.32, spitze:.72, funkeln:.28,
-    zeit:26, zeitStreu:16,
+    zeit:74, zeitStreu:46,
     x:function(){ return Math.random()<.68 ? 42+Math.random()*28 : Math.random()*100; },
     y:function(){ return Math.random()<.68 ? 52+Math.random()*40 : 70+Math.random()*40; }
   });
   /* mittig */
   streue(document.getElementById('wStaubMitte'), 86, {
     klein:6, gross:13, weg:150, hell:.58, streu:.3, spitze:.82, funkeln:.36,
-    zeit:21, zeitStreu:14,
+    zeit:60, zeitStreu:38,
     x:function(){ return 21 + Math.random()*58; }
   });
   /* vorn: groesser, heller, schneller */
   streue(document.getElementById('wStaub'), 56, {
     klein:9, gross:19, weg:195, hell:.72, streu:.28, spitze:.95, funkeln:.48,
-    zeit:15, zeitStreu:11,
+    zeit:44, zeitStreu:30,
     x:function(){ return 28 + Math.random()*44; }
   });
 
