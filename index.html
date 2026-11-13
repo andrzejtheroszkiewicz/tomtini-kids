@@ -547,35 +547,50 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 /* Die zweite Ebene: Tomtes Welt liegt unter der nüchternen Typo und öffnet sich kreisförmig,
    wenn der Cursor ruht (oder per Klicken+Ziehen sofort) und erlaubt dann ein Umsehen in einer
    größeren Fläche dahinter – wie mit einer Laterne durch einen Raum. Nur fürs Zeigegerät/Touch. */
-.magie{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden;
-  clip-path:circle(0px at var(--mx,50%) var(--my,50%));
-  transition:clip-path 1.8s cubic-bezier(.19,.72,.1,1)}
-.magie.offen{clip-path:circle(min(32vw,34vh) at var(--mx,50%) var(--my,50%))}
-.magie::after{content:"";position:absolute;inset:0;
-  box-shadow:inset 0 0 0 2px rgba(255,210,120,.35)}
-@media (prefers-reduced-motion:reduce){.magie{display:none}}
-@media (max-width:640px){.magie.offen{clip-path:circle(30vh at var(--mx,50%) var(--my,50%))}}
+/* Eigene, registrierte Variablen fuer den Kreis: nur so lassen sich Radius und Mittelpunkt
+   weich ueberblenden - und nur so sitzt der Schlagschatten beim Bewegen exakt auf dem Rand. */
+@property --kr{syntax:"<length>";inherits:true;initial-value:0px}
+@property --kx{syntax:"<length>";inherits:true;initial-value:0px}
+@property --ky{syntax:"<length>";inherits:true;initial-value:0px}
+@property --wx{syntax:"<number>";inherits:true;initial-value:0.5}
+@property --wy{syntax:"<number>";inherits:true;initial-value:0.5}
 
-/* Platzhalter-Welt: ein Verlauf statt echtem Bild, großzügig größer als der Bildschirm,
-   damit sich beim Umsehen wirklich etwas verschiebt. Wird später durch echte Illustration ersetzt. */
-.magie-welt{position:absolute;top:50%;left:50%;width:160vw;height:160vh;
-  transform:translate(calc(-50% + (0.5 - var(--wx,.5)) * 30vw), calc(-50% + (0.5 - var(--wy,.5)) * 30vh));
+.magie{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden;--kr:0px;
+  clip-path:circle(var(--kr) at var(--kx) var(--ky));
+  transition-property:--kr,--kx,--ky,--wx,--wy;
+  transition-timing-function:cubic-bezier(.19,.72,.1,1);
+  transition-duration:1.8s}
+.magie.offen{--kr:min(32vw,34vh)}
+
+/* Schlagschatten nach innen: der Ausschnitt bekommt dadurch Dicke und wirkt wie ein Loch,
+   durch das man in Tomtes Welt schaut, nicht wie ein aufgeklebter Kreis. Darueber der
+   schmale warme Lichtsaum, der vorher schon den Rand markiert hat. */
+.magie::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:
-    radial-gradient(60vw 60vh at 30% 25%, rgba(130,160,255,.28), transparent 60%),
-    radial-gradient(55vw 55vh at 76% 72%, rgba(255,205,120,.14), transparent 65%),
-    linear-gradient(190deg,#0b1130 0%,#141c46 45%,#1c2657 100%)}
-.w-licht{position:absolute;left:63%;top:60%;width:14vw;height:14vw;max-width:220px;max-height:220px;
-  border-radius:50%;filter:blur(2px);animation:flackern 2.6s ease-in-out infinite;
-  background:radial-gradient(circle, rgba(255,214,130,.9), rgba(255,180,90,.25) 55%, transparent 75%)}
-@keyframes flackern{0%,100%{opacity:.75;transform:scale(1)}35%{opacity:.5;transform:scale(.94)}55%{opacity:1;transform:scale(1.05)}80%{opacity:.65;transform:scale(.98)}}
-.w-schnee{position:absolute;inset:0}
-.w-schnee span{position:absolute;top:0;width:4px;height:4px;border-radius:50%;
-  background:rgba(255,255,255,.85);animation:fallen linear infinite}
-@keyframes fallen{0%{transform:translateY(-10vh) translateX(0);opacity:0}10%{opacity:.9}100%{transform:translateY(170vh) translateX(6vw);opacity:.2}}
-.w-flieger{position:absolute;left:-6%;top:24%;width:18px;height:10px;border-radius:50%;
-  background:rgba(255,130,115,.9);box-shadow:0 0 8px rgba(255,120,110,.6);
-  animation:fliegen 9s ease-in-out infinite;animation-delay:3s}
-@keyframes fliegen{0%{transform:translate(0,0);opacity:0}8%{opacity:1}45%{transform:translate(70vw,-6vh);opacity:1}55%{opacity:0}100%{transform:translate(70vw,-6vh);opacity:0}}
+    radial-gradient(circle var(--kr) at var(--kx) var(--ky),
+      rgba(4,7,18,0) 55%, rgba(4,7,18,.16) 74%, rgba(4,7,18,.48) 88%,
+      rgba(4,7,18,.82) 96%, rgba(4,7,18,.94) 100%),
+    radial-gradient(circle var(--kr) at var(--kx) var(--ky),
+      rgba(255,210,120,0) 92%, rgba(255,210,120,.32) 97%, rgba(255,210,120,0) 100%)}
+@media (prefers-reduced-motion:reduce){.magie{display:none}}
+@media (max-width:640px){.magie.offen{--kr:30vh}}
+
+/* Tomtes Welt: die Werkstatt liegt als Bild hinter der Typo-Seite, deutlich groesser als der
+   Bildschirm, damit man sich beim Umsehen wirklich darin bewegt. Zwei Ebenen mit verschiedener
+   Geschwindigkeit ergeben die Parallaxe: der Raum wandert langsam, der Staub davor dreimal so
+   schnell - beim Umsehen schiebt sich der Vordergrund sichtbar vor den Raum. */
+.magie-welt{position:absolute;top:50%;left:50%;width:126vw;height:126vh;
+  transform:translate(calc(-50% + (0.5 - var(--wx)) * 11vw), calc(-50% + (0.5 - var(--wy)) * 11vh));
+  background:#0a0f28 url(magie/werkstatt.webp) center/cover no-repeat}
+.magie-vorn{position:absolute;top:50%;left:50%;width:170vw;height:170vh;
+  transform:translate(calc(-50% + (0.5 - var(--wx)) * 34vw), calc(-50% + (0.5 - var(--wy)) * 34vh))}
+.w-staub{position:absolute;inset:0}
+.w-staub span{position:absolute;bottom:-8%;width:6px;height:6px;border-radius:50%;filter:blur(.7px);
+  background:radial-gradient(circle,rgba(255,226,172,.95),rgba(255,196,110,.3) 55%,transparent 75%);
+  animation:schweben linear infinite}
+@keyframes schweben{0%{transform:translate(0,0) scale(.7);opacity:0}
+  14%{opacity:.9}72%{opacity:.5}
+  100%{transform:translate(8vw,-190vh) scale(1.15);opacity:0}}
 
 .magie-hinweis{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:41;
   font-size:13px;letter-spacing:.02em;color:rgba(255,255,255,.6);
@@ -653,10 +668,9 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
 <body>
 
 <div class="magie" id="magie" aria-hidden="true">
-  <div class="magie-welt" id="magieWelt">
-    <div class="w-licht"></div>
-    <div class="w-schnee" id="wSchnee"></div>
-    <div class="w-flieger"></div>
+  <div class="magie-welt" id="magieWelt"></div>
+  <div class="magie-vorn" id="magieVorn">
+    <div class="w-staub" id="wStaub"></div>
   </div>
 </div>
 <div class="magie-hinweis" id="magieHinweis" aria-hidden="true"></div>
@@ -1101,7 +1115,7 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
 <script>
 /* Tomtes Welt unter der Oberfläche: öffnet sich kreisförmig, wenn der Cursor (oder der Finger) ruht,
    oder sofort per Klicken+Ziehen. Dahinter liegt eine größere Fläche, durch die man sich wie mit
-   einer Laterne umsehen kann (Platzhalter-Verlauf + Dummy-Elemente, später echte Illustration). */
+   einer Laterne umsehen kann. Hintergrund ist Tomtes Werkstatt, davor eine schnellere Staubebene. */
 (function(){
   var schicht = document.getElementById('magie');
   if (!schicht) return;
@@ -1109,16 +1123,17 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
   if (!willRuhe) return;
   var kannHover = window.matchMedia && window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  /* ein paar Schnee-Punkte als Platzhalter erzeugen */
-  var schneeBox = document.getElementById('wSchnee');
-  if (schneeBox){
-    for (var i = 0; i < 16; i++){
+  /* Staub im Lampenlicht: die vordere Parallaxe-Ebene. Langsam aufsteigend, warm, wenige
+     Punkte - er soll Tiefe geben und nicht vom Raum ablenken. */
+  var staubBox = document.getElementById('wStaub');
+  if (staubBox){
+    for (var i = 0; i < 14; i++){
       var s = document.createElement('span');
       s.style.left = (Math.random()*100) + '%';
-      s.style.animationDuration = (7 + Math.random()*7) + 's';
-      s.style.animationDelay = (Math.random()*8) + 's';
-      s.style.opacity = (0.4 + Math.random()*0.5);
-      schneeBox.appendChild(s);
+      s.style.animationDuration = (16 + Math.random()*14) + 's';
+      s.style.animationDelay = (-Math.random()*26) + 's';
+      s.style.opacity = (0.45 + Math.random()*0.45);
+      staubBox.appendChild(s);
     }
   }
 
@@ -1145,8 +1160,8 @@ html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
     document.documentElement.classList.remove('greift-magie');
   }
   function setPos(x,y){
-    schicht.style.setProperty('--mx', x + 'px');
-    schicht.style.setProperty('--my', y + 'px');
+    schicht.style.setProperty('--kx', x + 'px');
+    schicht.style.setProperty('--ky', y + 'px');
     var px = Math.max(0, Math.min(1, x / window.innerWidth));
     var py = Math.max(0, Math.min(1, y / window.innerHeight));
     schicht.style.setProperty('--wx', px);
