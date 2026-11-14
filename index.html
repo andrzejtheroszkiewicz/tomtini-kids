@@ -296,7 +296,7 @@ textarea{min-height:64px;resize:vertical}
 .kal-legende i{font-style:normal}
 .kal{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;border-top:2px solid var(--line);border-left:2px solid var(--line)}
 .kal>button{appearance:none;background:var(--dusk);color:var(--snow);border:0;border-right:2px solid var(--line);border-bottom:2px solid var(--line);border-radius:0;text-align:left;cursor:pointer;font:inherit;position:relative}
-.kal>button:hover{background:var(--deep)}
+@media (hover:hover){.kal>button:hover{background:var(--deep)}}
 .kal>button:focus-visible{outline:3px solid var(--lamp);outline-offset:-3px}
 .kal-vor{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:10px 14px}
 .kal-vor .kn{font-family:var(--display);font-weight:700;font-size:28px;line-height:1;color:var(--lamp)}
@@ -312,7 +312,7 @@ textarea{min-height:64px;resize:vertical}
 .kal-tag .kx{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--pine)}
 .kal-tag.m-wenig .kx{color:var(--mist)}
 .kal>button.vorbei{opacity:.45}
-.kal>button.vorbei:hover{opacity:.8}
+@media (hover:hover){.kal>button.vorbei:hover{opacity:.8}}
 .kal>button.done .kn{color:var(--mist)}
 .kal-tag.heute .kd::after{content:" · heute";color:var(--lamp);font-weight:700}
 .kal>button.offen,.kal>button.offen:hover{background:var(--snow);color:var(--night);opacity:1}

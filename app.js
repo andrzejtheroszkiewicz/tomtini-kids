@@ -190,9 +190,7 @@
 
   // ---- Kalender-Raster: A = klappt unter der Reihe auf, B = eigenes Fenster ----
   let openDay=null, openInit=false, prevSig=null;
-  const VIEWKEY="tomtini-ansicht";
-  function getView(){ try{ const q=new URLSearchParams(location.search).get('ansicht'); if(q==="a"||q==="b") return q; return localStorage.getItem(VIEWKEY)||"a"; }catch(e){ return "a"; } }
-  let kalView=getView();
+  const kalView="a"; try{ localStorage.removeItem("tomtini-ansicht"); }catch(e){}
   function vorabendHTML(){ const v=C.vorabend;
     const core=`${letterHTML(vorabendParas())}${basisHTML(v,-1)}<div class="zug"><span class="t">${v.ja.t} <span class="minbadge">${v.ja.min} Min · ${v.ja.zeit}</span></span><span>${lego(v.ja.x)}</span><span class="m">Material: ${lego(v.ja.m)}</span></div>`;
     const more=`${wantsExtra(-1)||val('aufwand')==="we"?`<div class="zug"><span class="t">Wochenend-Zugabe: ${v.extra.t} <span class="minbadge">${v.extra.min} Min · tagsüber</span></span><span>${v.extra.x}</span><span class="m">Material: ${v.extra.m}</span></div>`:""}<p class="tipp"><b>Vorher vorlesen:</b> „Wie Tomte zu euch kam“, Kapitel 1, 2, 3 und 6 (<a href="#geschichte">hier</a>). Danach weiß das Kind, wer da fragt und warum ihn niemand sehen darf.</p><p class="tipp"><b>Wenn das Kind Nein sagt oder zögert:</b> Rubis Warte-Zettel hinlegen, nichts montieren, später oder nächstes Jahr wieder fragen. Zettel: „${fill(v.nein.text)}“</p><p class="tipp"><b>Für euch:</b> ${v.tipp}</p>`;
@@ -203,7 +201,7 @@
     const s=val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i); if(s&&s.teil!==2) m+=(+s.x.min||0); return m; }
   function kalHTML(){ const kapNames={1:"Einzug",2:"Hilfe, die schiefgeht",3:"Tomtes Geheimnis",4:"Abschied"}; const ti=todayIndex();
     if(!openInit){ openInit=true; const p=ti+1; if(p>=-1&&p<=23) openDay=p; }
-    let h=`<div class="kal-kopf"><h3>Die 24 Tage</h3><div class="kal-ansicht" role="group" aria-label="Ansicht"><span>Ansicht</span><button type="button" data-view="a" aria-pressed="${kalView==="a"}">A · Aufklappen</button><button type="button" data-view="b" aria-pressed="${kalView==="b"}">B · Fenster</button></div></div>`;
+    let h=`<div class="kal-kopf"><h3>Die 24 Tage</h3></div>`;
     h+=`<p class="kal-legende"><span><i class="mk-min">4′</i> Minuten am Abend</span><span><i class="mk">●</i> lieb</span><span><i class="mk">●●</i> frech</span><span><i class="mk">●●●</i> ganz schön frech</span><span><i class="mk">○</i> Streich, 2. Abend</span><span><i class="mk">◆</i> Kleinigkeit</span><span><i class="mk">✓</i> vorbereitet</span></p>`;
     h+=`<div class="kal" id="kal">`;
     const vd=dateOf(-1);
@@ -237,7 +235,6 @@
   }
   function bindKal(root){
     root.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.open; openDay = (openDay===i && kalView==="a") ? null : i; rerender(); if(openDay!==null&&kalView==="a") scrollToDetail(true); });
-    root.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{ kalView=b.dataset.view; try{ localStorage.setItem(VIEWKEY,kalView); }catch(e){} rerender(); });
   }
   function focusTile(i){ if(i===null) return; const t=document.querySelector('#kal [data-open="'+i+'"]'); if(t) t.focus({preventScroll:true}); }
   function scrollToDetail(soft){ const el=document.querySelector('#kal>.kd'); if(!el) return; const r=el.getBoundingClientRect(); const navH=64;
