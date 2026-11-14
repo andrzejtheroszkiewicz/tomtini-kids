@@ -110,7 +110,7 @@ window.TOMTINI = {
       zettel: { von: "mimi", text: "Ich hab geholfen. Ich hab die Schale bewacht. Im Schlaf." },
       basis: { t: "Ein Stück Mandarine", x: "Morgens kurz vor dem Wecken ein Mandarinenstück (oder ein kleiner Keks, der einzige Süß-Tag) in die Müslischale, dazu der Zettel „Mehr ging nicht“ aus dem Druckpaket. Nicht über Nacht stehen lassen (Haustiere, Ameisen).", m: "Mandarine, Druckpaket", min: 2, zeit: "morgens" },
       extra: { t: "Kekse für Tomte", x: "Die Kinder backen tagsüber Mini-Kekse für Tomte (Rezept im Druckpaket). Drei kommen abends vor die Tür; morgens liegen Papierkrümel aus dem Druckpaket da, die echten Kekse isst die Familie abends.", m: "Rezept, Backzutaten", min: 45 },
-      tipp: "Das Lieblingsessen aus Tag 2 steht automatisch im Brief, wenn ihr es eingetragen habt. Sonst schreibt Tomte „das, was ihr mir gesagt habt“." },
+      tipp: "Das Lieblingsessen aus Tag 2 steht automatisch im Brief, wenn ihr es eingetragen habt. Sonst schreibt Tomte „was ihr am liebsten esst“, und ihr legt dazu, was die Kinder an Tag 2 geantwortet haben." },
     { n: 11, kap: 2, titel: "Mimis Kunstwerk",
       brief: ["Hallo {kinder},", "Mimi war heute Nacht wach. Das passiert selten, und dann passiert viel. Sie hat Rubis Kreide gefunden und einen Schneemann gemalt. Auf das Fenster. Mit den Pfoten.", "Es ist kein Schneemann geworden. Es ist ein Fleck mit Ohren. Sie ist sehr stolz. {Sagt|Sag} ihr, dass {ihr|du} ihn gesehen {habt|hast}. Das reicht ihr. Dann darf er weg."],
       kurz: ["Hallo {kinder},", "Mimi hat ans Fenster gemalt. Mit den Pfoten. Sie sagt, es ist ein Schneemann.", "{Sagt|Sag} ihr, dass {ihr|du} ihn gesehen {habt|hast}. Dann darf er weg."],

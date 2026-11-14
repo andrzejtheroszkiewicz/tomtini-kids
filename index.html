@@ -313,11 +313,14 @@ textarea{min-height:64px;resize:vertical}
 .kal-tag.m-wenig .kx{color:var(--mist)}
 .kal>button.vorbei{opacity:.45}
 @media (hover:hover){.kal>button.vorbei:hover{opacity:.8}}
-.kal>button.done .kn{color:var(--mist)}
+.kal>button.done{opacity:.5}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.kd .tmode{margin-top:10px;flex-wrap:wrap}
 .kal-tag.heute .kd::after{content:" · heute";color:var(--lamp);font-weight:700}
 .kal>button.offen,.kal>button.offen:hover{background:var(--snow);color:var(--night);opacity:1}
 .kal>button.offen .kd,.kal>button.offen .mk-min,.kal>button.offen .kn{color:var(--night)}
 .kal>button.offen .mk{color:var(--lamp)}
+.kal>button.offen .kx{color:var(--lamp)}
 /* A: Panel unter der Reihe */
 .kal>.kd{grid-column:1/-1;margin:0;border:0;border-right:2px solid var(--line);border-bottom:2px solid var(--line);position:relative;background:var(--deep);padding:18px clamp(14px,3vw,28px) 16px;animation:kdAuf .22s ease-out both}
 .kal>.kd::before{content:"";position:absolute;top:-1px;left:var(--pfeil,50%);width:16px;height:16px;background:var(--deep);border-left:2px solid var(--line);border-top:2px solid var(--line);transform:translate(-50%,-50%) rotate(45deg)}
@@ -1146,10 +1149,6 @@ details.streich[open]>summary::after{content:"–"}
           </div><p class="help">Im Januar ist Tomte müde: ein Brief pro Woche, keine Streiche, am Ende ein Abschied bis November.</p></div>
         <div class="field"><label for="essen">Lieblingsessen der Kinder (Tag 2 fragt danach)</label><input type="text" id="essen" placeholder="z. B. Pfannkuchen"></div>
         <div class="field"><label for="ritual">Was ihr im Winter am liebsten zusammen macht</label><input type="text" id="ritual" placeholder="z. B. Plätzchen backen"><p class="help">Als Tätigkeit, kleingeschrieben. Tomte zitiert es am letzten Tag.</p></div>
-        <div class="field"><span class="lbl">Besondere Tage</span>
-          <div class="cal" id="cal" aria-label="24 Tage antippen"></div>
-          <div class="legend"><span><i class="w"></i>wenig Zeit</span><span><i class="r"></i>unterwegs (Tomte reist mit)</span></div>
-          <p class="help">Antippen zum Wechseln. An „wenig Zeit“-Tagen zeigt Tomte, welche Briefe auch ohne Requisite funktionieren.</p></div>
         <button class="btn btn-primary" type="submit" id="go">Plan erstellen</button>
         <p class="help">Der Plan bleibt in diesem Browser gespeichert und wird nirgendwohin gesendet. Mit dem Plan-Link öffnet ihr ihn auf jedem anderen Gerät (der Link enthält die Namen).</p>
       </form>
