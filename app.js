@@ -204,14 +204,14 @@
   function kalHTML(){ const kapNames={1:"Einzug",2:"Hilfe, die schiefgeht",3:"Tomtes Geheimnis",4:"Abschied"}; const ti=todayIndex();
     if(!openInit){ openInit=true; const p=ti+1; if(p>=-1&&p<=23) openDay=p; }
     let h=`<div class="kal-kopf"><h3>Die 24 Tage</h3></div>`;
-    h+=`<p class="kal-legende"><span><i class="mk-min">7′</i> Minuten am Abend</span><span><i class="mk">●</i> Streich geplant <i class="mk">○</i> zweiter Abend</span></p>`;
+    h+=`<p class="kal-legende"><span><i class="mk-min">7 Min</i> am Abend</span><span><i class="mk">●</i> Streich geplant <i class="mk">○</i> zweiter Abend</span></p>`;
     h+=`<div class="kal" id="kal">`;
     const vd=dateOf(-1);
     h+=`<button type="button" class="kal-vor ${state.done.v?"done":""} ${ti>=0?"vorbei":""} ${openDay===-1?"offen":""}" data-open="-1" aria-expanded="${openDay===-1}"><span class="kn">0</span><span class="kt">Vorabend · ${C.vorabend.titel}</span><span class="kd">${fmt(vd)} · Zettel von Rubi${state.done.v?" · ✓":""}</span></button>`;
     const newSig={};
     C.tage.forEach((day,i)=>{ const d=dateOf(i), mode=state.modes[i]; const s=val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i); const k=$('#klein').checked&&C.klein[day.n]; const sig=s?s.x.id+":"+s.teil:""; const neu=prevSig!==null&&prevSig[i]!==sig; newSig[i]=sig;
       const cls=["kal-tag", state.done[i]?"done":"", i<ti?"vorbei":"", i===ti?"heute":"", mode?"m-"+mode:"", openDay===i?"offen":"", neu?"neu":"", day.n===1||C.tage[i-1]&&C.tage[i-1].kap!==day.kap?"kap-start":""].join(" ");
-      h+=`<button type="button" class="${cls}" data-open="${i}" aria-expanded="${openDay===i}" title="Tag ${day.n} · ${fill(day.titel).replace(/"/g,"&quot;")} · Kapitel ${day.kap}: ${kapNames[day.kap]}"><span class="kn">${day.n}</span><span class="kd">${WD[d.getDay()]}</span><span class="km"><i class="mk-min">${eveningMin(i)}′</i>${s?`<i class="mk mk-f" aria-label="Streich${s.teil===2?", zweiter Abend":""}">${s.teil===2?"○":"●"}</i>`:""}${state.done[i]?'<span class="sr">vorbereitet</span>':""}</span>${mode==="reise"?'<span class="kx">unterwegs</span>':mode==="wenig"?'<span class="kx">wenig Zeit</span>':""}</button>`; });
+      h+=`<button type="button" class="${cls}" data-open="${i}" aria-expanded="${openDay===i}" title="Tag ${day.n} · ${fill(day.titel).replace(/"/g,"&quot;")} · Kapitel ${day.kap}: ${kapNames[day.kap]}"><span class="kn">${day.n}</span><span class="kd">${WD[d.getDay()]}</span><span class="km"><i class="mk-min">${eveningMin(i)} Min</i>${s?`<i class="mk mk-f" aria-label="Streich${s.teil===2?", zweiter Abend":""}">${s.teil===2?"○":"●"}</i>`:""}${state.done[i]?'<span class="sr">vorbereitet</span>':""}</span>${mode==="reise"?'<span class="kx">unterwegs</span>':mode==="wenig"?'<span class="kx">wenig Zeit</span>':""}</button>`; });
     h+=`</div>`; prevSig=newSig; return h; }
   function detailHTML(i){ const isV=i===-1; const day=isV?null:C.tage[i]; const p=isV?vorabendHTML():dayParts(day,i); const mode=isV?null:state.modes[i];
     const titel=isV?C.vorabend.titel:fill(day.titel); const d=dateOf(i);
