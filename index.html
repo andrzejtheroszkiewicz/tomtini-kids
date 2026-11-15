@@ -3,7 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tomtini Typo-Seite</title>
+<title>Tomtini – der Wichtel, den man nicht sieht</title>
+<link rel="canonical" href="https://tomtini.kids/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="bild/touch-icon.png">
+<meta name="theme-color" content="#db3820">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tomtini">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://tomtini.kids/">
+<meta property="og:title" content="Tomtini – der Wichtel, den man nicht sieht">
+<meta property="og:description" content="Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
+<meta property="og:image" content="https://tomtini.kids/bild/teilen.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tomtini. Der Wichtel, den man nicht sieht.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Tomtini ist ein Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief, jede Nacht eine neue Zahl auf seiner Tafel. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
 <script>
 /* So früh wie möglich setzen, damit die Seite nicht erst hell aufblitzt und dann umschaltet. */
@@ -882,6 +897,14 @@ details.streich[open]>summary::after{content:"–"}
 .kal-tag .mk-f{display:inline-block;transform-origin:left center}
 @media (prefers-reduced-motion:reduce){.kal-tag.neu,.kal-tag.neu .mk-f{animation:none}}
 .streich-fuss{margin-top:22px;font-size:15px;color:var(--mist);max-width:44em}
+.mehr-felder{border-top:2px solid var(--line);border-bottom:2px solid var(--line)}
+.mehr-felder>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;font-weight:700}
+.mehr-felder>summary::-webkit-details-marker{display:none}
+.mehr-felder>summary small{display:block;font-weight:400;font-size:14px;line-height:1.4;color:var(--mist)}
+.mehr-felder>summary::after{content:"+";font:700 30px/1 var(--display);color:var(--lamp);width:.7em;text-align:center}
+.mehr-felder[open]>summary::after{content:"–"}
+.mehr-in{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding:6px 0 20px}
+.spaet{border:2px solid var(--lamp)}
 </style>
 </head>
 <body>
@@ -1024,7 +1047,7 @@ details.streich[open]>summary::after{content:"–"}
         <h2>Was ihr dafür braucht.</h2>
         <p class="sub">Tomtes Vorgarten besteht aus fünf Dingen: Tür, Zahlentafel, Bänkchen, Briefkasten, Laterne. Dafür gibt es drei Wege, und zwei davon kosten nichts außer einem Bastelabend.</p>
       </div>
-      <p class="tipp">Entscheidet euch bis Mitte November. Wer am 28. merkt, dass die Tür fehlt, bekommt sie nicht mehr rechtzeitig.</p>
+      <p class="tipp">Entscheidet euch früh. Eine gekaufte Tür braucht Lieferzeit; Papier und Steine gehen auch noch am letzten Abend.</p>
     </div>
     <div class="wege">
       <article class="weg">
@@ -1032,7 +1055,7 @@ details.streich[open]>summary::after{content:"–"}
         <h3>Fertiges Set</h3>
         <p>Wichteltüren gibt es im Handel ab etwa 8 Euro, meist mit etwas Zubehör; große Sets mit Leiter, Stiefeln und Laterne kosten mehr. Wir empfehlen kein Produkt und verdienen an keinem etwas.</p>
         <p>Achtet nur auf das Licht: LED-Teelicht mit verschraubtem Batteriefach. Keine echte Flamme, keine losen Knopfzellen.</p>
-        <p class="wann">Bestellen bis Mitte November.</p>
+        <p class="wann">Lieferzeit einplanen.</p>
       </article>
       <article class="weg">
         <p class="eyebrow">Ausgedruckt · kostenlos</p>
@@ -1101,7 +1124,8 @@ details.streich[open]>summary::after{content:"–"}
     <p class="sub">Tragt ein, was Tomte wissen muss. Der Plan entsteht sofort, ihr könnt ihn jederzeit ändern und neu drucken.</p>
     <div class="gen">
       <form class="form" id="form">
-        <div class="field"><label for="kinder">Namen der Kinder</label><input type="text" id="kinder" placeholder="z. B. Lina, Paul" autocomplete="off"><p class="help">Mit Komma trennen. Tomte spricht alle gemeinsam an.</p></div>
+        <div class="field"><label for="kinder">Namen der Kinder</label><input type="text" id="kinder" placeholder="z. B. Lina, Paul" autocomplete="off"><p class="help">Mit Komma trennen. Tomte spricht alle gemeinsam an. Mehr braucht der Plan nicht.</p></div>
+        <details class="mehr-felder" id="mehrFelder"><summary><span>Anpassen<small>Alter, Anrede, Einzug, Aufwand, Streiche, Dauer</small></span></summary><div class="mehr-in">
         <div class="field"><span class="lbl">Alter des jüngsten Kindes</span>
           <div class="seg">
             <label><input type="radio" name="alter" id="alter3" value="3"><span>3–4</span></label>
@@ -1125,8 +1149,8 @@ details.streich[open]>summary::after{content:"–"}
           </div><p class="help">„Nur Briefe“: jeden Abend Brief hinlegen und Zahl umstecken, 1 Minute, keine Requisiten; die vier Bauteile sind dann freiwillig. „Das Nötige“: was der Brief braucht, meist 1–5 Minuten. Ehrliche Gesamtsumme im Dezember: etwa 2 Stunden Vorbereitung (Drucken, Tür, Kiste), dazu die Abende. Chronik-Einträge sind freiwillig.</p></div>
         <div class="field"><span class="lbl">Streiche im Plan</span>
           <div class="seg">
-            <label><input type="radio" name="streichPlan" value="aus"><span>Keine</span></label>
-            <label><input type="radio" name="streichPlan" value="lieb" checked><span>Nur liebe</span></label>
+            <label><input type="radio" name="streichPlan" value="aus" checked><span>Keine</span></label>
+            <label><input type="radio" name="streichPlan" value="lieb"><span>Nur liebe</span></label>
             <label><input type="radio" name="streichPlan" value="frech"><span>Bis frech</span></label>
             <label><input type="radio" name="streichPlan" value="alle"><span>Alle</span></label>
           </div><p class="help">Zu jedem Tag ein Streich als Vorschlag, mit Zettel. Schnelle unter der Woche, aufwändige nur am Wochenende. Jeder lässt sich tauschen oder weglassen, der Brief funktioniert immer ohne.</p></div>
@@ -1150,6 +1174,7 @@ details.streich[open]>summary::after{content:"–"}
           </div><p class="help">Im Januar ist Tomte müde: ein Brief pro Woche, keine Streiche, am Ende ein Abschied bis November.</p></div>
         <div class="field"><label for="essen">Lieblingsessen der Kinder (Tag 2 fragt danach)</label><input type="text" id="essen" placeholder="z. B. Pfannkuchen"></div>
         <div class="field"><label for="ritual">Was ihr im Winter am liebsten zusammen macht</label><input type="text" id="ritual" placeholder="z. B. Plätzchen backen"><p class="help">Als Tätigkeit, kleingeschrieben. Tomte zitiert es am letzten Tag.</p></div>
+        </div></details>
         <button class="btn btn-primary" type="submit" id="go">Plan erstellen</button>
         <p class="help">Der Plan bleibt in diesem Browser gespeichert und wird nirgendwohin gesendet. Mit dem Plan-Link öffnet ihr ihn auf jedem anderen Gerät (der Link enthält die Namen).</p>
       </form>
@@ -1165,7 +1190,7 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap stack">
     <div class="split">
       <h2>Tomte wird gehört, nie gesehen.</h2>
-      <p class="sub" style="margin-top:0">Drei Stücke zum Lesen und Mitmachen, ganz aus Schrift. Kein Brief fertig? Dann nehmt heute das Fenster. Dazu drei Hörstücke und zwei Lieder, deren Texte stehen und deren Aufnahmen folgen. Das Handy ist dabei nie das Medium, sondern das Versteck: Es liegt neben der Tür, der Bildschirm bleibt dunkel.</p>
+      <p class="sub" style="margin-top:0">Drei Stücke zum Lesen und Mitmachen, ganz aus Schrift. Kein Brief fertig? Dann nehmt heute das Fenster. Dazu drei Hörstücke und zwei Lieder als Text, zum Vorlesen und Summen. Das Handy ist dabei nie das Medium, sondern das Versteck: Es liegt neben der Tür, der Bildschirm bleibt dunkel.</p>
     </div>
     <div class="stuecke">
       <article class="stueck">
@@ -1296,7 +1321,7 @@ details.streich[open]>summary::after{content:"–"}
       <p>Der Plan-Link enthält eure Eingaben im Link selbst, hinter dem Zeichen #. Dieser Teil wird beim Öffnen nicht an den Server gesendet. Wer den Link bekommt, kann die Angaben darin lesen. Gebt ihn also nur an Menschen weiter, die den Plan sehen dürfen.</p>
       <h2>Aufruf der Seite</h2>
       <p>Beim Aufruf verarbeitet der Hosting-Anbieter die technisch nötigen Daten, um die Seite auszuliefern: IP-Adresse, Datum und Uhrzeit, abgerufene Datei, Browser-Kennung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO, das Interesse an einem sicheren Betrieb.</p>
-      <p class="offen">Offen bis zum Livegang: Name und Sitz des Hosting-Anbieters und die Speicherdauer der Server-Protokolle.</p>
+      <p>Die Seite liegt bei GitHub Pages, einem Dienst der GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. GitHub verarbeitet die genannten Daten auch in den USA und stützt die Übermittlung auf das EU-US Data Privacy Framework. Auf die Server-Protokolle haben wir keinen Zugriff; wie lange GitHub sie aufbewahrt, steht in der <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
       <h2>Schriften</h2>
       <p>Die Schriften liegen auf demselben Server wie die Seite. Es wird keine Verbindung zu Google Fonts oder anderen Diensten aufgebaut.</p>
       <h2>E-Mail</h2>
@@ -1317,7 +1342,7 @@ details.streich[open]>summary::after{content:"–"}
 <footer>
   <div class="wrap cols">
     <div><p class="brand">Tomtini</p><p>Der Wichtel, den man nicht sieht. Ein Schwesterprojekt von <a href="https://fundini.kids">Fundini</a>.</p></div>
-    <div><p><strong>Im Dezember 2026 für alle kostenlos.</strong></p><p>Wer Tomte einen Kaffee ausgeben möchte: Eine Spendenmöglichkeit folgt.</p></div>
+    <div><p><strong>Im Dezember 2026 für alle kostenlos.</strong></p></div>
     <ul>
       <li><a href="#impressum">Impressum</a></li>
       <li><a href="#datenschutz">Datenschutz</a></li>
