@@ -144,7 +144,7 @@
   }
   const MED=(C.medien||[]).filter(function(m){return m.status!=="fertig";});
   function buildMedien(){
-    if(!C.medien) return;
+    if(!C.medien||!$('#medienGrid')) return;
     $('#medienGrid').innerHTML=MED.map(function(m,i){
       var fertig=m.status==="fertig";
       return '<div class="med"><span class="typ">'+m.typ+'</span><h4>'+m.t+'</h4><p>'+m.x+'</p>'+

@@ -905,6 +905,10 @@ details.streich[open]>summary::after{content:"–"}
 .mehr-felder[open]>summary::after{content:"–"}
 .mehr-in{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding:6px 0 20px}
 .spaet{border:2px solid var(--lamp)}
+.anker{display:block;position:relative;top:-80px;visibility:hidden}
+.aufbau-split{margin-top:clamp(48px,6vw,80px);padding-top:clamp(36px,5vw,56px);border-top:2px solid var(--line)}
+.aufbau-titel{font-size:clamp(28px,3.6vw,44px);line-height:1;font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
+.kap-zu .kapitel-liste{margin-top:0}
 </style>
 </head>
 <body>
@@ -938,10 +942,7 @@ details.streich[open]>summary::after{content:"–"}
 <nav class="nav" id="nav" aria-label="Hauptmenü">
   <div class="wrap nav-in">
     <a class="brand" href="#top">Tomtini</a>
-    <a href="#geschichte">Geschichte</a>
-    <a href="#so">So geht's</a>
-    <a href="#material">Material</a>
-    <a href="#aufbau">Aufbau</a>
+    <a href="#material">Vorbereitung</a>
     <a href="#streiche">Streiche</a>
     <a href="#notfall">Notfall</a>
     <a class="to-gen" href="#generator">Generator</a>
@@ -956,10 +957,7 @@ details.streich[open]>summary::after{content:"–"}
       <button type="button" class="menue-zu" id="menueZu">Schließen</button>
     </div>
     <ul>
-      <li><a href="#geschichte">Geschichte</a></li>
-      <li><a href="#so">So geht's</a></li>
-      <li><a href="#material">Material</a></li>
-      <li><a href="#aufbau">Aufbau</a></li>
+      <li><a href="#material">Vorbereitung</a></li>
       <li><a href="#streiche">Streiche</a></li>
       <li><a href="#notfall">Notfall</a></li>
       <li><a class="ziel" href="#generator">Generator</a></li>
@@ -1003,8 +1001,8 @@ details.streich[open]>summary::after{content:"–"}
       <p style="margin-top:22px"><button type="button" class="btn btn-ghost" id="gPrint">Geschichte drucken</button></p>
     </div>
     <div class="stack">
-      <div id="gKapitel" class="kapitel-liste"></div>
       <p class="tipp" id="gEltern"></p>
+      <details class="mehr-felder kap-zu"><summary><span>Alle sieben Kapitel<small>Zum Lesen am Bildschirm</small></span></summary><div id="gKapitel" class="kapitel-liste"></div></details>
     </div>
   </div>
 </section>
@@ -1025,27 +1023,13 @@ details.streich[open]>summary::after{content:"–"}
   </div>
 </section>
 
-<section class="block" id="so">
-  <div class="wrap split">
-    <div>
-      <h2>Eine Geschichte, die euch nicht im Stich lässt.</h2>
-      <p class="sub">Andere Wichtel-Ideen sind Listen. Tomte ist eine Geschichte mit Anfang, Bogen und Abschied. Jeder Tag hat einen Brief und das Nötige dazu. Zugaben gibt es für Wochenenden, wenn ihr Lust habt.</p>
-    </div>
-    <ol class="steps">
-      <li class="step"><h3>Ihr tragt euch ein</h3><p>Namen der Kinder, Startdatum, wie viel Zeit ihr abends habt. Dazu die Tage, an denen es eng wird oder ihr unterwegs seid. Alles bleibt in eurem Browser.</p></li>
-      <li class="step"><h3>Tomte plant 24 Tage</h3><p>Vier Kapitel: Einzug, Hilfe, die schiefgeht, Tomtes Geheimnis, Abschied. Ab Tag 15 bauen die Kinder Teile, die am 24. das Finale ergeben.</p></li>
-      <li class="step"><h3>Ihr druckt und legt hin</h3><p>Briefe in Tomtes Handschrift, vier auf einer Seite. Dazu der Elternplan für den Kühlschrank mit Material und ehrlichen Minuten pro Abend, und am Ende die Chronik als Geschenk.</p></li>
-      <li class="step"><h3>Vergessen ist eingeplant</h3><p>Mimi ist eingeschlafen, Rubi hing im Schneesturm fest. Jeder Ausweg führt die Geschichte weiter, kein Kind merkt einen Bruch.</p></li>
-    </ol>
-  </div>
-</section>
-
 <section class="block quiet" id="material">
+  <span id="aufbau" class="anker"></span>
   <div class="wrap">
     <div class="split">
       <div>
         <h2>Was ihr dafür braucht.</h2>
-        <p class="sub">Tomtes Vorgarten besteht aus fünf Dingen: Tür, Zahlentafel, Bänkchen, Briefkasten, Laterne. Dafür gibt es drei Wege, und zwei davon kosten nichts außer einem Bastelabend.</p>
+        <p class="sub">Tomtes Vorgarten besteht aus fünf Dingen: Tür, Zahlentafel, ein Bänkchen für das, was die Kinder Tomte hinlegen, Briefkasten, Laterne. Dafür gibt es drei Wege, und zwei davon kosten nichts außer einem Bastelabend.</p>
       </div>
       <p class="tipp">Entscheidet euch früh. Eine gekaufte Tür braucht Lieferzeit; Papier und Steine gehen auch noch am letzten Abend.</p>
     </div>
@@ -1073,14 +1057,10 @@ details.streich[open]>summary::after{content:"–"}
       </article>
     </div>
     <p class="leiste-fuss" style="margin-top:22px">Dazu nur, was ohnehin da ist: etwas Mehl für die Fußspuren, Papier, ein Drucker. Und ein Platz an einer Fußleiste, an dem nicht ständig jemand vorbeisaugt.</p>
-  </div>
-</section>
 
-<section class="block on-night" id="aufbau">
-  <div class="wrap">
-    <div class="split">
+    <div class="split aufbau-split">
       <div>
-        <h2>Am ersten Morgen steht alles da.</h2>
+        <h3 class="aufbau-titel">Am ersten Morgen steht alles da.</h3>
         <p class="sub">Kinder brauchen am 1. Dezember das ganze Bild. Danach wächst nicht mehr die Kulisse, sondern das Leben darin. Der Aufbau dauert zwei kurze Abende.</p>
       </div>
       <ol class="abende">
@@ -1090,33 +1070,8 @@ details.streich[open]>summary::after{content:"–"}
         <li><p class="wann">1. Dezember<small>morgens</small></p><p><b>Der erste Brief liegt da.</b> Ab jetzt ändert sich jede Nacht eine Kleinigkeit. Der Elternplan nennt für jeden Abend, was und wie viele Minuten.</p></li>
       </ol>
     </div>
-    <div class="leiste">
-      <p class="leiste-titel">So steht es an eurer Fußleiste, von links nach rechts:</p>
-      <div class="zonen">
-        <div class="zone"><h3>Vorgarten</h3><p>Wächst mit der Geschichte: Girlande an Tag 13, Tanne an Tag 15, Licht an Tag 17, Stern an Tag 21.</p></div>
-        <div class="zone"><h3>Zahlen&shy;tafel</h3><p>Jede Nacht die neue Zahl. Das ist das Türchen eures Adventskalenders.</p></div>
-        <div class="zone tuer"><h3>Tür</h3><p>Bleibt, wie sie ist. Sie geht nur von innen auf, von außen ist sie nur gemalt.</p></div>
-        <div class="zone"><h3>Bänkchen</h3><p>Platz für das, was die Kinder Tomte hinlegen. Und für Kleinigkeiten, wenn ihr sie zuschaltet.</p></div>
-        <div class="zone"><h3>Brief&shy;kasten</h3><p>Hier liegt der Brief. Mimi schläft darauf, deshalb kommt die Post manchmal spät.</p></div>
-      </div>
-      <p class="leiste-fuss">Die dicke Linie ist eure Fußleiste.</p>
-    </div>
   </div>
 </section>
-
-<section class="block" id="freunde">
-  <div class="wrap stack">
-    <div class="split">
-      <h2>Zwei, die man sehen darf.</h2>
-      <p class="sub" style="margin-top:0">Tomte zeigt sich nie. Mimi und Rubi schon. Sie sind der Beweis, dass es ihn gibt, und sie erzählen von ihm. Selten dasselbe.</p>
-    </div>
-    <div class="zwei">
-      <div class="wesen mimi"><h3>Mimi, die Haselmaus</h3><p>Soll Tomtes Post bringen und schläft dabei ständig ein. Wer sie morgens auf dem Briefkasten findet, klopft dreimal leise.</p><blockquote>„Kekse. Ich bleibe dabei.“</blockquote></div>
-      <div class="wesen rubi"><h3>Rubi, das Rotkehlchen</h3><p>Fliegt zwischen Tomtes Welt und draußen. Bringt Nachrichten vom Wetter und vom Schnee und übertreibt dabei gern.</p><blockquote>„Der Hund war so groß wie ein Bus. Ein kleiner Bus.“</blockquote></div>
-    </div>
-  </div>
-</section>
-
 
 <section class="block" id="generator">
   <div class="wrap">
@@ -1190,7 +1145,7 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap stack">
     <div class="split">
       <h2>Tomte wird gehört, nie gesehen.</h2>
-      <p class="sub" style="margin-top:0">Drei Stücke zum Lesen und Mitmachen, ganz aus Schrift. Kein Brief fertig? Dann nehmt heute das Fenster. Dazu drei Hörstücke und zwei Lieder als Text, zum Vorlesen und Summen. Das Handy ist dabei nie das Medium, sondern das Versteck: Es liegt neben der Tür, der Bildschirm bleibt dunkel.</p>
+      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann nehmt heute das Fenster: drei Minuten Tomtes Werkstatt, ganz aus Schrift. Hörstücke und Lieder stehen im Plan am passenden Tag.</p>
     </div>
     <div class="stuecke">
       <article class="stueck">
@@ -1204,30 +1159,8 @@ details.streich[open]>summary::after{content:"–"}
         </div>
       </article>
 
-      <article class="stueck">
-        <p class="eyebrow">Suchbild · für zwischendurch</p>
-        <h3>Wo ist Mimi?</h3>
-        <p class="stueck-sub">In Tomtes Werkstatt liegt viel herum. Hier stehen die Dinge als Wörter, und Mimi schläft irgendwo dazwischen.</p>
-        <div class="wortfeld" id="wortfeld"></div>
-        <p class="stueck-status" id="suchStatus" role="status"></p>
-        <div class="stueck-knoepfe" id="suchKnoepfe" hidden>
-          <button class="btn btn-primary" id="suchNochmal">Noch einmal suchen</button>
-          <button class="btn btn-ghost" id="suchFertig">Fertig</button>
-        </div>
-        <p class="tipp">Wer noch nicht liest, lässt sich die Wörter vorlesen und ruft Stopp, wenn ein Name kommt statt eines Dings.</p>
-      </article>
-
-      <article class="stueck">
-        <p class="eyebrow">Notizbuch · zum Ausdrucken</p>
-        <h3>Tomtes Notizbuch</h3>
-        <p class="stueck-sub">Er fängt Listen an und schläft darüber ein. Schreibt dazu, was fehlt.</p>
-        <p class="notiz-vorweg"><b>Für euch:</b> Getipptes bleibt nur, solange die Seite offen ist, und niemand liest es außer euch. Zum Behalten das Blatt ausdrucken und mit der Hand schreiben.</p>
-        <div class="notiz" id="notiz"></div>
-        <div class="stueck-knoepfe"><button class="btn btn-primary" id="notizDruck">Blatt ausdrucken</button></div>
-      </article>
     </div>
 
-    <div class="medien-grid" id="medienGrid"></div>
   </div>
 </section>
 
@@ -1272,12 +1205,9 @@ details.streich[open]>summary::after{content:"–"}
       <p class="sub">Ein paar Regeln, die wir uns selbst gegeben haben. Damit der Zauber bleibt und niemand draufzahlt.</p>
     </div>
     <ul class="kodex-liste">
-      <li><b>Tomte wird nie gesehen.</b>Nicht in Briefen, nicht auf dieser Seite, nirgends. Kinder ergänzen ihn in ihrer Fantasie, und das ist stärker als jedes Bild.</li>
-      <li><b>Tomte ist ein guter Wichtel. Immer.</b>Er beobachtet nicht, droht nicht, erzieht nicht. Keine Liste, kein Bericht. Nachts ist er leise in der ganzen Wohnung unterwegs, auch in den Kinderzimmern.</li>
-      <li><b>Ehrliche Minuten.</b>Jeder Tag sagt vorher, was der Brief braucht und wie lange das dauert, meist eine bis fünf Minuten. Was länger dauert, steht als Wochenend-Zugabe daneben.</li>
-      <li><b>Keine Sauerei, kein Einkaufszwang.</b>Spuren sind klein und in zwei Minuten weg. Alles geht mit Papier, Drucker und dem, was in einer Wohnung ist. Was ihr einmalig braucht, steht oben unter Material, und zwei der drei Wege dorthin kosten nichts.</li>
-      <li><b>Vergessen ist Teil der Geschichte.</b>Mimi schläft, Rubi hängt im Schneesturm fest. Niemand muss etwas erfinden, das Tomte nicht selbst erklärt.</li>
-      <li><b>Ein Winterwichtel.</b>Tomte funktioniert in Familien mit und ohne Weihnachten. Süßes gibt es nur, wenn ihr es einschaltet. Keine Daten von Kindern verlassen euer Gerät.</li>
+      <li><b>Tomte wird nie gesehen.</b>Nicht in Briefen, nicht auf dieser Seite, nirgends.</li>
+      <li><b>Tomte ist ein guter Wichtel. Immer.</b>Er beobachtet nicht, droht nicht, erzieht nicht.</li>
+      <li><b>Keine Daten von Kindern verlassen euer Gerät.</b>Kein Konto, kein Tracking, alles bleibt im Browser.</li>
     </ul>
   </div>
 </section>
@@ -1509,12 +1439,27 @@ details.streich[open]>summary::after{content:"–"}
     var ziehtMaus = false;
     if (knopf){
       knopf.classList.add('sichtbar');
+      knopf.setAttribute('aria-pressed','false');
       knopf.addEventListener('mousedown', function(e){
         e.preventDefault();
-        ziehtMaus = true;
+        ziehtMaus = true; gehaltenSeit = Date.now();
         setPos(e.clientX, e.clientY);
         ruhtJetzt('.35s');
       });
+      /* Kurzer Klick oder Tastatur: Welt bleibt offen, bis man erneut klickt, Esc drückt oder scrollt. */
+      knopf.addEventListener('click', function(e){
+        if (e.detail === 0){ /* Tastatur */
+          if (knopf.getAttribute('aria-pressed') === 'true'){ zuKnopf(); return; }
+          var r = knopf.getBoundingClientRect(); setPos(r.left + r.width/2, r.top + r.height/2);
+          ruhtJetzt('.6s'); knopf.setAttribute('aria-pressed','true'); return;
+        }
+      });
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && knopf.getAttribute('aria-pressed') === 'true') zuKnopf(); });
+      window.addEventListener('scroll', function(){ if (knopf.getAttribute('aria-pressed') === 'true') zuKnopf(); }, { passive: true });
+    }
+    var gehaltenSeit = 0;
+    function zuKnopf(){ knopf.setAttribute('aria-pressed','false'); schliessen('.4s'); }
+    if (knopf){
     }
     window.addEventListener('mousemove', function(e){
       if (ziehtMaus) setPos(e.clientX, e.clientY);
@@ -1522,8 +1467,13 @@ details.streich[open]>summary::after{content:"–"}
     function ziehenBeenden(){
       if (!ziehtMaus) return;
       ziehtMaus = false;
+      /* kurzer Klick (< 300 ms): offen lassen, längeres Halten: beim Loslassen schließen */
+      if (Date.now() - gehaltenSeit < 300 && knopf){ knopf.setAttribute('aria-pressed','true'); return; }
       schliessen('.4s');
     }
+    window.addEventListener('mousedown', function(e){
+      if (knopf && knopf.getAttribute('aria-pressed') === 'true' && e.target !== knopf) zuKnopf();
+    }, true);
     window.addEventListener('mouseup', ziehenBeenden);
     window.addEventListener('mouseleave', ziehenBeenden);
   } else {
@@ -1811,87 +1761,6 @@ details.streich[open]>summary::after{content:"–"}
       };
     }
 
-    /* 2. Wo ist Mimi: keine Runden, keine Zählung, Antworten aus Tomtes Welt. */
-    var DINGE=["Kerze","Hobel","Topf","Socke","Besen","Nagel","Krug","Schale","Kiste","Schnur","Löffel","Decke","Knopf","Kissen","Stuhl","Teller","Korb","Bürste","Eimer","Leiter","Zange","Kamm","Stift","Säge","Hut","Schlüssel","Brett","Tuch","Feder","Nest","Krümel","Dose","Pinsel","Schere"];
-    var KOEDER=["Mine","Minze","Murmel","Mühle","Mandel","Mohn","Milch","Mütze"];
-    var ANTWORT={
-      "Korb":"Der Korb. Da schläft sie sonst. Heute nicht.",
-      "Besen":"Der Besen steht hinter der Tür.",
-      "Löffel":"Ein Löffel. Der schnarcht auch nicht.",
-      "Säge":"Die Säge. Die ist hellwach.",
-      "Feder":"Eine Feder von Rubi. Er verliert ständig welche.",
-      "Krümel":"Krümel. Die waren mal ein Keks.",
-      "Decke":"Die Decke. Darunter ist niemand.",
-      "Mütze":"Meine Mütze. Die brauche ich noch.",
-      "Milch":"Milch. Die ist für später.",
-      "Nest":"Das Nest ist leer, Rubi ist draußen."
-    };
-    var feld=$('#wortfeld'), status=$('#suchStatus'), knoepfe=$('#suchKnoepfe'), durchgang=0;
-    function mischen(a){ a=a.slice(); for(var k=a.length-1;k>0;k--){ var j=Math.floor(Math.random()*(k+1)); var t=a[k]; a[k]=a[j]; a[j]=t; } return a; }
-    function bauen(){
-      durchgang++;
-      var koeder=mischen(KOEDER).slice(0,Math.min(2+2*(durchgang-1),6));
-      var rest=mischen(DINGE).slice(0,20-koeder.length);
-      var w=mischen(rest.concat(koeder));
-      var stelle=durchgang>2 ? (Math.random()<.5?0:w.length) : Math.floor(w.length/4)+Math.floor(Math.random()*(w.length/2));
-      w.splice(stelle,0,"Mimi");
-      feld.className='wortfeld';
-      feld.innerHTML=w.map(function(x){ return '<button type="button" data-w="'+x+'">'+x+'</button>'; }).join('');
-      knoepfe.hidden=true;
-      status.textContent= durchgang===1 ? '' : 'Im Schlaf wandert sie. Jetzt liegt sie woanders.';
-    }
-    if(feld){
-      bauen();
-      feld.addEventListener('click',function(e){
-        var b=e.target.closest('button'); if(!b||feld.classList.contains('fertig')) return;
-        var w=b.dataset.w;
-        if(w!=='Mimi'){ status.textContent=ANTWORT[w]||('Das liegt auch bei mir herum: '+w+'.'); return; }
-        b.classList.add('gefunden'); feld.classList.add('fertig');
-        status.textContent='Da ist sie. Sie dreht sich um und schläft weiter.';
-        knoepfe.hidden=false;
-      });
-      $('#suchNochmal').onclick=function(){ bauen(); };
-      $('#suchFertig').onclick=function(){ knoepfe.hidden=true; status.textContent='Jetzt schläft sie richtig fest. Wir lassen sie.'; };
-    }
-
-    /* 3. Notizbuch: Papier zuerst, Tippen als Nebenweg. */
-    var LISTEN=[
-      {t:"Was ich noch bauen will", z:["einen Stuhl, der nicht wackelt","ein Dach für den Briefkasten"], n:2,
-       tomte:"Ich bin langsam. Der Stuhl liegt seit drei Jahren auf der Werkbank."},
-      {t:"Was Mimi mag (sagt sie)", z:["Kekse","Socken","Kekse (hat sie zweimal gesagt)"], n:2,
-       tomte:"Sie bekommt nichts davon. Sie träumt nur davon."},
-      {t:"Rubis größte Geschichten", z:["dass der Hund so groß war wie ein Bus","dass er selbst bis ans Meer geflogen ist"], n:2,
-       tomte:"Ich glaube ihm jedes Wort. Fast."}
-    ];
-    var box=$('#notiz');
-    function listeHTML(l,n,druck){
-      var zeilen=l.z.map(function(z){ return '<li>'+z+'</li>'; }).join('');
-      for(var k=0;k<l.n;k++){
-        zeilen += druck ? '<li class="leer">&nbsp;</li>'
-          : '<li><input id="nz'+n+k+'" type="text" placeholder="…" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="'+l.t+', eigene Zeile '+(k+1)+'"></li>';
-      }
-      return '<div><h4>'+l.t+'</h4><ul>'+zeilen+'</ul><p class="tomte-zeile">'+l.tomte+'</p></div>';
-    }
-    if(box){
-      box.innerHTML=LISTEN.map(function(l,n){ return listeHTML(l,n,false); }).join('');
-      $('#notizDruck').onclick=function(){
-        var A=window.TOMTINI_APP;
-        var seite='<div class="sheet" style="font-family:var(--hand);color:#27306b">'
-          +'<p class="eyebrow" style="font-family:var(--body)">Tomtini · Tomtes Notizbuch</p>'
-          +'<h3 class="pt" style="font-family:var(--body)">Was noch fehlt</h3>'
-          +'<p class="pt-sub" style="font-family:var(--body)">Er fängt Listen an und schläft darüber ein. Schreibt mit der Hand dazu, was fehlt, und legt das Blatt vor die Tür.</p>'
-          +'<div style="display:grid;gap:9mm;font-size:15pt;line-height:1.5">'
-          + LISTEN.map(function(l){
-              var leer=''; for(var k=0;k<4;k++) leer+='<div style="border-bottom:1px solid #c9bfa8;height:9mm"></div>';
-              return '<div><div style="font-weight:700;font-size:17pt;margin-bottom:2mm">'+l.t+'</div>'
-                + l.z.map(function(z){ return '<div>'+z+'</div>'; }).join('')
-                + leer
-                + '<div style="opacity:.75;margin-top:2mm">'+l.tomte+'</div></div>';
-            }).join('')
-          +'</div></div>';
-        if(A&&A.openPV) A.openPV('Tomtes Notizbuch',seite);
-      };
-    }
   })();
 })();
 </script>
