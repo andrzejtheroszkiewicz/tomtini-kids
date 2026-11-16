@@ -828,11 +828,17 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 .magie-hinweis.sichtbar{opacity:1}
 @media (prefers-reduced-motion:reduce){.magie-hinweis{display:none}}
 
+/* Der Knopf sitzt in der klebenden Navileiste und ist damit auf der ganzen Seite
+   erreichbar, nicht nur im Hero. Am Handy entfaellt er: dort oeffnet die
+   Zwei-Finger-Geste die Welt, und die Leiste bleibt frei. */
 .magie-knopf{display:none;align-items:center;gap:7px;border:1.5px solid var(--line);
   background:transparent;color:var(--snow);font-family:var(--body);
-  font-size:13px;font-weight:600;letter-spacing:.01em;padding:10px 17px;
-  border-radius:999px;cursor:pointer;-webkit-user-select:none;user-select:none}
+  font-size:14px;font-weight:600;letter-spacing:.01em;padding:0 15px;min-height:45px;
+  border-radius:999px;cursor:pointer;flex:none;white-space:nowrap;
+  -webkit-user-select:none;user-select:none}
 .magie-knopf.sichtbar{display:inline-flex}
+.magie-knopf[aria-pressed="true"]{border-color:var(--gold,#f0c76a);color:var(--gold,#f0c76a)}
+@media (max-width:600px){.magie-knopf,.magie-knopf.sichtbar{display:none}}
 .magie-knopf:hover{border-color:var(--mist)}
 .magie-knopf:active{transform:scale(.97)}
 @media (prefers-reduced-motion:reduce){.magie-knopf{display:none!important}}
@@ -989,6 +995,7 @@ details.streich[open]>summary::after{content:"–"}
     <a href="#streiche">Streiche</a>
     <a href="#notfall">Notfall</a>
     <a class="to-gen" href="#generator">Generator</a>
+    <button class="magie-knopf" id="magieKnopf" type="button">✦ Tomtes Welt</button>
     <button type="button" class="menue-knopf" id="menueKnopf" aria-expanded="false" aria-controls="menue">Menü</button>
     <button type="button" class="modus-knopf" id="modusKnopf" aria-label="Dunkelmodus umschalten" title="Dunkelmodus umschalten">☽</button>
   </div>
@@ -1023,7 +1030,6 @@ details.streich[open]>summary::after{content:"–"}
         <p class="facts">Kein Konto. Keine App. Abends eine bis fünf Minuten.</p>
       </div>
       <div class="hero-magie">
-        <button class="magie-knopf" id="magieKnopf" type="button">✦ Blick in Tomtes Welt</button>
         <p class="rubi-note" id="rubiNote">Zeigt mal auf ihn. Er ist schneller.<small>Rubi, das Rotkehlchen</small></p>
       </div>
     </div>
@@ -1503,12 +1509,16 @@ details.streich[open]>summary::after{content:"–"}
        zum Umsehen, loslassen schließt wieder. Volle Kontrolle liegt beim Benutzer. */
     var knopf = document.getElementById('magieKnopf');
     var ziehtMaus = false;
+    var vonDerLeiste = false;
+    function inDieMitte(){ setPos(window.innerWidth/2, window.innerHeight/2); }
     if (knopf){
       knopf.classList.add('sichtbar');
       knopf.setAttribute('aria-pressed','false');
       knopf.addEventListener('mousedown', function(e){
         e.preventDefault();
-        ziehtMaus = true; gehaltenSeit = Date.now();
+        /* Steht die Welt schon offen, ist der zweite Druck das Schliessen. */
+        if (knopf.getAttribute('aria-pressed') === 'true'){ zuKnopf(); return; }
+        ziehtMaus = true; gehaltenSeit = Date.now(); vonDerLeiste = true;
         setPos(e.clientX, e.clientY);
         ruhtJetzt('.35s');
       });
@@ -1516,12 +1526,13 @@ details.streich[open]>summary::after{content:"–"}
       knopf.addEventListener('click', function(e){
         if (e.detail === 0){ /* Tastatur */
           if (knopf.getAttribute('aria-pressed') === 'true'){ zuKnopf(); return; }
-          var r = knopf.getBoundingClientRect(); setPos(r.left + r.width/2, r.top + r.height/2);
-          ruhtJetzt('.6s'); knopf.setAttribute('aria-pressed','true'); return;
+          inDieMitte(); ruhtJetzt('.6s'); knopf.setAttribute('aria-pressed','true'); return;
         }
       });
       document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && knopf.getAttribute('aria-pressed') === 'true') zuKnopf(); });
-      window.addEventListener('scroll', function(){ if (knopf.getAttribute('aria-pressed') === 'true') zuKnopf(); }, { passive: true });
+      /* Kein Schliessen beim Scrollen mehr: der Raumturm wandert mit dem Seitenscroll,
+         also muss der Kreis dabei offen bleiben. Zu geht er per zweitem Klick,
+         Esc oder Klick daneben. */
     }
     var gehaltenSeit = 0;
     function zuKnopf(){ knopf.setAttribute('aria-pressed','false'); schliessen('.4s'); }
@@ -1534,7 +1545,12 @@ details.streich[open]>summary::after{content:"–"}
       if (!ziehtMaus) return;
       ziehtMaus = false;
       /* kurzer Klick (< 300 ms): offen lassen, längeres Halten: beim Loslassen schließen */
-      if (Date.now() - gehaltenSeit < 300 && knopf){ knopf.setAttribute('aria-pressed','true'); return; }
+      if (Date.now() - gehaltenSeit < 300 && knopf){
+        /* Der Knopf steht jetzt oben rechts in der Leiste - der Kreis darf nicht dort
+           kleben bleiben, sondern rueckt in die Bildmitte. */
+        if (vonDerLeiste) inDieMitte();
+        knopf.setAttribute('aria-pressed','true'); return;
+      }
       schliessen('.4s');
     }
     window.addEventListener('mousedown', function(e){
@@ -1585,7 +1601,10 @@ details.streich[open]>summary::after{content:"–"}
     window.addEventListener('touchend', fingerWeg, { passive: true });
     window.addEventListener('touchcancel', fingerWeg, { passive: true });
   }
-  window.addEventListener('scroll', function(){ schliessen(); clearTimeout(timer); }, { passive: true });
+  window.addEventListener('scroll', function(){
+    if (knopf && knopf.getAttribute('aria-pressed') === 'true') return;
+    schliessen(); clearTimeout(timer);
+  }, { passive: true });
   window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
 })();
 </script>
