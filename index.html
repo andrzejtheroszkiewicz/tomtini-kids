@@ -688,17 +688,18 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 /* Das Bild sitzt in einer eigenen Flaeche mit dem Seitenverhaeltnis der Illustration. Dadurch
    deckt es wie "cover" den Raum ab, und die Lichtstrahlen darin lassen sich in Prozent des
    Bildes setzen - sie bleiben also auf jedem Bildschirm genau auf ihrer Lampe sitzen. */
-/* Tomtes Welt ist jetzt ein ganzer Turm: acht Raeume uebereinander, dazwischen der
-   Treppenschacht. Er traegt die Treppe von der Bodenoeffnung des Raums (50 % der Breite)
-   zur Deckenoeffnung des naechsten (27 %) - deshalb muss kein Raum gespiegelt werden.
-   Der Turm wandert mit dem Seitenscroll: oben der Flur vor der Tuer, unten die
-   Vorratskammer. Jede Kachel ist oben und unten um 9,5 % beschnitten, damit die weichen
-   Aquarell-Papierraender nicht als helle Baender in der Naht stehen. */
+/* Tomtes Welt ist jetzt ein ganzer Turm: acht Raeume uebereinander, ohne Pause
+   dazwischen - die Kacheln liegen direkt aneinander und ueberlappen sich leicht
+   (siehe --sh:0px und die Maske unten), sodass an der Naht ein weicher Verlauf
+   entsteht statt eines harten Schnitts. Der Turm wandert mit dem Seitenscroll:
+   oben der Flur vor der Tuer, unten die Vorratskammer. Jede Kachel ist oben und
+   unten um 9,5 % beschnitten, damit die weichen Aquarell-Papierraender nicht als
+   helle Baender in der Naht stehen. */
 .magie-turm{position:absolute;left:50%;top:50%;isolation:isolate;
   --kw:max(calc(var(--wz,1.26) * 100vw), calc(var(--wz,1.26) * 100vh * 1.77075));
   --kh:calc(var(--kw) / 1.77075);
   --sicht:calc(var(--kh) * 0.81);
-  --sh:calc(var(--kw) / 4.0635);
+  --sh:0px;
   --turmh:calc(6.22 * var(--kh) + 7 * var(--sh));
   width:var(--kw);
   transform:translate(-50%,
@@ -715,11 +716,15 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
    spiegeln, sonst sitzt er nicht mehr unter der Lampe - deshalb hier der ganze Raum. */
 .magie-kachel.gespiegelt-raum{transform:scaleX(-1)}
 .magie-schacht{position:relative;width:100%;height:var(--sh);overflow:hidden}
-/* Statt einer gezeichneten Treppe: eine dunkle Blende. Man taucht kurz ins Dunkel und
-   taucht im naechsten Raum wieder auf - so muessen nie zwei gemalte Treppenstile an
-   einer Naht zueinander passen, weil an der Naht gar keine Treppe mehr gezeichnet ist. */
+/* --sh ist 0: der Schacht als eigene Blende ist weg, keine Pause mehr zwischen den
+   Raeumen. Das Markup bleibt (falls spaeter wieder eine eigene Zwischenebene noetig
+   wird), aber ohne Hoehe zeigt es nichts mehr. */
 .magie-schacht > i{position:absolute;inset:0;
   background:linear-gradient(to bottom, #0a0f28 0%, #050810 50%, #0a0f28 100%)}
+/* Jede Kachel ueberlappt die vorherige leicht und blendet oben weich ein (Maske:
+   erst transparent, ab 4 % voll deckend). Da spaeter im Code gezeichnete Elemente
+   im DOM auch oben liegen, legt sich jede Kachel beim Ueberlappen sanft ueber die
+   vorherige - das ergibt den weichen Verlauf an der Nahtstelle, ohne Luecke. */
 .magie-turm > * + *{margin-top:calc(var(--kh) * -0.02);
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 4%,#000 100%);
   mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 4%,#000 100%)}
