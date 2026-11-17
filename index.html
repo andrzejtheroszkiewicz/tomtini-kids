@@ -350,11 +350,28 @@ textarea{min-height:64px;resize:vertical}
 .kd .mode button{border:1.5px solid var(--line);background:var(--deep);color:var(--snow);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
 .kd .mode button[aria-pressed="true"]{background:var(--snow);color:var(--night);border-color:var(--snow)}
 .kd-mehr{border-top:2px solid var(--line);padding-top:4px}
-.kd-mehr>summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none;display:flex;gap:8px;align-items:baseline}
+.kd-mehr>summary{cursor:pointer;font-weight:600;font-size:14.5px;color:var(--mist);padding:10px 0;list-style:none;display:flex;gap:8px;align-items:baseline}
 .kd-mehr>summary::-webkit-details-marker{display:none}
 .kd-mehr>summary::before{content:"+";font-family:var(--display);font-size:22px;line-height:1;color:var(--lamp);width:.8em}
 .kd-mehr[open]>summary::before{content:"–"}
 .kd-mehr-in{display:grid;gap:12px;padding-bottom:6px}
+.kd-mehr .tmode{margin-top:2px}
+/* Der aufgeklappte Tag: die Handgriffe am Abend, in der Reihenfolge, in der man sie macht */
+.schritte{list-style:none;margin:0;padding:0;counter-reset:schritt;border-bottom:2px solid var(--line)}
+.schritt{counter-increment:schritt;position:relative;border-top:2px solid var(--line);padding:12px 0 13px 40px;display:grid;grid-template-columns:minmax(0,1fr);gap:5px;font-size:15.5px;line-height:1.45}
+.schritt::before{content:counter(schritt);position:absolute;left:0;top:10px;font-family:var(--display);font-weight:700;font-size:28px;line-height:1;color:var(--lamp);font-variant-numeric:tabular-nums}
+.schritt p{margin:0}
+.schritt .sk{font-size:18px;line-height:1.25}
+.schritt .sk b{font-weight:700}
+.schritt .sz{display:inline-block;font-size:14px;font-weight:500;color:var(--mist)}
+.schritt .m{color:var(--mist);font-size:14px}
+.schritt .zettel{align-items:flex-start;margin:3px 0 0}
+.schritt .links{display:flex;flex-wrap:wrap;gap:0 20px;margin-top:-2px}
+.schritt .lnk{appearance:none;background:none;border:0;padding:10px 0;margin:0;font:500 14px/1.2 var(--body);color:var(--mist);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.schritt .lnk:hover{color:var(--snow)}
+.schritt .lnk:focus-visible{outline:3px solid var(--lamp);outline-offset:2px}
+.schritt.leise::before{color:var(--mist)}
+.schritt.leise .sk b{font-weight:600;color:var(--mist)}
 .kd-nav{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:12px}
 /* B: Fenster, auf dem Handy von unten */
 .kal-sheet{position:fixed;inset:0;z-index:80;display:none}
@@ -883,9 +900,6 @@ html.magie-zweifinger, html.magie-zweifinger body{touch-action:none}
 .frech{font-size:12.5px;font-weight:700;padding:1px 9px;line-height:1.35;border:1px solid currentColor}
 .frech.f2{background:var(--yellow,#ffd23f);color:#0f1430;border-color:#0f1430}
 .frech.f3{background:var(--rubi);color:#fff;border-color:var(--rubi)}
-.streichvor .kopf{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.streichvor .zettel{align-items:flex-start;margin:4px 0}
-.streichvor .knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
 .streich-leer{font-size:17px;color:var(--mist);padding:8px 0}
 .streich-stufe{margin:22px 0 14px;font-size:clamp(22px,2.6vw,32px);font-weight:700;letter-spacing:-.02em}
 .streich-stufe small{font-weight:400;color:var(--mist);font-size:16px;letter-spacing:0;margin-left:8px;white-space:nowrap}
@@ -1692,7 +1706,7 @@ details.streich[open]>summary::after{content:"–"}
 })();
 </script>
 <script src="content.js"></script>
-<script src="app.js"></script>
+<script src="app.js?v=20261117"></script>
 <script>
 (function(){
   var $=function(s){return document.querySelector(s);};

@@ -69,8 +69,16 @@
   function lego(x){ if($('#lego').checked) return x; return x.replace(/Klemmbausteine/g,"Pappe oder Schachteln").replace(/Bausteinen/g,"Schachteln").replace(/Bausteine/g,"Schachteln"); }
   const BAUTEILE=new Set([15,17,19,21]);
   function tafelObj(){ const id=$('#tafel').value; return C.tafel.find(t=>t.id===id)||C.tafel[0]; }
-  function zahlHTML(day){ const t=tafelObj();
-    return `<div class="zug"><span class="t">Zahlentafel: heute die ${day.n} <span class="minbadge">1 Min · nachts</span></span><span>${day.n===1?"Die 1 steht seit dem JA-Abend. Ab heute jede Nacht die neue Zahl: "+t.t.toLowerCase()+".":"Zahl auf "+day.n+" wechseln ("+t.t.toLowerCase()+"). Das ist das Türchen, Tomte hat nachts gebaut."}</span></div>`; }
+  // Die Handgriffe am Abend: Brief, Streich, Zahlentafel. Jeder Schritt hat eine fette Zeile, die für sich allein reicht.
+  const TAFELVERB={steine:"stecken",karten:"aufstellen",kreide:"schreiben",scheiben:"dazulegen",fenster:"dazuschreiben"};
+  function schritt(cls,kopf,zeit,inner){ return `<li class="schritt ${cls}"><p class="sk"><b>${kopf}</b>${zeit?` <span class="sz">${zeit}</span>`:""}</p>${inner||""}</li>`; }
+  function zahlSchritt(day){ if(day.n===1) return schritt("s-tafel","Zahlentafel: Die 1 steht schon","",`<p>Seit dem JA-Abend. Ab heute jede Nacht die neue Zahl.</p>`);
+    return schritt("s-tafel",`Zahlentafel: die ${day.n} ${TAFELVERB[tafelObj().id]||"wechseln"}`,"1 Min"); }
+  function briefSchritt(day,i){ const b=day.basis, mode=state.modes[i]; if(!b) return schritt("s-brief","Brief hinlegen","");
+    if(val('aufwand')==="briefe"&&!mode&&day.n) return schritt("s-brief","Brief hinlegen","1 Min · abends",`<p>Die Requisite dieses Tages entfällt, der Brief funktioniert ohne.${BAUTEILE.has(day.n)?" Dieser Tag hat ein Bauteil fürs Finale ("+b.t+"); freiwillig, das Finale geht auch ohne: Dann ist die Chronik allein das Geschenk.":""}</p>`);
+    const wenig = mode==="wenig" ? `<p class="m">${PROPFREI.has(day.n)?"Wenig Zeit: Dieser Brief funktioniert auch ganz ohne Vorbereitung.":"Wenig Zeit: Heute nur das Nötigste, kein Extra."}</p>` : "";
+    const zeit = /^\d/.test(b.zeit) ? b.zeit : `${b.min} Min · ${b.zeit}`;
+    return schritt("s-brief",`Brief hinlegen, dazu: ${b.t}`,zeit,`${wenig}<p>${lego(b.x)}</p><p class="m">Material: ${lego(b.m)}</p>`); }
   function suessHTML(day){ if(!$('#suess').checked) return ""; const x=C.suess.tage[day.n]; if(!x) return "";
     return `<div class="zug"><span class="t">Etwas Süßes <span class="minbadge">dazu</span></span><span>${x}${plural()?" Bei mehreren Kindern pro Kind dasselbe.":""} Steht nicht im Brief.</span></div>`; }
   function basisHTML(day,i){ const b=day.basis; if(!b) return ""; const mode=state.modes[i];
@@ -98,25 +106,26 @@
     return res; }
   let _sp=null; function streichFuer(i){ if(!_sp) _sp=streichPlan(); return _sp[i]; }
   function streichMin(x){ return x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`); }
-  function streichVorHTML(i){ if(val('streichPlan')==="aus") return ""; const off=(state.streichOff||{})[i]; const v=streichFuer(i);
-    if(off) return `<div class="zug streichvor"><span class="t">Streich-Vorschlag: heute keiner</span><span class="knoepfe"><button type="button" class="btn btn-ghost btn-mini" data-son="${i}">Doch einen zeigen</button></span></div>`;
-    if(!v) return ""; const x=v.x; const fname=C.streicheFrech.find(o=>o.f===x.f).t; const tier=$('#haustier').checked;
-    if(v.teil===2) return `<div class="zug streichvor"><span class="t">Streich-Vorschlag, zweiter Abend: ${x.t}</span><span>Heute Abend der zweite Teil von gestern.</span>${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</div>`;
-    return `<div class="zug streichvor"><span class="t kopf">Streich-Vorschlag: ${x.t} <span class="minbadge">${streichMin(x)}</span><span class="frech f${x.f}">${fname}</span></span><span>${x.x}</span>${x.m&&x.m!=="–"?`<span class="m">Material: ${x.m}</span>`:""}${x.auf?`<span class="m">Aufräumen am Morgen: ${x.auf}</span>`:""}${tier&&x.tier?`<span class="m"><b>Haustier:</b> ${x.tier}</span>`:""}${zettelHTML({von:x.von,text:x.z})}<span class="knoepfe"><button type="button" class="btn btn-ghost btn-mini" data-snext="${i}">Anderer Vorschlag</button><button type="button" class="btn btn-ghost btn-mini" data-soff="${i}">Heute keiner</button></span></div>`; }
+  function streichSchritt(i){ if(val('streichPlan')==="aus") return ""; const off=(state.streichOff||{})[i]; const v=streichFuer(i);
+    if(off) return schritt("s-streich leise","Streich: heute keiner","",`<p class="links"><button type="button" class="lnk" data-son="${i}">Doch einen zeigen</button></p>`);
+    if(!v) return ""; const x=v.x; const tier=$('#haustier').checked;
+    if(v.teil===2){ const a2=x.x.indexOf("Abend 2:"); return schritt("s-streich",`Streich, zweiter Abend: ${x.t}`,"",`<p>${a2>=0?x.x.slice(a2+8).trim().replace(/^./,c=>c.toUpperCase()):"Heute Abend der zweite Teil von gestern."}</p>${x.z2?zettelHTML({von:x.von,text:x.z2}):""}`); }
+    return schritt("s-streich",`Streich: ${x.t}`,streichMin(x),`<p>${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}<p class="links"><button type="button" class="lnk" data-snext="${i}">Anderer Streich</button><button type="button" class="lnk" data-soff="${i}">Heute keiner</button></p>`); }
   function doneBtn(i){ return `<button type="button" class="done-btn" data-done="${i}" aria-pressed="${!!state.done[i]}">${state.done[i]?"Vorbereitet ✓":"Als vorbereitet markieren"}</button>`; }
   function answerHTML(i,label){ return `<div class="antwort"><label for="a${i}">${label}</label><textarea id="a${i}" data-ans="${i}" placeholder="Für die Chronik am Ende: was die Kinder geantwortet, gemalt oder gesagt haben">${state.answers[i]||""}</textarea></div>`; }
-  // Ein Tag in zwei Ebenen: core = Brief und Abendaufgabe, more = alles Optionale
-  function dayParts(day,i){ let core="", more=""; const labels=[]; const mode=state.modes[i];
+  // Ein Tag in drei Ebenen: steps = die Handgriffe am Abend, core = der Brieftext, more = alles Optionale.
+  // Reihenfolge Brief, Zahlentafel, Streich: erst die Tür (zwei kurze Schritte), dann der Streich. So stehen am Handy alle drei Zeilen im ersten Blick.
+  function dayParts(day,i){ let steps="", core="", more=""; const labels=[]; const mode=state.modes[i];
     if(day.brief) core+=letterHTML(briefParas(day,i),day.ps);
     if(day.zettelDoppel) core+=day.zettelDoppel.map(zettelHTML).join(""); else if(day.zettel) core+=zettelHTML(day.zettel);
     if(mode==="reise"){ const r=C.notfall.find(n=>n.id==="reise"); core+=`<div class="zug"><span class="t">Ihr seid unterwegs. Tomte reist mit.</span><span>Diesen Brief am Abend vor der Abfahrt legen. Unterwegs reicht eine kleine Spur pro Abend. Dieser Tag entfällt sonst.</span></div>`+letterHTML(kurz()&&r.kurz?r.kurz:r.brief); }
-    else { core+=zahlHTML(day)+basisHTML(day,i); if(day.extra){ const e=day.extra, on=wantsExtra(i); more+=`<div class="zug"><span class="t">Wochenend-Zugabe: ${e.t} <span class="minbadge">${e.min} Min · tagsüber</span></span><span>${lego(e.x)}</span><span class="m">Material: ${lego(e.m)}</span><span><button type="button" class="btn btn-ghost btn-mini" data-i="${i}" data-l="${on?"basis":"we"}" data-zug>${on?"Im Elternplan ✓":"In den Elternplan übernehmen"}</button></span></div>`; labels.push("Zugabe"); } const st=streichVorHTML(i); if(st){ more+=st; labels.push("Streich"); } }
+    else { steps=`<ol class="schritte">${briefSchritt(day,i)}${zahlSchritt(day)}${streichSchritt(i)}</ol>`; if(day.extra){ const e=day.extra, on=wantsExtra(i); more+=`<div class="zug"><span class="t">Wochenend-Zugabe: ${e.t} <span class="minbadge">${e.min} Min · tagsüber</span></span><span>${lego(e.x)}</span><span class="m">Material: ${lego(e.m)}</span><span><button type="button" class="btn btn-ghost btn-mini" data-i="${i}" data-l="${on?"basis":"we"}" data-zug>${on?"Im Elternplan ✓":"In den Elternplan übernehmen"}</button></span></div>`; labels.push("Zugabe"); } }
     const nxt=C.tage[i+1]; if(nxt&&nxt.ohne){ more+=`<p class="tipp"><b>Keine Lust gehabt?</b> Nicht gemacht heißt: nichts passiert, Tomte erwähnt es nicht. <button type="button" class="btn btn-ghost btn-mini" data-nope="${i}">${state.nope&&state.nope[i]?"Morgen-Brief ohne Dank ✓":"Morgen-Brief ohne Dank"}</button></p>`; }
     const su=suessHTML(day); if(su){ more+=su; labels.push("Süßes"); }
     if($('#klein').checked&&C.klein[day.n]){ more+=`<div class="zug"><span class="t">Kleinigkeit <span class="minbadge">Türchen ${day.n}</span></span><span>${lego(C.klein[day.n])}${plural()?" Bei mehreren Kindern: pro Kind eins.":""} Ohne Begründung hinlegen, Tomte erwähnt sie nicht.</span></div>`; labels.push("Kleinigkeit"); }
     more+=`<p class="tipp"><b>Für euch:</b> ${day.tipp}</p>`+haustierHint(day); labels.push("Tipps");
-    return {core:core, more:more, labels:labels}; }
-  function dayBody(day,i){ const p=dayParts(day,i); return p.core+p.more; }
+    return {steps:steps, core:core, more:more, labels:labels}; }
+  function dayBody(day,i){ const p=dayParts(day,i); return p.steps+p.core+p.more; }
 
   function januarList(){ const b=val('bleibt'); if(b==="24") return []; return C.januar.filter(j=>b==="31"||j.datum<="01-06"); }
   function janDate(j){ const y=startDate().getFullYear()+1; const [m,d]=j.datum.split("-"); return new Date(y,+m-1,+d); }
@@ -217,10 +226,10 @@
   function detailHTML(i){ const isV=i===-1; const day=isV?null:C.tage[i]; const p=isV?vorabendHTML():dayParts(day,i); const mode=isV?null:state.modes[i];
     const titel=isV?C.vorabend.titel:fill(day.titel); const d=dateOf(i);
     let head=`<div class="kd-kopf"><span class="num">${isV?0:day.n}</span><div><h4>${titel}</h4><p class="date">${isV?"Vorabend · ":""}${fmt(d)}${mode==="wenig"?" · wenig Zeit":mode==="reise"?" · unterwegs":""}</p></div><button type="button" class="kd-zu" data-close aria-label="Schließen">×</button></div>`;
-    if(!isV){ head+=`<span class="mode tmode" role="group" aria-label="Dieser Tag">${[["","Normal"],["wenig","Wenig Zeit"],["reise","Unterwegs"]].map(([v,t])=>`<button type="button" data-tmode="${v}" data-ti="${i}" aria-pressed="${(mode||"")===v}">${t}</button>`).join("")}</span>`; }
+    const umschalter=isV?"":`<div class="zug"><span class="t">Dieser Tag</span><span class="mode tmode" role="group" aria-label="Dieser Tag">${[["","Normal"],["wenig","Wenig Zeit"],["reise","Unterwegs"]].map(([v,t])=>`<button type="button" data-tmode="${v}" data-ti="${i}" aria-pressed="${(mode||"")===v}">${t}</button>`).join("")}</span></div>`;
     if(false){ const on=wantsExtra(i); head+=`<span class="mode"><button type="button" data-i="${i}" data-l="basis" aria-pressed="${!on}">Nötiges</button><button type="button" data-i="${i}" data-l="we" aria-pressed="${on}">+ Zugabe</button></span>`; }
-    const mehr=isV?p.labels:p.labels.concat(["Chronik"]);
-    const body=p.core+`<details class="kd-mehr" ${state.mehrOffen?"open":""}><summary>Mehr: ${mehr.join(", ")}</summary><div class="kd-mehr-in">${p.more}${isV?"":answerHTML(i,"Antwort der Kinder (für die Chronik)")}</div></details>`+doneBtn(isV?"v":i);
+    const mehr=isV?p.labels:["Wenig Zeit, Unterwegs"].concat(p.labels,["Chronik"]);
+    const body=(p.steps||"")+p.core+doneBtn(isV?"v":i)+`<details class="kd-mehr" ${state.mehrOffen?"open":""}><summary>Mehr: ${mehr.join(", ")}</summary><div class="kd-mehr-in">${umschalter}${p.more}${isV?"":answerHTML(i,"Antwort der Kinder (für die Chronik)")}</div></details>`;
     const prev=i>-1?i-1:null, next=i<23?i+1:null; const lab=j=>j===-1?"Vorabend":"Tag "+C.tage[j].n;
     const nav=`<div class="kd-nav">${prev!==null?`<button type="button" class="btn btn-ghost btn-mini" data-go="${prev}">‹ ${lab(prev)}</button>`:"<span></span>"}${next!==null?`<button type="button" class="btn btn-ghost btn-mini" data-go="${next}">${lab(next)} ›</button>`:"<span></span>"}</div>`;
     return `<div class="day kd ${state.done[isV?"v":i]?"done":""}">${head}${body}${nav}</div>`; }
@@ -243,7 +252,13 @@
   }
   function focusTile(i){ if(i===null) return; const t=document.querySelector('#kal [data-open="'+i+'"]'); if(t) t.focus({preventScroll:true}); }
   function scrollToDetail(soft){ const el=document.querySelector('#kal>.kd'); if(!el) return; const r=el.getBoundingClientRect(); const navH=64;
-    if(soft && r.top>navH && r.top<window.innerHeight*0.55) return; window.scrollTo({top:window.scrollY+r.top-navH-90,behavior:"smooth"}); }
+    // Ziel: Die Schritt-Zeilen (Brief, Zahlentafel, Streich) stehen nach dem Aufklappen ohne Scrollen im Bild.
+    const ks=el.querySelectorAll('.schritt .sk'); const last=ks.length?ks[ks.length-1].getBoundingClientRect():null;
+    // Sanft heißt: nicht scrollen, wenn der Tag schon gut im Bild steht und alle Schritt-Zeilen sichtbar sind.
+    if(soft && r.top>navH && r.top<window.innerHeight*0.55 && (!last||last.bottom<=window.innerHeight)) return;
+    // Über dem Tag bleiben 90 px von der Kachelreihe stehen; auf kleinen Bildschirmen weniger, wenn sonst eine Schritt-Zeile abgeschnitten wäre.
+    let luft=90; if(last){ const fehlt=(last.bottom-r.top)+navH+luft+12-window.innerHeight; if(fehlt>0) luft=Math.max(8,luft-fehlt); }
+    window.scrollTo({top:window.scrollY+r.top-navH-luft,behavior:"smooth"}); }
   function placeInline(){ const kal=$('#kal'); if(!kal) return; const old=kal.querySelector(':scope>.kd'); if(old) old.remove(); if(openDay===null||kalView!=="a") return;
     const tmp=document.createElement('div'); tmp.innerHTML=detailHTML(openDay); const panel=tmp.firstElementChild;
     if(openDay===-1){ kal.querySelector('.kal-vor').after(panel); }
