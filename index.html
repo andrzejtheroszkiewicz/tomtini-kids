@@ -1293,7 +1293,7 @@ details.streich[open]>summary::after{content:"–"}
     <ul class="kodex-liste">
       <li><b>Tomte wird nie gesehen.</b>Nicht in Briefen, nicht auf dieser Seite, nirgends.</li>
       <li><b>Tomte ist ein guter Wichtel. Immer.</b>Er beobachtet nicht, droht nicht, erzieht nicht.</li>
-      <li><b>Keine Daten von Kindern verlassen euer Gerät.</b>Kein Konto, kein Tracking, alles bleibt im Browser.</li>
+      <li><b>Keine Daten von Kindern verlassen euer Gerät.</b>Kein Konto, keine Cookies, keine Profile. Was ihr eintragt, bleibt im Browser.</li>
     </ul>
   </div>
 </section>
@@ -1327,7 +1327,7 @@ details.streich[open]>summary::after{content:"–"}
     </article>
     <article id="datenschutz" hidden>
       <h1>Datenschutz</h1>
-      <p>Kurz gesagt: kein Konto, keine Cookies, kein Tracking, keine Werbung. Was ihr eintragt, bleibt auf eurem Gerät.</p>
+      <p>Kurz gesagt: kein Konto, keine Cookies, keine Werbung, keine Profile. Wir zählen anonym, wie die Seite genutzt wird. Was ihr eintragt, bleibt auf eurem Gerät.</p>
       <h2>Verantwortlich</h2>
       <p>Andrzej Roszkiewicz, Sürther Str. 14, 50996 Köln. E-Mail: <a href="mailto:hallo@tomtini.kids">hallo@tomtini.kids</a></p>
       <h2>Was ihr in den Generator eintragt</h2>
@@ -1338,6 +1338,11 @@ details.streich[open]>summary::after{content:"–"}
       <h2>Aufruf der Seite</h2>
       <p>Beim Aufruf verarbeitet der Hosting-Anbieter die technisch nötigen Daten, um die Seite auszuliefern: IP-Adresse, Datum und Uhrzeit, abgerufene Datei, Browser-Kennung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO, das Interesse an einem sicheren Betrieb.</p>
       <p>Die Seite liegt bei GitHub Pages, einem Dienst der GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. GitHub verarbeitet die genannten Daten auch in den USA und stützt die Übermittlung auf das EU-US Data Privacy Framework. Auf die Server-Protokolle haben wir keinen Zugriff; wie lange GitHub sie aufbewahrt, steht in der <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
+      <h2>Anonyme Nutzungszählung</h2>
+      <p>Damit wir sehen, ob Tomtini wie gedacht funktioniert und wo wir es verbessern können, zählen wir anonym einzelne Aktionen auf der Seite: Seitenaufrufe, ob ein Plan erstellt oder wieder geöffnet wurde, ob ein Tag aufgeklappt wurde, die gewählte Streich-Stufe, das Öffnen einer Druckansicht und das Drucken, geöffnete Briefe aus dem Notfall-Bereich und das Erstellen eines Plan-Links. Gespeichert werden ausschließlich Tageszähler, zusammen mit groben Angaben zur Anfrage: das Land (aus der Verbindung abgeleitet), die Art des Geräts (Handy, Tablet oder Computer), die Browsersprache und die Herkunftsseite (zum Beispiel Google oder Instagram).</p>
+      <p>Wir speichern dabei keine IP-Adressen, keine Kennungen, keine Zeitpunkte einzelner Aufrufe und nichts von dem, was ihr in den Generator eintragt. Auch der Plan-Link wird nicht übertragen. Für die Zählung wird kein Cookie gesetzt und nichts in eurem Browser gespeichert. Einzelne Besucher lassen sich daher weder wiedererkennen noch über mehrere Aufrufe verfolgen. Wenn euer Browser „Do Not Track“ oder Global Privacy Control sendet, zählen wir nicht mit.</p>
+      <p>Die Zählung läuft über unser Schwesterprojekt <a href="https://fundini.kids" target="_blank" rel="noopener">fundini.kids</a>, das wir selbst betreiben: Euer Browser schickt die Zählmeldung dorthin. fundini.kids liegt bei Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA. Cloudflare verarbeitet dabei die technisch nötigen Daten, um die Meldung anzunehmen, darunter eure IP-Adresse, und kann Daten in die USA übermitteln. Cloudflare ist nach eigenen Angaben unter dem EU-U.S. Data Privacy Framework zertifiziert und setzt ergänzend Standardvertragsklauseln der Europäischen Kommission ein; mit Cloudflare besteht ein Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO. Weitere Informationen: <a href="https://www.cloudflare.com/de-de/privacypolicy/" target="_blank" rel="noopener">Datenschutzerklärung von Cloudflare</a>. Die Zähler liegen in einer Datenbank bei Cloudflare und werden nur von uns eingesehen.</p>
+      <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse liegt darin, Tomtini für Eltern zu verbessern und zu sehen, ob die Seite wie gedacht funktioniert.</p>
       <h2>Schriften</h2>
       <p>Die Schriften liegen auf demselben Server wie die Seite. Es wird keine Verbindung zu Google Fonts oder anderen Diensten aufgebaut.</p>
       <h2>E-Mail</h2>
@@ -1707,6 +1712,7 @@ details.streich[open]>summary::after{content:"–"}
 </script>
 <script src="content.js"></script>
 <script src="app.js?v=20261117"></script>
+<script src="z.js?v=20261117" defer></script>
 <script>
 (function(){
   var $=function(s){return document.querySelector(s);};
