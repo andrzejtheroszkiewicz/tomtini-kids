@@ -853,9 +853,11 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 /* Textauswahl/Copy-Callout sitzweit aus, damit der Finger-ruht-Reveal auf Touch
    nicht mit dem System-Kontextmenü kollidiert. Ausnahme: das Plan-Link-Feld bleibt kopierbar. */
 body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
-/* Solange der Kreis dem Finger folgt, muss Safari das native Scroll-Gesture erst gar nicht
-   starten – preventDefault() allein stoppt ein einmal begonnenes Scrollen auf iOS oft nicht. */
-html.greift-magie, html.greift-magie body{touch-action:none}
+/* Nur waehrend die zwei Finger aktiv gehalten werden (Entscheidung offen/zu, oder Umsehen),
+   muss Safari das native Scroll-Gesture erst gar nicht starten. NICHT mehr fuer die ganze
+   Dauer, in der die Welt offen steht - sonst blockiert das jedes Ein-Finger-Scrollen danach
+   und die Lupe kann beim Scrollen nicht mehr wachsen. */
+html.magie-zweifinger, html.magie-zweifinger body{touch-action:none}
 #linkField,input,textarea{-webkit-touch-callout:default;-webkit-user-select:text;user-select:text}
 /* Streiche-Vorrat */
 .streich-vorher{margin-top:32px;border:2px solid var(--line);padding:14px 18px;font-size:16.5px;line-height:1.4;max-width:52em}
@@ -1619,6 +1621,7 @@ details.streich[open]>summary::after{content:"–"}
     window.addEventListener('touchstart', function(e){
       if (e.touches.length === 2){
         tapAktiv = false;
+        document.documentElement.classList.add('magie-zweifinger');
         if (schicht.classList.contains('offen')) return; /* schon offen: Finger sehen sich nur um */
         var m = mitte(e.touches);
         startX = m.x; startY = m.y;
@@ -1651,11 +1654,17 @@ details.streich[open]>summary::after{content:"–"}
     }, { passive: true });
     function fingerWeg(){
       clearTimeout(timer);
+      /* Sobald weniger als zwei Finger anliegen, darf ein Finger wieder ganz normal
+         scrollen - egal ob die Welt gerade offen steht oder nicht. */
+      document.documentElement.classList.remove('magie-zweifinger');
       if (tapAktiv && schicht.classList.contains('offen') && Date.now() - tapZeit < 400) schliessen('.4s');
       tapAktiv = false;
     }
     window.addEventListener('touchend', fingerWeg, { passive: true });
-    window.addEventListener('touchcancel', function(){ tapAktiv = false; clearTimeout(timer); }, { passive: true });
+    window.addEventListener('touchcancel', function(){
+      document.documentElement.classList.remove('magie-zweifinger');
+      tapAktiv = false; clearTimeout(timer);
+    }, { passive: true });
   }
   /* Kein Schliessen mehr beim Scrollen: offen bleibt offen, das Scrollen laesst die
      Lupe stattdessen wachsen (siehe wachsAnwenden oben). Nur Tab-Wechsel schliesst sie. */
