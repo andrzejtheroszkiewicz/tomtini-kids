@@ -707,6 +707,13 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 .magie-kachel > i{position:absolute;left:0;top:calc(var(--kh) * -0.095);
   width:100%;height:var(--kh);background-position:center;
   background-size:100% 100%;background-repeat:no-repeat}
+/* Ein paar Raeume horizontal gespiegelt, damit der Turm beim Scrollen nicht immer die
+   gleiche Treppenseite/Komposition zeigt - nur dort, wo kein Text oder Zifferblatt im
+   Bild sitzt (sonst liest sich das seitenverkehrt). */
+.magie-kachel > i.gespiegelt{transform:scaleX(-1)}
+/* Werkstatt: der Staub-Lichtkegel haengt als eigenes Element neben dem Bild und muss mit-
+   spiegeln, sonst sitzt er nicht mehr unter der Lampe - deshalb hier der ganze Raum. */
+.magie-kachel.gespiegelt-raum{transform:scaleX(-1)}
 .magie-schacht{position:relative;width:100%;height:var(--sh);overflow:hidden}
 /* Statt einer gezeichneten Treppe: eine dunkle Blende. Man taucht kurz ins Dunkel und
    taucht im naechsten Raum wieder auf - so muessen nie zwei gemalte Treppenstile an
@@ -959,15 +966,15 @@ details.streich[open]>summary::after{content:"–"}
     <div class="magie-turm" id="magieTurm">
       <div class="magie-kachel"><!-- Flur --><i style="background-image:url(magie/flur.webp)"></i></div>
       <div class="magie-schacht"><i></i></div>
-      <div class="magie-kachel"><!-- Dachkammer --><i style="background-image:url(magie/dachkammer.webp)"></i></div>
+      <div class="magie-kachel"><!-- Dachkammer --><i class="gespiegelt" style="background-image:url(magie/dachkammer.webp)"></i></div>
       <div class="magie-schacht"><i></i></div>
       <div class="magie-kachel"><!-- Schlafzimmer --><i style="background-image:url(magie/schlafzimmer.webp)"></i></div>
       <div class="magie-schacht"><i></i></div>
       <div class="magie-kachel"><!-- Wohnzimmer --><i style="background-image:url(magie/wohnzimmer.webp)"></i></div>
       <div class="magie-schacht"><i></i></div>
-      <div class="magie-kachel"><!-- Kueche --><i style="background-image:url(magie/kueche.webp)"></i></div>
+      <div class="magie-kachel"><!-- Kueche --><i class="gespiegelt" style="background-image:url(magie/kueche.webp)"></i></div>
       <div class="magie-schacht"><i></i></div>
-      <div class="magie-kachel"><!-- Werkstatt -->
+      <div class="magie-kachel gespiegelt-raum"><!-- Werkstatt -->
         <i style="background-image:url(magie/werkstatt-neu.webp)"></i>
         <div class="w-staub w-staub-fern" id="wStaubFern"></div>
       </div>
