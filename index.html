@@ -1397,17 +1397,21 @@ details.streich[open]>summary::after{content:"–"}
     return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
   }
   function wachsAnwenden(p){
-    var f = wachsKurve(p);
-    if (schicht.classList.contains('offen')){
-      var basis = kannHover ? Math.min(.32*window.innerWidth, .34*window.innerHeight)
-                             : .30*window.innerHeight;
-      var voll = 1.5 * Math.max(window.innerWidth, window.innerHeight);
-      schicht.style.setProperty('--kr-voll', (basis + f*(voll-basis)).toFixed(1) + 'px');
-      schicht.style.setProperty('--wz', (1.26 - f*0.26).toFixed(4));
-    } else {
+    /* All das hier darf nur gelten, solange die Welt tatsaechlich offen steht - sonst
+       verblasst die normale Seite schon beim blossen Scrollen, ganz ohne dass die Lupe
+       je aufgemacht wurde. */
+    if (!schicht.classList.contains('offen')){
       schicht.style.setProperty('--kr-voll', '0px');
       schicht.style.setProperty('--wz', '1.26');
+      if (site){ site.style.opacity = ''; site.style.pointerEvents = ''; }
+      return;
     }
+    var f = wachsKurve(p);
+    var basis = kannHover ? Math.min(.32*window.innerWidth, .34*window.innerHeight)
+                           : .30*window.innerHeight;
+    var voll = 1.5 * Math.max(window.innerWidth, window.innerHeight);
+    schicht.style.setProperty('--kr-voll', (basis + f*(voll-basis)).toFixed(1) + 'px');
+    schicht.style.setProperty('--wz', (1.26 - f*0.26).toFixed(4));
     if (site){
       site.style.opacity = (1 - 0.92*f).toFixed(3);
       site.style.pointerEvents = f > 0.9 ? 'none' : '';
