@@ -699,7 +699,7 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
   --kh:calc(var(--kw) / 1.77075);
   --sicht:calc(var(--kh) * 0.81);
   --sh:calc(var(--kw) / 4.0635);
-  --turmh:calc(6.22 * var(--kh) + 6 * var(--sh));
+  --turmh:calc(6.22 * var(--kh) + 7 * var(--sh));
   width:var(--kw);
   transform:translate(-50%,
     calc(-1 * (var(--sicht) / 2 + var(--wv,0) * (var(--turmh) - var(--sicht)))))}
@@ -708,8 +708,11 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
   width:100%;height:var(--kh);background-position:center;
   background-size:100% 100%;background-repeat:no-repeat}
 .magie-schacht{position:relative;width:100%;height:var(--sh);overflow:hidden}
+/* Statt einer gezeichneten Treppe: eine dunkle Blende. Man taucht kurz ins Dunkel und
+   taucht im naechsten Raum wieder auf - so muessen nie zwei gemalte Treppenstile an
+   einer Naht zueinander passen, weil an der Naht gar keine Treppe mehr gezeichnet ist. */
 .magie-schacht > i{position:absolute;inset:0;
-  background:url(magie/schacht.webp) center/100% 100% no-repeat}
+  background:linear-gradient(to bottom, #0a0f28 0%, #050810 50%, #0a0f28 100%)}
 .magie-turm > * + *{margin-top:calc(var(--kh) * -0.02);
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 4%,#000 100%);
   mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 0,#000 4%,#000 100%)}
@@ -955,6 +958,7 @@ details.streich[open]>summary::after{content:"–"}
   <div class="magie-welt" id="magieWelt">
     <div class="magie-turm" id="magieTurm">
       <div class="magie-kachel"><!-- Flur --><i style="background-image:url(magie/flur.webp)"></i></div>
+      <div class="magie-schacht"><i></i></div>
       <div class="magie-kachel"><!-- Dachkammer --><i style="background-image:url(magie/dachkammer.webp)"></i></div>
       <div class="magie-schacht"><i></i></div>
       <div class="magie-kachel"><!-- Schlafzimmer --><i style="background-image:url(magie/schlafzimmer.webp)"></i></div>
