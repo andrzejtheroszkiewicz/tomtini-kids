@@ -654,21 +654,25 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
 @property --wy{syntax:"<number>";inherits:true;initial-value:0.5}
 
 .magie{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden;--kr:0px;
-  clip-path:circle(var(--kr) at var(--kx) var(--ky));
+  --kr-voll:0px;--wz:1.26;
+  clip-path:circle(max(var(--kr),var(--kr-voll)) at var(--kx) var(--ky));
   transition-property:--kr,--kx,--ky,--wx,--wy;
   transition-timing-function:cubic-bezier(.19,.72,.1,1);
   transition-duration:1.8s}
 .magie.offen{--kr:min(32vw,34vh)}
+/* --kr-voll waechst ohne Uebergang direkt mit dem Scroll (siehe Script) und hebt den
+   Radius ueber --kr hinaus an, bis die Lupe vollflaechig wird. --wz zieht Welt und Turm
+   dabei von 126% auf 100% zusammen - das zeigt mehr Bild und schaerft es zugleich. */
 
 /* Schlagschatten nach innen: der Ausschnitt bekommt dadurch Dicke und wirkt wie ein Loch,
    durch das man in Tomtes Welt schaut, nicht wie ein aufgeklebter Kreis. Darueber der
    schmale warme Lichtsaum, der vorher schon den Rand markiert hat. */
 .magie::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:
-    radial-gradient(circle var(--kr) at var(--kx) var(--ky),
+    radial-gradient(circle max(var(--kr),var(--kr-voll)) at var(--kx) var(--ky),
       rgba(4,7,18,0) 55%, rgba(4,7,18,.16) 74%, rgba(4,7,18,.48) 88%,
       rgba(4,7,18,.82) 96%, rgba(4,7,18,.94) 100%),
-    radial-gradient(circle var(--kr) at var(--kx) var(--ky),
+    radial-gradient(circle max(var(--kr),var(--kr-voll)) at var(--kx) var(--ky),
       rgba(255,210,120,0) 92%, rgba(255,210,120,.32) 97%, rgba(255,210,120,0) 100%)}
 @media (prefers-reduced-motion:reduce){.magie{display:none}}
 @media (max-width:640px){.magie.offen{--kr:30vh}}
@@ -677,9 +681,10 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
    Bildschirm, damit man sich beim Umsehen wirklich darin bewegt. Zwei Ebenen mit verschiedener
    Geschwindigkeit ergeben die Parallaxe: der Raum wandert langsam, der Staub davor dreimal so
    schnell - beim Umsehen schiebt sich der Vordergrund sichtbar vor den Raum. */
-.magie-welt{position:absolute;top:50%;left:50%;width:126vw;height:126vh;
+.magie-welt{position:absolute;top:50%;left:50%;
+  width:calc(var(--wz,1.26) * 100vw);height:calc(var(--wz,1.26) * 100vh);
   transform:translate(calc(-50% + (0.5 - var(--wx)) * 11vw), calc(-50% + (0.5 - var(--wy)) * 11vh));
-  background:#0a0f28;overflow:hidden}
+  background:#0a0f28;overflow:hidden;transition:width .05s linear,height .05s linear}
 /* Das Bild sitzt in einer eigenen Flaeche mit dem Seitenverhaeltnis der Illustration. Dadurch
    deckt es wie "cover" den Raum ab, und die Lichtstrahlen darin lassen sich in Prozent des
    Bildes setzen - sie bleiben also auf jedem Bildschirm genau auf ihrer Lampe sitzen. */
@@ -690,7 +695,7 @@ footer .brand{font-size:44px;letter-spacing:-.055em}
    Vorratskammer. Jede Kachel ist oben und unten um 9,5 % beschnitten, damit die weichen
    Aquarell-Papierraender nicht als helle Baender in der Naht stehen. */
 .magie-turm{position:absolute;left:50%;top:50%;isolation:isolate;
-  --kw:max(126vw, calc(126vh * 1.77075));
+  --kw:max(calc(var(--wz,1.26) * 100vw), calc(var(--wz,1.26) * 100vh * 1.77075));
   --kh:calc(var(--kw) / 1.77075);
   --sicht:calc(var(--kh) * 0.81);
   --sh:calc(var(--kw) / 4.0635);
@@ -1015,7 +1020,7 @@ details.streich[open]>summary::after{content:"–"}
   </div>
 </div>
 
-<main id="site">
+<main id="site" style="transition:opacity .18s linear">
 
 <header class="hero on-red" id="top">
   <div class="wrap">
@@ -1372,6 +1377,36 @@ details.streich[open]>summary::after{content:"–"}
      ganz unten die Vorratskammer. Dazwischen laeuft die Treppe durch die Schaechte.
      Kein Uebergang auf --wv, damit die Welt beim Scrollen nicht nachzieht. */
   var turm = document.getElementById('magieTurm');
+  var site = document.getElementById('site');
+  /* Die Lupe waechst mit demselben Scrollfortschritt p, der auch den Turm bewegt: in der
+     ersten Haelfte der Seite bleibt sie ein Guckloch (man liest zuerst), im letzten
+     Fuenftel zieht sie sich vollflaechig auf - ohne Uebergang, damit sie dem Scrollbalken
+     ohne Verzug folgt. Die Welt zieht sich dabei von 126% auf 100% zusammen (--wz):
+     das zeigt mehr vom Bild und schaerft es zugleich, der Text darunter verblasst. */
+  var G_START = 0.5, G_END = 0.95;
+  function wachsKurve(p){
+    if (p <= G_START) return 0;
+    if (p >= G_END) return 1;
+    var t = (p - G_START) / (G_END - G_START);
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  }
+  function wachsAnwenden(p){
+    var f = wachsKurve(p);
+    if (schicht.classList.contains('offen')){
+      var basis = kannHover ? Math.min(.32*window.innerWidth, .34*window.innerHeight)
+                             : .30*window.innerHeight;
+      var voll = 1.5 * Math.max(window.innerWidth, window.innerHeight);
+      schicht.style.setProperty('--kr-voll', (basis + f*(voll-basis)).toFixed(1) + 'px');
+      schicht.style.setProperty('--wz', (1.26 - f*0.26).toFixed(4));
+    } else {
+      schicht.style.setProperty('--kr-voll', '0px');
+      schicht.style.setProperty('--wz', '1.26');
+    }
+    if (site){
+      site.style.opacity = (1 - 0.92*f).toFixed(3);
+      site.style.pointerEvents = f > 0.9 ? 'none' : '';
+    }
+  }
   if (turm){
     var wvAn = false;
     var weltScroll = function(){
@@ -1380,6 +1415,7 @@ details.streich[open]>summary::after{content:"–"}
       var p = hoehe > 0 ? window.pageYOffset / hoehe : 0;
       if (p < 0) p = 0; else if (p > 1) p = 1;
       schicht.style.setProperty('--wv', p.toFixed(4));
+      wachsAnwenden(p);
     };
     var weltScrollBald = function(){
       if (wvAn) return;
@@ -1479,6 +1515,11 @@ details.streich[open]>summary::after{content:"–"}
     schicht.style.transitionDuration = dauer || '.6s';
     schicht.classList.remove('offen');
     document.documentElement.classList.remove('greift-magie');
+    /* Sofort zuruecksetzen, nicht erst beim naechsten Scroll: sonst bliebe der gewachsene
+       Radius (--kr-voll) stehen und der naechste Blick waere ein viel zu grosser Kreis. */
+    schicht.style.setProperty('--kr-voll', '0px');
+    schicht.style.setProperty('--wz', '1.26');
+    if (site){ site.style.opacity = ''; site.style.pointerEvents = ''; }
   }
   function setPos(x,y){
     schicht.style.setProperty('--kx', x + 'px');
@@ -1559,52 +1600,65 @@ details.streich[open]>summary::after{content:"–"}
     window.addEventListener('mouseup', ziehenBeenden);
     window.addEventListener('mouseleave', ziehenBeenden);
   } else {
-    /* Touch: zwei Finger gemeinsam ruhen lassen (Mitte der beiden), bis sich der Kreis öffnet.
-       Ein-Finger-Scrollen bleibt dabei die ganze Zeit völlig unberührt - keine Kollision mit
-       der nativen Wisch-Geste, da Safari Scrollen nur über einen einzelnen Finger erkennt.
-       Ist der Kreis einmal offen, folgt er den beiden Fingern weiter, solange sie gehalten werden.
-       Der Ausschnitt öffnet sich versetzt nach links-oben der Fingermitte, sonst verdecken die
-       Finger selbst den größten Teil der Aussicht. */
-    var startX = 0, startY = 0, offen = false;
+    /* Touch: zwei Finger gemeinsam ruhen lassen (Mitte der beiden) schaltet die Welt auf
+       Dauer-offen um - sie bleibt offen, auch wenn die Finger loslassen. Danach scrollt ein
+       Finger ganz normal die Seite UND laesst die Lupe dabei wachsen (siehe wachsAnwenden).
+       Ein Tippen (kurz, kaum Bewegung) bei offener Welt schliesst sie wieder. Ein-Finger-
+       Scrollen bleibt die ganze Zeit unberuehrt - keine Kollision mit der nativen Wisch-Geste,
+       da Safari Scrollen nur ueber einen einzelnen Finger erkennt. Der Ausschnitt oeffnet sich
+       versetzt nach links-oben der Fingermitte, sonst verdecken die Finger selbst die Aussicht. */
+    var startX = 0, startY = 0;
     var SCHWELLE = 10, WARTEN = 750;
     var VERSATZ_X = -70, VERSATZ_Y = -100;
+    var tapAktiv = false, tapX = 0, tapY = 0, tapZeit = 0;
     function mitte(touches){
       var x = 0, y = 0;
       for (var i = 0; i < touches.length; i++){ x += touches[i].clientX; y += touches[i].clientY; }
       return { x: x / touches.length, y: y / touches.length };
     }
     window.addEventListener('touchstart', function(e){
-      if (e.touches.length !== 2){ clearTimeout(timer); schliessen(); offen = false; return; }
-      var m = mitte(e.touches);
-      startX = m.x; startY = m.y; offen = false;
-      setPos(startX + VERSATZ_X, startY + VERSATZ_Y);
-      schliessen();
-      clearTimeout(timer);
-      timer = setTimeout(function(){ offen = true; ruhtJetzt(); }, WARTEN);
-    }, { passive: true });
-    window.addEventListener('touchmove', function(e){
-      if (e.touches.length !== 2){ clearTimeout(timer); schliessen(); offen = false; return; }
-      var m = mitte(e.touches);
-      if (offen){
-        setPos(m.x + VERSATZ_X, m.y + VERSATZ_Y);
+      if (e.touches.length === 2){
+        tapAktiv = false;
+        if (schicht.classList.contains('offen')) return; /* schon offen: Finger sehen sich nur um */
+        var m = mitte(e.touches);
+        startX = m.x; startY = m.y;
+        setPos(startX + VERSATZ_X, startY + VERSATZ_Y);
+        clearTimeout(timer);
+        timer = setTimeout(function(){ ruhtJetzt(); }, WARTEN);
         return;
       }
-      if (Math.abs(m.x - startX) > SCHWELLE || Math.abs(m.y - startY) > SCHWELLE){
-        clearTimeout(timer); schliessen();
+      if (e.touches.length === 1){
+        tapAktiv = schicht.classList.contains('offen');
+        tapX = e.touches[0].clientX; tapY = e.touches[0].clientY; tapZeit = Date.now();
+        return;
+      }
+      tapAktiv = false; clearTimeout(timer);
+    }, { passive: true });
+    window.addEventListener('touchmove', function(e){
+      if (e.touches.length === 2){
+        var m = mitte(e.touches);
+        if (schicht.classList.contains('offen')){
+          setPos(m.x + VERSATZ_X, m.y + VERSATZ_Y);
+          return;
+        }
+        if (Math.abs(m.x - startX) > SCHWELLE || Math.abs(m.y - startY) > SCHWELLE) clearTimeout(timer);
+        return;
+      }
+      if (tapAktiv && e.touches.length === 1){
+        if (Math.abs(e.touches[0].clientX - tapX) > SCHWELLE ||
+            Math.abs(e.touches[0].clientY - tapY) > SCHWELLE) tapAktiv = false;
       }
     }, { passive: true });
     function fingerWeg(){
-      offen = false;
       clearTimeout(timer);
-      schliessen();
+      if (tapAktiv && schicht.classList.contains('offen') && Date.now() - tapZeit < 400) schliessen('.4s');
+      tapAktiv = false;
     }
     window.addEventListener('touchend', fingerWeg, { passive: true });
-    window.addEventListener('touchcancel', fingerWeg, { passive: true });
+    window.addEventListener('touchcancel', function(){ tapAktiv = false; clearTimeout(timer); }, { passive: true });
   }
-  window.addEventListener('scroll', function(){
-    if (knopf && knopf.getAttribute('aria-pressed') === 'true') return;
-    schliessen(); clearTimeout(timer);
-  }, { passive: true });
+  /* Kein Schliessen mehr beim Scrollen: offen bleibt offen, das Scrollen laesst die
+     Lupe stattdessen wachsen (siehe wachsAnwenden oben). Nur Tab-Wechsel schliesst sie. */
   window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
 })();
 </script>
