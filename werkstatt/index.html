@@ -26,14 +26,22 @@
 html,body{height:100%;background:var(--nacht);color:var(--weiss);font-family:"Switzer","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;overscroll-behavior:none}
 button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:3px solid var(--gelb);outline-offset:3px}
+/* iPhone: Seite minimal scrollbar, damit Safari seine Leisten beim Wischen einklappt */
+html.wisch,html.wisch body{overflow-x:hidden;overflow-y:auto;height:auto}
+html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
+.wischtipp{position:fixed;left:50%;bottom:calc(max(4px,env(safe-area-inset-bottom)) + 48px);transform:translateX(-50%);z-index:6;background:var(--gelb);color:var(--nacht);font-weight:700;font-size:15px;padding:9px 16px;border-radius:20px;box-shadow:0 4px 0 rgba(15,20,48,.5);white-space:nowrap;pointer-events:none;display:flex;align-items:center;gap:8px;transition:opacity .4s}
+.wischtipp[hidden]{display:none}
+.wischtipp svg{width:18px;height:18px;animation:hoch 1.4s ease-in-out infinite}
+@keyframes hoch{0%,100%{transform:translateY(3px)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){.wischtipp svg{animation:none}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* Bühne: Bild immer ganz sichtbar, Punkte in Prozent darauf */
 .buehne{position:fixed;inset:0;display:grid;place-items:center;touch-action:pan-y;overflow:hidden}
 .rahmen{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);aspect-ratio:1792/1012;
   /* füllt den Bildschirm, schneidet aber höchstens so viel ab, dass alle Punkte sichtbar bleiben */
-  width:min(max(100vw,calc(100vh * var(--ratio))),calc(100vh * var(--ratio) * 1.25));
-  width:min(max(100vw,calc(100dvh * var(--ratio))),calc(100dvh * var(--ratio) * 1.25))}
+  width:min(max(100vw,calc(100vh * var(--ratio))),calc(100vh * var(--ratio) * 1.33));
+  width:min(max(100vw,calc(100dvh * var(--ratio))),calc(100dvh * var(--ratio) * 1.33))}
 @media (orientation:portrait){.rahmen{width:min(100vw,calc(100vh * var(--ratio)));width:min(100vw,calc(100dvh * var(--ratio)))}}
 .rahmen svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 
@@ -125,6 +133,12 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   .voll{width:40px;height:40px;right:calc(max(10px,env(safe-area-inset-right)) + 100px)}
   .kopf{padding-left:150px;padding-right:160px}
 }
+@media (max-height:400px){
+  .kopf{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:16px}
+  .kopf .ort{display:inline;margin-right:8px}
+  .kopf p{display:inline;font-size:15px;margin:0}
+  .punkte button{height:34px}
+}
 @media (prefers-reduced-motion:reduce){
   .spot::after,.dreh .handy{animation:none}
   .fx{display:none}
@@ -168,6 +182,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
 <button class="blatt zur" id="zur" type="button" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
 <button class="blatt vor" id="vor" type="button" aria-label="Weiter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
 <nav class="punkte" id="punkte" aria-label="Zimmer"></nav>
+<div class="wischtipp" id="wischtipp" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>Einmal nach oben wischen, dann wird das Fenster groß</div>
 
 <div class="schicht start" id="start">
   <div class="innen">
@@ -288,6 +303,19 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
     document.addEventListener("fullscreenchange",fsZeigen);document.addEventListener("webkitfullscreenchange",fsZeigen);
   }
 
+  /* ---- iPhone: Safari-Leisten wegwischen ---- */
+  var iphone=/iPhone|iPod/.test(navigator.userAgent);
+  if(iphone){document.documentElement.classList.add("wisch");}
+  var tippGezeigt=false;
+  function wischPruefen(){
+    if(!iphone||tippGezeigt)return;
+    var quer=innerWidth>innerHeight, leistenDa=innerHeight<screen.width-40;
+    if(quer&&leistenDa&&scrollY<10){$("wischtipp").hidden=false;}
+  }
+  function wischWeg(){if(!$("wischtipp").hidden){$("wischtipp").hidden=true;tippGezeigt=true;}}
+  addEventListener("scroll",function(){if(scrollY>5)wischWeg();},{passive:true});
+  addEventListener("resize",function(){if(iphone&&innerHeight>=screen.width-40)wischWeg();else if(!tippGezeigt&&$("start").hidden)wischPruefen();});
+
   /* ---- Bilder ---- */
   function laden(i){if(i<0||i>=ZIMMER.length)return Promise.resolve();var u=src(i);if(!cache[u]){cache[u]=new Promise(function(ok){var im=new Image();im.onload=im.onerror=function(){ok()};im.src=u;});}return cache[u];}
   function setz(el,u){el.setAttribute("href",u);el.setAttributeNS(NS,"xlink:href",u);}
@@ -400,7 +428,7 @@ button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:tra
   laden(start);
   function los(mit){tonAn=mit;tonZeigen();try{localStorage.setItem("tomtini-werkstatt-ton",mit?"1":"0")}catch(e){}
     if(mit){spiel("tuer");}
-    $("start").hidden=true;sperre(false);zeigen(start,true);setTimeout(function(){$("vor").focus({preventScroll:true})},50);}
+    $("start").hidden=true;sperre(false);zeigen(start,true);wischPruefen();setTimeout(function(){$("vor").focus({preventScroll:true})},50);}
   $("mitTon").onclick=function(){los(true)};$("ohneTon").onclick=function(){los(false)};
   $(tonAn?"mitTon":"ohneTon").focus({preventScroll:true});
 })();
