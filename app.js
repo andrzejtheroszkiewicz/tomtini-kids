@@ -12,10 +12,10 @@
 
   // ---- Zustand ----
   const F = { kinder:'#kinder', eltern:'#eltern', start:'#start', ritual:'#ritual', essen:'#essen' };
-  function formState(){ const o={}; for(const k in F) o[k]=$(F[k]).value; o.aufwand=val('aufwand'); o.alter=val('alter'); o.nikolaus=$('#nikolaus').checked; o.lego=$('#lego').checked; o.figur=$('#figur').checked; o.haustier=$('#haustier').checked; o.klein=$('#klein').checked; o.suess=$('#suess').checked; o.tafel=$('#tafel').value; o.bleibt=val('bleibt'); o.modes=state.modes; o.dayLevel=state.dayLevel; o.done=state.done; o.answers=state.answers; o.nope=state.nope||{}; o.streichPlan=val('streichPlan'); o.streichSkip=state.streichSkip||{}; o.streichOff=state.streichOff||{}; return o; }
+  function formState(){ const o={}; for(const k in F) o[k]=$(F[k]).value; o.aufwand=val('aufwand'); o.alter=val('alter'); o.nikolaus=$('#nikolaus').checked; o.lego=$('#lego').checked; o.figur=$('#figur').checked; o.haustier=$('#haustier').checked; o.klein=$('#klein').checked; o.suess=$('#suess').checked; o.tafel=$('#tafel').value; o.bleibt=val('bleibt'); o.modes=state.modes; o.dayLevel=state.dayLevel; o.done=state.done; o.answers=state.answers; o.nope=state.nope||{}; o.streichPlan=val('streichPlan'); o.streichSkip=state.streichSkip||{}; o.streichOff=state.streichOff||{}; o.checks=state.checks||{}; return o; }
   function val(n){ const r=document.querySelector('input[name='+n+']:checked'); return r?r.value:""; }
   function setRadio(n,v){ const r=document.querySelector('input[name='+n+'][value="'+v+'"]'); if(r) r.checked=true; }
-  function applyState(o){ if(!o) return; try{ for(const k in F) if(o[k]!=null) $(F[k]).value=o[k]; if(o.aufwand) setRadio('aufwand',o.aufwand); if(o.alter) setRadio('alter',o.alter); if(o.bleibt) setRadio('bleibt',o.bleibt); if(o.tafel) $('#tafel').value=o.tafel; ['nikolaus','lego','figur','haustier','klein','suess'].forEach(k=>{ if(typeof o[k]==="boolean") $('#'+k).checked=o[k]; }); state.modes=o.modes||{}; state.dayLevel=o.dayLevel||{}; state.done=o.done||{}; state.answers=o.answers||{}; state.nope=o.nope||{}; if(o.streichPlan) setRadio('streichPlan',o.streichPlan); state.streichSkip=o.streichSkip||{}; state.streichOff=o.streichOff||{}; }catch(e){} }
+  function applyState(o){ if(!o) return; try{ for(const k in F) if(o[k]!=null) $(F[k]).value=o[k]; if(o.aufwand) setRadio('aufwand',o.aufwand); if(o.alter) setRadio('alter',o.alter); if(o.bleibt) setRadio('bleibt',o.bleibt); if(o.tafel) $('#tafel').value=o.tafel; ['nikolaus','lego','figur','haustier','klein','suess'].forEach(k=>{ if(typeof o[k]==="boolean") $('#'+k).checked=o[k]; }); state.modes=o.modes||{}; state.dayLevel=o.dayLevel||{}; state.done=o.done||{}; state.answers=o.answers||{}; state.nope=o.nope||{}; if(o.streichPlan) setRadio('streichPlan',o.streichPlan); state.streichSkip=o.streichSkip||{}; state.streichOff=o.streichOff||{}; state.checks=o.checks||{}; }catch(e){} }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(formState())); }catch(e){} }
   function load(){ try{ const h=location.hash; if(h.startsWith('#p=')){ applyState(JSON.parse(decodeURIComponent(escape(atob(h.slice(3).replace(/-/g,'+').replace(/_/g,'/')))))); return true; } }catch(e){}
     try{ const o=JSON.parse(localStorage.getItem(KEY)||"null"); if(o){ applyState(o); return !!o.kinder; } }catch(e){} return false; }
@@ -96,13 +96,15 @@
     let h=2166136261; for(const ch of ($('#kinder').value||"tomte")) h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0; const rnd=()=>{ h^=h<<13; h>>>=0; h^=h>>>17; h^=h<<5; h>>>=0; return h/4294967296; };
     const tier=$('#haustier').checked, suess=$('#suess').checked; const skip=state.streichSkip||{}, off=state.streichOff||{};
     let pool=C.streiche.filter(x=>x.f<=max&&(!x.suess||suess)&&(!x.ohneTier||!tier)); pool=pool.map(x=>[rnd(),x]).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
-    const used=new Set(); let folge=null;
+    const used=new Set(); let folge=null; let letzterMehl=-9;
+    // Mehl nie zwei Morgen hintereinander: kein Mehl-Streich an, vor oder nach einem Tag, dessen Requisite Mehl braucht, und nicht zwei Mehl-Streiche dicht beieinander
+    const mehlStreich=x=>/Mehl/.test((x.m||"")+(x.x||"")); const mehlTag=k=>{ const d=C.tage[k]; return !!(d&&d.basis&&/Mehl/.test((d.basis.m||"")+(d.basis.x||""))); };
     C.tage.forEach((day,i)=>{ if(folge){ res[i]={x:folge,teil:2}; folge=null; return; }
       if(day.n===1||day.n===24||state.modes[i]) return; const we=isWE(dateOf(i)); const leicht=!day.basis||day.basis.min<=3;
-      const passt=x=>{ if(used.has(x.id)||(x.ab&&day.n<x.ab)) return false; if(x.zwei) return we&&day.n<23&&!isNaN(i)&&!state.modes[i+1]; if(day.n>=22) return x.s===1&&!x.we; if(we) return true; if(x.we||x.s===4) return false; return x.s<=(leicht?3:2); };
+      const passt=x=>{ if(used.has(x.id)||(x.ab&&day.n<x.ab)) return false; if(mehlStreich(x)&&(mehlTag(i-1)||mehlTag(i)||mehlTag(i+1)||(letzterMehl>=0&&i-letzterMehl<=2))) return false; if(x.zwei) return we&&day.n<23&&!isNaN(i)&&!state.modes[i+1]; if(day.n>=22) return x.s===1&&!x.we; if(we) return true; if(x.we||x.s===4) return false; return x.s<=(leicht?3:2); };
       let cand=pool.filter(passt); if(we){ const gross=cand.filter(x=>x.s===4||x.we); if(gross.length) cand=gross.concat(cand.filter(x=>!(x.s===4||x.we))); }
       const wd=dateOf(i).getDay(); const gr=x=>(x.s===4||x.we)?0:1; if(max>1&&wd===5) cand=cand.slice().sort((a,b)=>b.f-a.f); else if(max>1&&we) cand=cand.slice().sort((a,b)=>gr(a)-gr(b)||b.f-a.f);
-      if(!cand.length) return; const x=cand[(skip[i]||0)%cand.length]; used.add(x.id); if(off[i]) return; res[i]={x,teil:1}; if(x.zwei) folge=x; });
+      if(!cand.length) return; const x=cand[(skip[i]||0)%cand.length]; used.add(x.id); if(off[i]) return; if(mehlStreich(x)) letzterMehl=i; res[i]={x,teil:1}; if(x.zwei) folge=x; });
     return res; }
   let _sp=null; function streichFuer(i){ if(!_sp) _sp=streichPlan(); return _sp[i]; }
   function streichMin(x){ return x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`); }
@@ -111,15 +113,38 @@
     if(!v) return ""; const x=v.x; const tier=$('#haustier').checked;
     if(v.teil===2){ const a2=x.x.indexOf("Abend 2:"); return schritt("s-streich",`Streich, zweiter Abend: ${x.t}`,"",`<p>${a2>=0?x.x.slice(a2+8).trim().replace(/^./,c=>c.toUpperCase()):"Heute Abend der zweite Teil von gestern."}</p>${x.z2?zettelHTML({von:x.von,text:x.z2}):""}`); }
     return schritt("s-streich",`Streich: ${x.t}`,streichMin(x),`<p>${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}<p class="links"><button type="button" class="lnk" data-snext="${i}">Anderer Streich</button><button type="button" class="lnk" data-soff="${i}">Heute keiner</button></p>`); }
+
+  // ---- Ein Tag = drei Zeilen zum Abhaken. Fett steht, was zu tun ist bzw. was die Kinder morgens finden; Details erst beim Antippen. ----
+  const ckOffen=new Set();
+  function ckZeile(i,key,art,kopf,zeit,inner,leise,unter){ const id=i+":"+key; const on=!!((state.checks||{})[i]||{})[key];
+    const box=leise?`<span class="ck-box ck-leer" aria-hidden="true"></span>`:`<button type="button" class="ck-box" data-ck="${id}" aria-pressed="${on}" aria-label="${art}: erledigt"></button>`;
+    const txt=`<span class="ck-art">${art}</span><b>${kopf}</b>${zeit?`<span class="sz">${zeit}</span>`:""}${unter||""}`;
+    const body=inner?`<details class="ck-d" data-ckd="${id}" ${ckOffen.has(id)?"open":""}><summary class="ck-t">${txt}</summary><div class="ck-in">${inner}</div></details>`:`<div class="ck-t">${txt}</div>`;
+    return `<li class="ck ${on?"an":""} ${leise?"leise":""}" data-k="${key}">${box}${body}</li>`; }
+  function ckKeys(i){ if(i===-1) return ["auf","zet","ja"]; const keys=["b","z"]; if(val('streichPlan')!=="aus"&&!(state.streichOff||{})[i]&&streichFuer(i)) keys.push("s"); return keys; }
+  function ckSync(i){ const c=(state.checks||{})[i]||{}; const k=i===-1?"v":i; if(ckKeys(i).every(x=>c[x])) state.done[k]=1; else delete state.done[k]; }
+  function briefZeile(day,i,core){ const b=day.basis, mode=state.modes[i];
+    if(!b||(val('aufwand')==="briefe"&&!mode&&day.n)) return ckZeile(i,"b","Brief","Brief hinlegen","1 Min",core);
+    const wenig = mode==="wenig" ? `<p class="m">${PROPFREI.has(day.n)?"Wenig Zeit: Der Brief geht auch ohne Vorbereitung.":"Wenig Zeit: Heute nur das Nötigste."}</p>` : "";
+    return ckZeile(i,"b","Brief",`Brief + ${b.t}`,`${b.min} Min`,`${wenig}<p>${lego(b.x)}</p><p class="m">Material: ${lego(b.m)}</p>${core}`); }
+  function zahlZeile(day,i){ if(day.n===1) return ckZeile(i,"z","Zahlentafel","Die 1 steht schon",""); return ckZeile(i,"z","Zahlentafel",`Die ${day.n} ${TAFELVERB[tafelObj().id]||"wechseln"}`,"1 Min"); }
+  function streichZeile(i){ if(val('streichPlan')==="aus") return ""; const off=(state.streichOff||{})[i]; const v=streichFuer(i);
+    if(off) return ckZeile(i,"s","Streich","Heute keiner","",`<p class="links"><button type="button" class="lnk" data-son="${i}">Doch einen</button></p>`,true);
+    if(!v) return ""; const x=v.x; const tier=$('#haustier').checked;
+    const info=[x.m&&x.m!=="–"?`Material: ${x.m}`:"", x.auf?`Aufräumen: ${x.auf}`:""].filter(Boolean).join(" · ");
+    const zet=t=>t?zettelHTML({von:x.von,text:t}):"";
+    if(v.teil===2){ const a2=x.x.indexOf("Abend 2:"); return ckZeile(i,"s","Streich, Teil 2",x.mo,"",`<p>${a2>=0?x.x.slice(a2+8).trim().replace(/^./,c=>c.toUpperCase()):"Heute Abend der zweite Teil von gestern."}</p>${zet(x.z2)}`); }
+    const kick="Streich"+(x.wann?" · "+x.wann:""); const kurzTier=tier&&x.tier?`<span class="ck-warn">Haustier: ${x.tier}</span>`:"";
+    return ckZeile(i,"s",kick,x.mo,streichMin(x),`<p>${x.x}</p>${info?`<p class="m">${info}</p>`:""}${zet(x.z)}<p class="links"><button type="button" class="lnk" data-snext="${i}">Anderer Streich</button><button type="button" class="lnk" data-soff="${i}">Heute keiner</button></p>`,false,kurzTier); }
   function doneBtn(i){ return `<button type="button" class="done-btn" data-done="${i}" aria-pressed="${!!state.done[i]}">${state.done[i]?"Vorbereitet ✓":"Als vorbereitet markieren"}</button>`; }
   function answerHTML(i,label){ return `<div class="antwort"><label for="a${i}">${label}</label><textarea id="a${i}" data-ans="${i}" placeholder="Für die Chronik am Ende: was die Kinder geantwortet, gemalt oder gesagt haben">${state.answers[i]||""}</textarea></div>`; }
   // Ein Tag in drei Ebenen: steps = die Handgriffe am Abend, core = der Brieftext, more = alles Optionale.
   // Reihenfolge Brief, Zahlentafel, Streich: erst die Tür (zwei kurze Schritte), dann der Streich. So stehen am Handy alle drei Zeilen im ersten Blick.
   function dayParts(day,i){ let steps="", core="", more=""; const labels=[]; const mode=state.modes[i];
-    if(day.brief) core+=letterHTML(briefParas(day,i),day.ps);
-    if(day.zettelDoppel) core+=day.zettelDoppel.map(zettelHTML).join(""); else if(day.zettel) core+=zettelHTML(day.zettel);
-    if(mode==="reise"){ const r=C.notfall.find(n=>n.id==="reise"); core+=`<div class="zug"><span class="t">Ihr seid unterwegs. Tomte reist mit.</span><span>Diesen Brief am Abend vor der Abfahrt legen. Unterwegs reicht eine kleine Spur pro Abend. Dieser Tag entfällt sonst.</span></div>`+letterHTML(kurz()&&r.kurz?r.kurz:r.brief); }
-    else { steps=`<ol class="schritte">${briefSchritt(day,i)}${zahlSchritt(day)}${streichSchritt(i)}</ol>`; if(day.extra){ const e=day.extra, on=wantsExtra(i); more+=`<div class="zug"><span class="t">Wochenend-Zugabe: ${e.t} <span class="minbadge">${e.min} Min · tagsüber</span></span><span>${lego(e.x)}</span><span class="m">Material: ${lego(e.m)}</span><span><button type="button" class="btn btn-ghost btn-mini" data-i="${i}" data-l="${on?"basis":"we"}" data-zug>${on?"Im Elternplan ✓":"In den Elternplan übernehmen"}</button></span></div>`; labels.push("Zugabe"); } }
+    let brief=""; if(day.brief) brief+=letterHTML(briefParas(day,i),day.ps);
+    if(day.zettelDoppel) brief+=day.zettelDoppel.map(zettelHTML).join(""); else if(day.zettel) brief+=zettelHTML(day.zettel);
+    if(mode==="reise"){ core+=brief; const r=C.notfall.find(n=>n.id==="reise"); core+=`<div class="zug"><span class="t">Ihr seid unterwegs. Tomte reist mit.</span><span>Diesen Brief am Abend vor der Abfahrt legen. Unterwegs reicht eine kleine Spur pro Abend. Dieser Tag entfällt sonst.</span></div>`+letterHTML(kurz()&&r.kurz?r.kurz:r.brief); }
+    else { const vor=new Date(dateOf(i)); vor.setDate(vor.getDate()-1); steps=`<p class="ck-kopf">Am Abend davor · ${fmt(vor)}</p><ol class="cks">${briefZeile(day,i,brief)}${zahlZeile(day,i)}${streichZeile(i)}</ol>`; if(day.extra){ const e=day.extra, on=wantsExtra(i); more+=`<div class="zug"><span class="t">Wochenend-Zugabe: ${e.t} <span class="minbadge">${e.min} Min · tagsüber</span></span><span>${lego(e.x)}</span><span class="m">Material: ${lego(e.m)}</span><span><button type="button" class="btn btn-ghost btn-mini" data-i="${i}" data-l="${on?"basis":"we"}" data-zug>${on?"Im Elternplan ✓":"In den Elternplan übernehmen"}</button></span></div>`; labels.push("Zugabe"); } }
     const nxt=C.tage[i+1]; if(nxt&&nxt.ohne){ more+=`<p class="tipp"><b>Keine Lust gehabt?</b> Nicht gemacht heißt: nichts passiert, Tomte erwähnt es nicht. <button type="button" class="btn btn-ghost btn-mini" data-nope="${i}">${state.nope&&state.nope[i]?"Morgen-Brief ohne Dank ✓":"Morgen-Brief ohne Dank"}</button></p>`; }
     const su=suessHTML(day); if(su){ more+=su; labels.push("Süßes"); }
     if($('#klein').checked&&C.klein[day.n]){ more+=`<div class="zug"><span class="t">Kleinigkeit <span class="minbadge">Türchen ${day.n}</span></span><span>${lego(C.klein[day.n])}${plural()?" Bei mehreren Kindern: pro Kind eins.":""} Ohne Begründung hinlegen, Tomte erwähnt sie nicht.</span></div>`; labels.push("Kleinigkeit"); }
@@ -204,9 +229,9 @@
   let openDay=null, openInit=false, prevSig=null;
   const kalView="a"; try{ localStorage.removeItem("tomtini-ansicht"); }catch(e){}
   function vorabendHTML(){ const v=C.vorabend;
-    const core=`${letterHTML(vorabendParas())}${basisHTML(v,-1)}<div class="zug"><span class="t">${v.ja.t} <span class="minbadge">${v.ja.min} Min · ${v.ja.zeit}</span></span><span>${lego(v.ja.x)}</span><span class="m">Material: ${lego(v.ja.m)}</span></div>`;
+    const steps=`<p class="ck-kopf">Zwei Abende vor dem ersten Brief</p><ol class="cks">${ckZeile(-1,"auf","Aufbau","Briefkasten an die Fußleiste, Mimi drauf","5 Min",`<p>Davor mit einer Gabel drei Vogelspuren in einen Teelöffel Mehl auf Backpapier drücken. Mehr nicht.</p><p class="m">Material: Briefkasten, Mimi-Bild, Mehl, Backpapier, Gabel</p>`)}${ckZeile(-1,"zet","Zettel","Rubis Zettel davorlegen","1 Min",letterHTML(vorabendParas()))}${ckZeile(-1,"ja","Nach dem JA","Tür und Zahlentafel mit der 1",`${v.ja.min} Min`,`<p>${lego(v.ja.x)}</p><p class="m">Material: ${lego(v.ja.m)}</p>`)}</ol>`; const core="";
     const more=`${wantsExtra(-1)||val('aufwand')==="we"?`<div class="zug"><span class="t">Wochenend-Zugabe: ${v.extra.t} <span class="minbadge">${v.extra.min} Min · tagsüber</span></span><span>${v.extra.x}</span><span class="m">Material: ${v.extra.m}</span></div>`:""}<p class="tipp"><b>Vorher vorlesen:</b> „Wie Tomte zu euch kam“, Kapitel 1, 2, 3 und 6 (<a href="#geschichte">hier</a>). Danach weiß das Kind, wer da fragt und warum ihn niemand sehen darf.</p><p class="tipp"><b>Wenn das Kind Nein sagt oder zögert:</b> Rubis Warte-Zettel hinlegen, nichts montieren, später oder nächstes Jahr wieder fragen. Zettel: „${fill(v.nein.text)}“</p><p class="tipp"><b>Für euch:</b> ${v.tipp}</p>`;
-    return {core:core, more:more, labels:["Vorlesen","Nein-Pfad","Tipps"]}; }
+    return {steps:steps, core:core, more:more, labels:["Vorlesen","Nein-Pfad","Tipps"]}; }
   function eveningMin(i){ if(i<0) return C.vorabend.basis.min; const day=C.tage[i], mode=state.modes[i];
     if(mode==="reise") return 2; if(val('aufwand')==="briefe"&&!mode) return 1;
     let m=1+(day.basis&&mode!=="wenig"?(+day.basis.min||0):0); if(mode==="wenig"&&day.basis&&!PROPFREI.has(day.n)) m+=Math.min(+day.basis.min||0,3);
@@ -225,11 +250,11 @@
     h+=`</div>`; prevSig=newSig; return h; }
   function detailHTML(i){ const isV=i===-1; const day=isV?null:C.tage[i]; const p=isV?vorabendHTML():dayParts(day,i); const mode=isV?null:state.modes[i];
     const titel=isV?C.vorabend.titel:fill(day.titel); const d=dateOf(i);
-    let head=`<div class="kd-kopf"><span class="num">${isV?0:day.n}</span><div><h4>${titel}</h4><p class="date">${isV?"Vorabend · ":""}${fmt(d)}${mode==="wenig"?" · wenig Zeit":mode==="reise"?" · unterwegs":""}</p></div><button type="button" class="kd-zu" data-close aria-label="Schließen">×</button></div>`;
+    let head=`<div class="kd-kopf"><span class="num">${isV?0:day.n}</span><div><h4>${titel}</h4><p class="date">${isV?"Vorabend · "+fmt(d):"Die Kinder finden es am "+fmt(d)}${mode==="wenig"?" · wenig Zeit":mode==="reise"?" · unterwegs":""}</p></div><button type="button" class="kd-zu" data-close aria-label="Schließen">×</button></div>`;
     const umschalter=isV?"":`<div class="zug"><span class="t">Dieser Tag</span><span class="mode tmode" role="group" aria-label="Dieser Tag">${[["","Normal"],["wenig","Wenig Zeit"],["reise","Unterwegs"]].map(([v,t])=>`<button type="button" data-tmode="${v}" data-ti="${i}" aria-pressed="${(mode||"")===v}">${t}</button>`).join("")}</span></div>`;
     if(false){ const on=wantsExtra(i); head+=`<span class="mode"><button type="button" data-i="${i}" data-l="basis" aria-pressed="${!on}">Nötiges</button><button type="button" data-i="${i}" data-l="we" aria-pressed="${on}">+ Zugabe</button></span>`; }
     const mehr=isV?p.labels:["Wenig Zeit, Unterwegs"].concat(p.labels,["Chronik"]);
-    const body=(p.steps||"")+p.core+doneBtn(isV?"v":i)+`<details class="kd-mehr" ${state.mehrOffen?"open":""}><summary>Mehr: ${mehr.join(", ")}</summary><div class="kd-mehr-in">${umschalter}${p.more}${isV?"":answerHTML(i,"Antwort der Kinder (für die Chronik)")}</div></details>`;
+    const body=(p.steps||"")+p.core+(mode==="reise"?doneBtn(i):"")+`<details class="kd-mehr" ${state.mehrOffen?"open":""}><summary>Mehr: ${mehr.join(", ")}</summary><div class="kd-mehr-in">${umschalter}${p.more}${isV?"":answerHTML(i,"Antwort der Kinder (für die Chronik)")}</div></details>`;
     const prev=i>-1?i-1:null, next=i<23?i+1:null; const lab=j=>j===-1?"Vorabend":"Tag "+C.tage[j].n;
     const nav=`<div class="kd-nav">${prev!==null?`<button type="button" class="btn btn-ghost btn-mini" data-go="${prev}">‹ ${lab(prev)}</button>`:"<span></span>"}${next!==null?`<button type="button" class="btn btn-ghost btn-mini" data-go="${next}">${lab(next)} ›</button>`:"<span></span>"}</div>`;
     return `<div class="day kd ${state.done[isV?"v":i]?"done":""}">${head}${body}${nav}</div>`; }
@@ -240,6 +265,8 @@
     root.querySelectorAll('[data-snext]').forEach(b=>b.onclick=()=>{ const k=b.dataset.snext; state.streichSkip=state.streichSkip||{}; state.streichSkip[k]=(state.streichSkip[k]||0)+1; rerender(); });
     root.querySelectorAll('[data-soff]').forEach(b=>b.onclick=()=>{ state.streichOff=state.streichOff||{}; state.streichOff[b.dataset.soff]=1; rerender(); });
     root.querySelectorAll('[data-son]').forEach(b=>b.onclick=()=>{ delete state.streichOff[b.dataset.son]; rerender(); });
+    root.querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{ const [a,k]=b.dataset.ck.split(":"); const i=+a; state.checks=state.checks||{}; const c=state.checks[i]=state.checks[i]||{}; if(c[k]) delete c[k]; else c[k]=1; ckSync(i); const fid=b.dataset.ck; rerender(); const nb=document.querySelector(`[data-ck="${fid}"]`); if(nb) nb.focus({preventScroll:true}); });
+    root.querySelectorAll('details.ck-d').forEach(d=>d.addEventListener('toggle',()=>{ d.open?ckOffen.add(d.dataset.ckd):ckOffen.delete(d.dataset.ckd); }));
     root.querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{ const k=b.dataset.done; if(state.done[k]) delete state.done[k]; else state.done[k]=1; rerender(); });
     root.querySelectorAll('textarea[data-ans]').forEach(t=>t.addEventListener('input',()=>{ state.answers[t.dataset.ans]=t.value; save(); }));
     root.querySelectorAll('details.kd-mehr').forEach(dt=>dt.addEventListener('toggle',()=>{ state.mehrOffen=dt.open; }));
@@ -253,7 +280,7 @@
   function focusTile(i){ if(i===null) return; const t=document.querySelector('#kal [data-open="'+i+'"]'); if(t) t.focus({preventScroll:true}); }
   function scrollToDetail(soft){ const el=document.querySelector('#kal>.kd'); if(!el) return; const r=el.getBoundingClientRect(); const navH=64;
     // Ziel: Die Schritt-Zeilen (Brief, Zahlentafel, Streich) stehen nach dem Aufklappen ohne Scrollen im Bild.
-    const ks=el.querySelectorAll('.schritt .sk'); const last=ks.length?ks[ks.length-1].getBoundingClientRect():null;
+    const ks=el.querySelectorAll('.ck .ck-t'); const last=ks.length?ks[ks.length-1].getBoundingClientRect():null;
     // Sanft heißt: nicht scrollen, wenn der Tag schon gut im Bild steht und alle Schritt-Zeilen sichtbar sind.
     if(soft && r.top>navH && r.top<window.innerHeight*0.55 && (!last||last.bottom<=window.innerHeight)) return;
     // Über dem Tag bleiben 90 px von der Kachelreihe stehen; auf kleinen Bildschirmen weniger, wenn sonst eine Schritt-Zeile abgeschnitten wäre.
@@ -304,7 +331,7 @@
     const badge=(x,st)=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
     const hinweis=max?"":`<p class="streich-leer">Im Kalender sind Streiche gerade aus. Zum Stöbern stehen hier trotzdem alle.</p>`;
     grid.innerHTML=hinweis+C.streicheStufen.map(st=>{ const list=C.streiche.filter(x=>x.s===st.s&&pass(x)).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0))||a.f-b.f); const leer=!list.length;
-      return `<details class="st-stufe ${leer?"leer":""}" data-s="${st.s}" ${!leer&&stOffen.has(st.s)?"open":""}><summary><span class="st-n">${st.s}</span><span class="st-t">${st.kurz}<small>${st.t}</small></span><span class="st-z">${leer?"keine":list.length+" "+(list.length===1?"Streich":"Streiche")}</span></summary><div class="streich-grid">${list.map(x=>`<details class="streich" data-id="${x.id}" ${streichOffen.has(x.id)?"open":""}><summary><h4><span>${x.t}</span></h4><p class="marken"><span class="minbadge">${badge(x,st)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p></summary><div class="streich-in"><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</div></details>`).join("")}</div></details>`; }).join("");
+      return `<details class="st-stufe ${leer?"leer":""}" data-s="${st.s}" ${!leer&&stOffen.has(st.s)?"open":""}><summary><span class="st-n">${st.s}</span><span class="st-t">${st.kurz}<small>${st.t}</small></span><span class="st-z">${leer?"keine":list.length+" "+(list.length===1?"Streich":"Streiche")}</span></summary><div class="streich-grid">${list.map(x=>`<details class="streich" data-id="${x.id}" ${streichOffen.has(x.id)?"open":""}><summary><h4><span>${x.t}</span></h4><p class="mo">Morgens: ${x.mo}</p><p class="marken"><span class="minbadge">${badge(x,st)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p></summary><div class="streich-in"><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</div></details>`).join("")}</div></details>`; }).join("");
     grid.querySelectorAll('details.st-stufe').forEach(d=>{ const sm=d.querySelector(':scope>summary'); if(d.classList.contains('leer')){ sm.setAttribute('aria-disabled','true'); sm.onclick=e=>e.preventDefault(); return; } d.addEventListener('toggle',()=>{ const k=+d.dataset.s; d.open?stOffen.add(k):stOffen.delete(k); }); });
     grid.querySelectorAll('details.streich').forEach(d=>d.addEventListener('toggle',()=>{ d.open?streichOffen.add(d.dataset.id):streichOffen.delete(d.dataset.id); }));
   }
@@ -324,12 +351,12 @@
   function openPV(title,pagesHTML){ $('#pvTitle').textContent=title; $('#pvPages').innerHTML=pagesHTML; $('#pv').classList.add('open'); window.scrollTo(0,0); }
   $('#pvClose').onclick=()=>$('#pv').classList.remove('open');
   $('#pvPrint').onclick=()=>{ let ok=false; try{ const before=Date.now(); window.print(); ok=(Date.now()-before)>150 || !window.frameElement; }catch(e){ ok=false; } if(!ok){ $('#pvHint').style.display="block"; } };
-  function cell(tag,paras,note,small,ps){ return `<div class="cell"><div class="tag"><span>${tag}</span><span>Tomtini</span></div><div class="body ${small?"small":""}">${paras.map(p=>fill(p)).filter(x=>x.trim()).map(x=>`<p>${x}</p>`).join("")}${ps&&showPS()?`<p style="font-size:11pt;margin-top:2mm">${fill(ps)}</p>`:""}</div>${note?`<div class="note"><b>${vonName(note.von)}</b>„${fill(note.text)}“</div>`:""}</div>`; }
+  function cell(tag,paras,note,small,ps){ return `<div class="cell"><div class="tag"><span>${tag}</span><span>Tomtini</span></div><div class="body ${small?"small":""}">${paras.map(p=>fill(p)).filter(x=>x.trim()).map(x=>`<p>${x}</p>`).join("")}${ps&&showPS()?`<p style="font-size:11pt;margin-top:2mm">${fill(ps)}</p>`:""}</div>${(Array.isArray(note)?note:note?[note]:[]).map(n=>`<div class="note"><b>${vonName(n.von)}</b>„${fill(n.text)}“</div>`).join("")}</div>`; }
   function sheets(cells,cut){ let out=""; for(let i=0;i<cells.length;i+=4){ const chunk=cells.slice(i,i+4); while(chunk.length<4) chunk.push(`<div class="cell empty"></div>`); out+=`<div class="sheet"><div class="cut">${cut}</div><div class="grid4">${chunk.join("")}</div></div>`; } return out; }
   function printBriefe(){ const cells=[]; cells.push(cell("Vorabend · von Rubi",vorabendParas(),null,false));
     C.tage.forEach((day,i)=>{ const paras=briefParas(day,i); const long=paras.join(" ").length>520;
-      if(day.zettelDoppel){ cells.push(cell("Tag "+day.n,paras,null,false)); cells.push(cell("Tag "+day.n+" · Zettel von Mimi",[day.zettelDoppel[0].text],null)); cells.push(cell("Tag "+day.n+" · Zettel von Rubi",[day.zettelDoppel[1].text],null)); return; }
-      cells.push(cell("Tag "+day.n,paras,day.zettel||null,long,day.ps)); });
+      if(day.zettelDoppel){ cells.push(cell("Tag "+day.n,paras,null,false)); day.zettelDoppel.forEach(z=>cells.push(cell("Tag "+day.n+" · Zettel von "+vonName(z.von),[z.text],null))); return; }
+      cells.push(cell("Tag "+day.n,paras,day.zettelDoppel||day.zettel||null,long,day.ps)); });
     januarList().forEach(j=>{ let ps=(kurz()&&j.kurz?j.kurz:j.brief).slice(); if(j.briefEnde&&val('bleibt')==="6") ps.push(j.briefEnde); cells.push(cell("Januar · "+j.titel,ps,null,false)); });
     const pushN=(tag,n)=>{ const all=allNames(); if(n.einzeln&&all.length>1){ all.forEach(w=>{ onlyName=w; cells.push(cell(tag+" · "+n.titel+" · für "+w,nfParas(n),null,false)); }); onlyName=null; } else cells.push(cell(tag+" · "+n.titel,nfParas(n),null,false)); if(n.auszug){ cells.push(cell(tag+" · Auszugs-Zettel",[n.auszug.text],null)); } };
     if(C.vorabend.nein) cells.push(cell("Vorabend · Rubis Warte-Zettel (bei Nein)",[C.vorabend.nein.text],null));
@@ -358,7 +385,7 @@
     openPV("Chronik",pages); }
   function nightText(day){ const n={1:"Tomte hat die Tür dreimal geprüft, ob sie wirklich nur von innen aufgeht. Dann ist er davor eingeschlafen.",2:"Rubi hat das Schild rückwärts gelesen. Tomte hat es dreimal umgedreht, bis es stimmte.",3:"Mimi lag auf dem Brief. Eine Stunde Suche, drei Zentimeter entfernt.",4:"Rubi hat den Hund noch zweimal größer gemacht, bis Mimi eingeschlafen ist.",5:"Tomte hat nachts versucht, den Kühlschrank zu schrumpfen. Der Kühlschrank hat gebrummt.",6:"Mimi hat den Zapfen versteckt und sofort vergessen, wo. Tomte auch.",7:"Die weichen Sachen wurden gewogen, gefaltet und für wichtig befunden.",8:"Tomte hat Socken sortiert. Nach Farbe. Rubi hat dreimal geseufzt.",9:"Hausschuhe zu zweit. Tomte war so stolz, dass er Rubi geweckt hat.",10:"Der Toaster hat geknurrt. Tomte hat zurückgeknurrt. Mimi hat auf seinem Rücken geschlafen. Der Toaster hat gewonnen.",11:"Mimi war nachts wach. Alle haben es bemerkt.",12:"Mimi wollte wissen, wie das Gesicht war. Rubi hat es dreimal erzählt, jedes Mal größer.",13:"Die Girlande war zu kurz. Tomte hat den Türgriff dafür entschuldigt.",14:"Mimi und Rubi haben gestritten. Tomte hat gehämmert, damit er nichts hört.",15:"Der Baum steht. Rubi sitzt oben. Er sagt, er sieht alles.",16:"Rubi hat in der Tanne geschimpft. Der Schnee hat nicht zugehört.",17:"Zum ersten Mal Licht in der Werkstatt. Tomte hat gesehen, wie unordentlich es ist, und die halbe Nacht aufgeräumt.",18:"Tomte hat lange über das Lieblingsbild nachgedacht. Dann hat er es eingeklebt.",19:"Das bunte Papier wurde glatt gestrichen. Zwölfmal.",20:"Mimi lag im Warmen und hat nichts von alledem mitbekommen.",21:"Der Stern passte nicht durch die Tür. Tomte hat ihn draußen gelassen, für den Baum.",22:"Tomte hat gepackt. Dann wieder ausgepackt. Dann gepackt.",23:"Rubi: siebenmal Schrank. Tomte hat mitgezählt und nichts gesagt.",24:"Das Licht ging aus. Mimi hat sich in die Socke gekuschelt. Tomte ist losgegangen, und das Haus hat geschlafen."}; return n[day.n]||""; }
 
-  window.TOMTINI_APP={ openPV:openPV, fill:fill, tag:function(i){ return briefParas(C.tage[i],i); }, zettel:function(i){ return C.tage[i].zettel; } };
+  window.TOMTINI_APP={ openPV:openPV, fill:fill, tag:function(i){ return briefParas(C.tage[i],i); }, zettel:function(i){ const d=C.tage[i]; return d.zettelDoppel||(d.zettel?[d.zettel]:[]); } };
   // ---- Start ----
   const had=load(); buildCal(); if(had){ render(); if(location.hash.startsWith('#p=')) toast("Plan geladen"); }
 })();

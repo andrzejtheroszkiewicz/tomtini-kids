@@ -44,7 +44,7 @@
   --line:#0f1430;       /* Linien */
   --snow:#0f1430;       /* Schrift: Nachtblau statt Schwarz */
   --mist:#555b73;       /* leise Schrift */
-  --lamp:#db3820;       /* Akzent: Rubis Rot */
+  --lamp:#db3820; --lamp-text:#b42e1a;       /* Akzent: Rubis Rot */
   --red:#db3820; --yellow:#ffd23f; --ink-night:#0f1430;
   --paper:#fffdf6;      /* Tomtes Briefpapier */
   --ink:#27306b;        /* Tomtes Tinte, dunkelblau */
@@ -65,7 +65,7 @@ html.dunkel{color-scheme:dark}
    Grund 05161A · Flächen 072E33 · Linien 294D61 · Schrift 6DA5C0 (6,9:1 auf Grund, 5,4:1 auf Fläche) · Akzent 0F969C · Hervorhebung 0C7075 */
 html.dunkel body{
   --night:#05161a; --deep:#072e33; --dusk:#072e33;
-  --line:#294d61; --snow:#6da5c0; --mist:#6da5c0; --lamp:#0f969c; --hover:#0c7075;
+  --line:#294d61; --snow:#6da5c0; --mist:#6da5c0; --lamp:#0f969c; --lamp-text:#6da5c0; --hover:#0c7075;
   --ink-night:#294d61; /* die nachtblauen Blöcke (Aufbau, Werkstatt, Fuß) nehmen im Dunkelmodus den sechsten Palettenton */
 }
 html.dunkel .zettel .who.tomte{color:#05161a}
@@ -349,6 +349,43 @@ textarea{min-height:64px;resize:vertical}
 .kd .mode{display:flex;gap:4px}
 .kd .mode button{border:1.5px solid var(--line);background:var(--deep);color:var(--snow);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
 .kd .mode button[aria-pressed="true"]{background:var(--snow);color:var(--night);border-color:var(--snow)}
+.wer-liste{list-style:none;margin:clamp(22px,3vw,40px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(20px,3vw,44px)}
+.wer-liste li{border-top:3px solid var(--line);padding-top:14px}
+.wer-n{display:inline-block;font-family:var(--display);font-weight:700;font-size:clamp(26px,2.6vw,36px);letter-spacing:-.03em;line-height:1}
+.wer-n.tomte{color:var(--lamp)}
+.wer-liste p{margin:10px 0 0;font-size:18px;line-height:1.4}
+@media (max-width:760px){.wer-liste{grid-template-columns:minmax(0,1fr);gap:22px}}
+/* Tag = drei Zeilen zum Abhaken */
+.ck-kopf{margin:14px 0 0;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mist)}
+.cks{list-style:none;margin:6px 0 0;padding:0}
+.ck{display:grid;grid-template-columns:38px minmax(0,1fr);gap:0 12px;align-items:start;border-top:2px solid var(--line);padding:10px 0}
+.ck-box{appearance:none;position:relative;width:44px;height:44px;margin:-5px 0 -5px -6px;border:0;background:transparent;cursor:pointer;padding:0}
+.ck-box::before{content:"";position:absolute;inset:7px;border:2px solid var(--line);border-radius:6px;box-sizing:border-box}
+.ck-box[aria-pressed="true"]::before{background:var(--lamp);border-color:var(--lamp)}
+.ck-box[aria-pressed="true"]::after{content:"";position:absolute;left:18px;top:12px;width:8px;height:15px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
+.ck-box:focus-visible{outline:3px solid var(--lamp);outline-offset:-2px;border-radius:8px}
+.ck-leer{opacity:.5;cursor:default}
+.ck-leer::before{border-style:dashed}
+.ck-t{display:block;font-size:18px;line-height:1.25;cursor:pointer;list-style:none;padding:3px 26px 3px 0;position:relative}
+div.ck-t{cursor:default;padding-right:0}
+.ck-t::-webkit-details-marker{display:none}
+summary.ck-t::after{content:"+";position:absolute;right:0;top:2px;font-weight:700;color:var(--lamp);font-size:20px}
+.ck-d[open]>summary.ck-t::after{content:"–"}
+.ck-art{display:block;font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--lamp-text);margin-bottom:1px}
+.ck-t b{font-weight:700}
+.ck-t .sz{display:inline-block;margin-left:8px;font-size:14px;font-weight:500;color:var(--mist);white-space:nowrap}
+.ck.an .ck-t b{color:var(--mist);font-weight:500}
+.ck.an .ck-t .ck-art,.ck.an .ck-t .ck-warn{color:var(--mist)}
+.ck-warn{display:block;margin-top:4px;font-size:14px;font-weight:600;color:var(--lamp-text)}
+.ck.leise .ck-t b{color:var(--mist);font-weight:600}
+.ck-in{display:grid;gap:8px;padding:8px 0 4px;font-size:15.5px;line-height:1.45}
+.ck-in p{margin:0}
+.ck-in .m{color:var(--mist);font-size:14px}
+.ck-in .letter{margin-top:4px}
+.ck-in .links{display:flex;flex-wrap:wrap;gap:0 20px}
+.ck-in .lnk{appearance:none;background:none;border:0;padding:14px 0;min-height:44px;margin:0;font:500 14px/1.2 var(--body);color:var(--mist);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.ck-in .lnk:hover{color:var(--snow)}
+.streich .mo{margin:2px 0 6px;font-size:15px;line-height:1.35}
 .kd-mehr{border-top:2px solid var(--line);padding-top:4px}
 .kd-mehr>summary{cursor:pointer;font-weight:600;font-size:14.5px;color:var(--mist);padding:10px 0;list-style:none;display:flex;gap:8px;align-items:baseline}
 .kd-mehr>summary::-webkit-details-marker{display:none}
@@ -1079,6 +1116,17 @@ details.streich[open]>summary::after{content:"–"}
   </div>
 </header>
 
+<section class="block" id="wer">
+  <div class="wrap">
+    <h2>Wer bei euch einzieht.</h2>
+    <ul class="wer-liste">
+      <li><span class="wer-n tomte">Tomte</span><p>Ein Wichtel, kleiner als eine Kinderhand. Man sieht ihn nie. Morgens sieht man nur, was er nachts gemacht hat.</p></li>
+      <li><span class="wer-n mimi">Mimi</span><p>Seine Haselmaus und Postbotin. Schläft auf dem Briefkasten und verschläft fast alles, auch die Post.</p></li>
+      <li><span class="wer-n rubi">Rubi</span><p>Ein Rotkehlchen. Fliegt für Tomte nach draußen und bringt Nachrichten mit. Übertreibt immer.</p></li>
+    </ul>
+  </div>
+</section>
+
 <section class="block quiet" id="geschichte">
   <div class="wrap split">
     <div>
@@ -1710,8 +1758,8 @@ details.streich[open]>summary::after{content:"–"}
   window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
 })();
 </script>
-<script src="content.js"></script>
-<script src="app.js?v=20261117"></script>
+<script src="content.js?v=20261118"></script>
+<script src="app.js?v=20261118"></script>
 <script src="z.js?v=20261117" defer></script>
 <script>
 (function(){
@@ -1871,7 +1919,7 @@ details.streich[open]>summary::after{content:"–"}
   function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function probe(){ if(!A) return;
     $('#demoLetter').innerHTML=A.tag(0).map(function(p){return '<p>'+A.fill(p)+'</p>';}).join('');
-    var z=A.zettel(0); $('#demoZettel').innerHTML=z?'<div class="zettel"><span class="who '+z.von+'">Rubi</span><em>„'+A.fill(z.text)+'“</em></div>':''; }
+    var z=A.zettel(0)||[]; $('#demoZettel').innerHTML=z.map(function(n){ return '<div class="zettel"><span class="who '+n.von+'">'+n.von.charAt(0).toUpperCase()+n.von.slice(1)+'</span><em>„'+A.fill(n.text)+'“</em></div>'; }).join(''); }
   demo.value=kinder.value;
   demo.addEventListener('input',function(){ kinder.value=demo.value; kinder.dispatchEvent(new Event('input',{bubbles:true})); probe(); });
   kinder.addEventListener('input',function(){ if(document.activeElement!==demo) demo.value=kinder.value; probe(); });
