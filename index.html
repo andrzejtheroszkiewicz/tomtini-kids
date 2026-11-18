@@ -522,7 +522,7 @@ footer strong{color:var(--snow)}
 /* Impressum, Datenschutz */
 .legal{padding:clamp(36px,6vw,80px) 0 clamp(60px,9vw,120px)}
 .legal article{max-width:42em;display:grid;gap:14px}
-.legal h1{font-size:clamp(40px,7vw,84px);line-height:.95;letter-spacing:-.035em;margin:18px 0 10px}
+.legal .legal-titel{font-size:clamp(40px,7vw,84px);line-height:.95;letter-spacing:-.035em;margin:18px 0 10px}
 .legal h2{font-size:24px;font-weight:700;margin-top:18px}
 .legal p,.legal li{color:#d5d0c4}
 .legal ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
@@ -637,7 +637,7 @@ input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--lin
 footer{background:var(--ink-night);--snow:#fff;--mist:#cfd3e6;--lamp:var(--yellow);color:#cfd3e6;border-top:0}
 footer .brand{font-size:44px;letter-spacing:-.055em}
 .legal p,.legal li{color:var(--snow)}
-.legal h1{letter-spacing:-.055em;text-transform:uppercase}
+.legal .legal-titel{letter-spacing:-.055em;text-transform:uppercase}
 .legal .offen{border:2px dashed var(--lamp)}
 .dialog{border:2px solid var(--line)}
 .toast{background:var(--ink-night);color:#fff}
@@ -1352,7 +1352,7 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap legal">
     <p><a class="btn btn-ghost" href="#top">Zurück zu Tomtini</a></p>
     <article id="impressum" hidden>
-      <h1>Impressum</h1>
+      <h2 class="legal-titel">Impressum</h2>
       <h2>Angaben gemäß § 5 DDG</h2>
       <address>Andrzej Roszkiewicz<br>Sürther Str. 14<br>50996 Köln</address>
       <h2>Kontakt</h2>
@@ -1374,7 +1374,7 @@ details.streich[open]>summary::after{content:"–"}
       <p>Ich bin nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
     </article>
     <article id="datenschutz" hidden>
-      <h1>Datenschutz</h1>
+      <h2 class="legal-titel">Datenschutz</h2>
       <p>Kurz gesagt: kein Konto, keine Cookies, keine Werbung, keine Profile. Wir zählen anonym, wie die Seite genutzt wird. Was ihr eintragt, bleibt auf eurem Gerät.</p>
       <h2>Verantwortlich</h2>
       <p>Andrzej Roszkiewicz, Sürther Str. 14, 50996 Köln. E-Mail: <a href="mailto:hallo@tomtini.kids">hallo@tomtini.kids</a></p>
