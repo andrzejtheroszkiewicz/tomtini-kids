@@ -236,8 +236,8 @@ window.TOMTINI = {
     { s: 3, kurz: "Haushalt", t: "Bis 10 Minuten: mit Dingen aus der Wohnung" },
     { s: 4, kurz: "Wochenende", t: "Fürs Wochenende: mit den Kindern oder mit Vorlauf" }
   ],
-  streichePlan: [ { v: "aus", t: "keine", max: 0 }, { v: "lieb", t: "nur liebe", max: 1 }, { v: "frech", t: "bis frech", max: 2 }, { v: "alle", t: "alle", max: 3 } ],
-  streicheFrech: [ { f: 0, t: "alle" }, { f: 1, t: "lieb" }, { f: 2, t: "frech" }, { f: 3, t: "ganz schön frech" } ],
+  streichePlan: [ { v:"lieb", t:"liebe", max:1, ziel:1 }, { v:"lustig", t:"lustige", max:2, ziel:2 }, { v:"frech", t:"freche", max:3, ziel:3 }, { v:"alle", t:"alle", max:3, ziel:0 } ],
+  streicheFrech: [ { f:0, t:"alle" }, { f:1, t:"lieb" }, { f:2, t:"lustig" }, { f:3, t:"frech" } ],
   streiche: [
     /* Stufe 1 */
     { id:"kruemel", s:1, f:1, mo:"Ein Teller voller Krümel vor der Tür", t:"Der Keksteller", min:3, m:"1 Keks, Teller", x:"Einen Keks essen, den Teller mit den Krümeln neben die Wichteltür stellen.", von:"mimi", z:"Mmmh.", tier:"Teller erst morgens hinstellen." },

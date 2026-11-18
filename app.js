@@ -15,7 +15,7 @@
   function formState(){ const o={}; for(const k in F) o[k]=$(F[k]).value; o.aufwand=val('aufwand'); o.alter=val('alter'); o.nikolaus=$('#nikolaus').checked; o.lego=$('#lego').checked; o.figur=$('#figur').checked; o.haustier=$('#haustier').checked; o.klein=$('#klein').checked; o.suess=$('#suess').checked; o.tafel=$('#tafel').value; o.bleibt=val('bleibt'); o.modes=state.modes; o.dayLevel=state.dayLevel; o.done=state.done; o.answers=state.answers; o.nope=state.nope||{}; o.streichPlan=val('streichPlan'); o.streichSkip=state.streichSkip||{}; o.streichOff=state.streichOff||{}; o.checks=state.checks||{}; return o; }
   function val(n){ const r=document.querySelector('input[name='+n+']:checked'); return r?r.value:""; }
   function setRadio(n,v){ const r=document.querySelector('input[name='+n+'][value="'+v+'"]'); if(r) r.checked=true; }
-  function applyState(o){ if(!o) return; try{ for(const k in F) if(o[k]!=null) $(F[k]).value=o[k]; if(o.aufwand) setRadio('aufwand',o.aufwand); if(o.alter) setRadio('alter',o.alter); if(o.bleibt) setRadio('bleibt',o.bleibt); if(o.tafel) $('#tafel').value=o.tafel; ['nikolaus','lego','figur','haustier','klein','suess'].forEach(k=>{ if(typeof o[k]==="boolean") $('#'+k).checked=o[k]; }); state.modes=o.modes||{}; state.dayLevel=o.dayLevel||{}; state.done=o.done||{}; state.answers=o.answers||{}; state.nope=o.nope||{}; if(o.streichPlan) setRadio('streichPlan',o.streichPlan); state.streichSkip=o.streichSkip||{}; state.streichOff=o.streichOff||{}; state.checks=o.checks||{}; }catch(e){} }
+  function applyState(o){ if(!o) return; try{ for(const k in F) if(o[k]!=null) $(F[k]).value=o[k]; if(o.aufwand) setRadio('aufwand',o.aufwand); if(o.alter) setRadio('alter',o.alter); if(o.bleibt) setRadio('bleibt',o.bleibt); if(o.tafel) $('#tafel').value=o.tafel; ['nikolaus','lego','figur','haustier','klein','suess'].forEach(k=>{ if(typeof o[k]==="boolean") $('#'+k).checked=o[k]; }); state.modes=o.modes||{}; state.dayLevel=o.dayLevel||{}; state.done=o.done||{}; state.answers=o.answers||{}; state.nope=o.nope||{}; if(o.streichPlan) setRadio('streichPlan',o.streichPlan==='aus'?'lieb':o.streichPlan); state.streichSkip=o.streichSkip||{}; state.streichOff=o.streichOff||{}; state.checks=o.checks||{}; }catch(e){} }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(formState())); }catch(e){} }
   function load(){ try{ const h=location.hash; if(h.startsWith('#p=')){ applyState(JSON.parse(decodeURIComponent(escape(atob(h.slice(3).replace(/-/g,'+').replace(/_/g,'/')))))); return true; } }catch(e){}
     try{ const o=JSON.parse(localStorage.getItem(KEY)||"null"); if(o){ applyState(o); return !!o.kinder; } }catch(e){} return false; }
@@ -92,7 +92,7 @@
   // ---- Streich-Vorschläge im Plan ----
   // Pro Tag höchstens ein Vorschlag aus C.streiche. Unter der Woche schnelle (Stufe 1–2, an leichten Tagen bis 3), am Wochenende die aufwändigen.
   // Reihenfolge hängt an den Kindernamen, damit nicht jede Familie denselben Dezember hat. Tag 1 und Tag 24 bleiben frei.
-  function streichPlan(){ const max=(C.streichePlan.find(o=>o.v===val('streichPlan'))||{max:0}).max; const res={}; if(!max||!C.streiche) return res;
+  function streichPlan(){ const pv=C.streichePlan.find(o=>o.v===val('streichPlan'))||C.streichePlan[0]; const max=pv.max, ziel=pv.ziel; const res={}; if(!max||!C.streiche) return res;
     let h=2166136261; for(const ch of ($('#kinder').value||"tomte")) h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0; const rnd=()=>{ h^=h<<13; h>>>=0; h^=h>>>17; h^=h<<5; h>>>=0; return h/4294967296; };
     const tier=$('#haustier').checked, suess=$('#suess').checked; const skip=state.streichSkip||{}, off=state.streichOff||{};
     let pool=C.streiche.filter(x=>x.f<=max&&(!x.suess||suess)&&(!x.ohneTier||!tier)); pool=pool.map(x=>[rnd(),x]).sort((a,b)=>a[0]-b[0]).map(a=>a[1]);
@@ -103,7 +103,7 @@
       if(day.n===1||day.n===24||state.modes[i]) return; const we=isWE(dateOf(i)); const leicht=!day.basis||day.basis.min<=3;
       const passt=x=>{ if(used.has(x.id)||(x.ab&&day.n<x.ab)) return false; if(mehlStreich(x)&&(mehlTag(i-1)||mehlTag(i)||mehlTag(i+1)||(letzterMehl>=0&&i-letzterMehl<=2))) return false; if(x.zwei) return we&&day.n<23&&!isNaN(i)&&!state.modes[i+1]; if(day.n>=22) return x.s===1&&!x.we; if(we) return true; if(x.we||x.s===4) return false; return x.s<=(leicht?3:2); };
       let cand=pool.filter(passt); if(we){ const gross=cand.filter(x=>x.s===4||x.we); if(gross.length) cand=gross.concat(cand.filter(x=>!(x.s===4||x.we))); }
-      const wd=dateOf(i).getDay(); const gr=x=>(x.s===4||x.we)?0:1; if(max>1&&wd===5) cand=cand.slice().sort((a,b)=>b.f-a.f); else if(max>1&&we) cand=cand.slice().sort((a,b)=>gr(a)-gr(b)||b.f-a.f);
+      const wd=dateOf(i).getDay(); const gr=x=>(x.s===4||x.we)?0:1; const nah=x=>ziel?Math.abs(ziel-x.f):0; /* Liebe/Lustige/Freche: eigene Stufe zuerst, Lücken mit der nächstmilderen füllen; Alle: gemischt */ if(ziel) cand=cand.slice().sort((a,b)=>(we?gr(a)-gr(b):0)||nah(a)-nah(b)); else if(wd===5) cand=cand.slice().sort((a,b)=>b.f-a.f); else if(we) cand=cand.slice().sort((a,b)=>gr(a)-gr(b)||b.f-a.f);
       if(!cand.length) return; const x=cand[(skip[i]||0)%cand.length]; used.add(x.id); if(off[i]) return; if(mehlStreich(x)) letzterMehl=i; res[i]={x,teil:1}; if(x.zwei) folge=x; });
     return res; }
   let _sp=null; function streichFuer(i){ if(!_sp) _sp=streichPlan(); return _sp[i]; }
@@ -322,14 +322,14 @@
   const stOffen=new Set(), streichOffen=new Set();
   function buildStreiche(){ const grid=$('#streichGrid'), ft=$('#streichFrech'); if(!grid||!C.streiche) return;
     $('#streichZahl').textContent=C.streiche.length; const tier=$('#haustier').checked;
-    const planV=val('streichPlan')||"lieb"; const max=(C.streichePlan.find(o=>o.v===planV)||{max:0}).max;
-    const pass=x=>!max||x.f<=max;
+    const planV=val('streichPlan')||"lieb"; const ziel=(C.streichePlan.find(o=>o.v===planV)||{ziel:1}).ziel;
+    const pass=x=>!ziel||x.f===ziel;
     // Ein Schalter für beides: dieselben vier Werte wie im Generator, synchron
     ft.innerHTML=C.streichePlan.map(o=>`<label><input type="radio" name="streichFrechSync" value="${o.v}" ${o.v===planV?"checked":""}><span>${o.t.charAt(0).toUpperCase()+o.t.slice(1)}</span></label>`).join("");
     ft.querySelectorAll('input').forEach(r=>r.onchange=()=>{ setRadio('streichPlan',r.value); rerender(); });
     const fname=f=>C.streicheFrech.find(o=>o.f===f).t;
     const badge=(x,st)=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
-    const hinweis=max?"":`<p class="streich-leer">Im Kalender sind Streiche gerade aus. Zum Stöbern stehen hier trotzdem alle.</p>`;
+    const hinweis="";
     grid.innerHTML=hinweis+C.streicheStufen.map(st=>{ const list=C.streiche.filter(x=>x.s===st.s&&pass(x)).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0))||a.f-b.f); const leer=!list.length;
       return `<details class="st-stufe ${leer?"leer":""}" data-s="${st.s}" ${!leer&&stOffen.has(st.s)?"open":""}><summary><span class="st-n">${st.s}</span><span class="st-t">${st.kurz}<small>${st.t}</small></span><span class="st-z">${leer?"keine":list.length+" "+(list.length===1?"Streich":"Streiche")}</span></summary><div class="streich-grid">${list.map(x=>`<details class="streich" data-id="${x.id}" ${streichOffen.has(x.id)?"open":""}><summary><h4><span>${x.t}</span></h4><p class="mo">Morgens: ${x.mo}</p><p class="marken"><span class="minbadge">${badge(x,st)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p></summary><div class="streich-in"><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${tier&&x.tier?`<p class="m"><b>Haustier:</b> ${x.tier}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}</div></details>`).join("")}</div></details>`; }).join("");
     grid.querySelectorAll('details.st-stufe').forEach(d=>{ const sm=d.querySelector(':scope>summary'); if(d.classList.contains('leer')){ sm.setAttribute('aria-disabled','true'); sm.onclick=e=>e.preventDefault(); return; } d.addEventListener('toggle',()=>{ const k=+d.dataset.s; d.open?stOffen.add(k):stOffen.delete(k); }); });
