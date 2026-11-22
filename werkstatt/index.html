@@ -187,7 +187,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
 <div class="schicht start" id="start">
   <div class="innen">
     <h1>Tomtes Werkstatt</h1>
-    <p>Hinter der kleinen Tür wohnt Tomte. Er ist gerade unterwegs. Wir schauen leise hinein.</p>
+    <p>Hinter der kleinen Tür wohnt Tomte. Er ist gerade unterwegs.</p>
     <div class="knoepfe">
       <button class="k voll" id="mitTon" type="button">Mit Ton</button>
       <button class="k" id="ohneTon" type="button">Ohne Ton</button>
@@ -219,50 +219,50 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   "use strict";
   /* x,y in Prozent des Bildes. s = Geräusch, f = Mikroaktion */
   var ZIMMER=[
-    {id:"flur",ort:"Die Tür",text:"Das ist Tomtes Tür. Dahinter geht es nach oben, Zimmer für Zimmer.",p:[
-      {x:49.5,y:54,t:"Im Fensterchen brennt noch Licht. Er war eben hier.",s:"tuer",f:"glut"},
+    {id:"flur",ort:"Die Tür",text:"Das ist Tomtes Tür. Dahinter geht es hinein, Zimmer für Zimmer.",p:[
+      {x:49.5,y:54,t:"Im Fensterchen ist Licht. So findet Mimi nach der Post heim.",s:"tuer",f:"glut"},
       {x:65.5,y:62,t:"Im Briefkasten liegt Post. Mimi war schon da.",s:"briefkasten",f:"ring"},
       {x:57,y:64.5,t:"Die erste Zahl hängt noch hier. Die anderen zählt er drinnen.",s:"glitzer",f:"funken"},
-      {x:68.5,y:72,t:"Die Laterne ist noch warm.",s:"kerze",f:"glut"},
-      {x:77,y:75,t:"Tannenzapfen. Die sammelt er für den Winter.",s:"bett",f:"ring"}]},
+      {x:68.5,y:72,t:"Die Laterne ist noch warm.",s:"laterne",f:"glut"},
+      {x:77,y:75,t:"Tannenzapfen. Die sammelt er für den Winter.",s:"zapfen",f:"ring"}]},
     {id:"wohnzimmer",ort:"Wohnzimmer",text:"Der Baum leuchtet, auf dem Tisch dampft eine Tasse. Tomte ist gerade weg.",p:[
       {x:66.5,y:63.5,t:"Tomte war gerade noch hier und hat köstlichen Kakao getrunken.",s:"schluerfen",f:"dampf"},
-      {x:43.5,y:50,t:"Jede Kugel hat er selbst bemalt.",s:"gloeckchen",f:"funken"},
-      {x:78,y:62,t:"Die Decke ist noch warm. Hier hat jemand gesessen.",s:"bett",f:"glut"},
-      {x:61.5,y:56,t:"Auf der Tafel steht die 24. So weit zählt er mit euch.",s:"feder",f:"ring"},
-      {x:39.5,y:26,t:"Die Sterne hat er selbst gefaltet.",s:"glitzer",f:"funken"},
+      {x:43.5,y:50,t:"Jede Kugel hat er selbst bemalt.",s:"kugeln",f:"funken"},
+      {x:78,y:62,t:"Die Decke ist noch warm. Hier hat Tomte eben gesessen.",s:"bett",f:"glut"},
+      {x:61.5,y:56,t:"Auf der Tafel steht die 24. So weit zählt er mit euch.",s:"kreide",f:"ring"},
+      {x:39.5,y:26,t:"Die Sterne hat er selbst gefaltet.",s:"sterne",f:"funken"},
       {x:60,y:33,t:"Die Papierkette hat er selbst geklebt.",s:"blaettern",f:"ring"},
-      {x:52,y:79,t:"Durch diese Luke ist er heraufgekommen.",s:"kessel",f:"dampf"}]},
-    {id:"kueche",ort:"Küche",text:"Es duftet. Auf dem Tisch liegt noch Teig.",p:[
+      {x:52,y:79,t:"Durch diese Luke ist er heraufgekommen.",s:"treppe",f:"ring"}]},
+    {id:"kueche",ort:"Küche",text:"Es duftet nach Zimt und Vanille. Auf dem Tisch liegt noch Teig.",p:[
       {x:48,y:51,t:"Der Kessel pfeift. Gleich gibt es Tee.",s:"kessel",f:"dampf"},
-      {x:77,y:74,t:"Im Teig fehlt ein Stern. Den hat er schon ausgestochen.",s:"glitzer",f:"flocken"},
-      {x:69,y:63,t:"Die Plätzchen müssen noch abkühlen.",s:"feuer",f:"dampf"},
-      {x:45,y:32,t:"Die Lichter hat er heute schon früh angemacht.",s:"glitzer",f:"glut"}]},
-    {id:"werkstatt-neu",ort:"Werkstatt",text:"Hier baut er Spielzeug. Überall liegen Späne.",p:[
+      {x:77,y:74,t:"Im Teig fehlt ein Stern. Den hat er schon ausgestochen.",s:"ausstecher",f:"flocken"},
+      {x:69,y:63,t:"Die Plätzchen müssen noch abkühlen.",s:"ofen",f:"dampf"},
+      {x:45,y:32,t:"Die Lichter hat er heute schon früh angemacht.",s:"lichterkette",f:"glut"}]},
+    {id:"werkstatt-neu",ort:"Werkstatt",text:"Hier baut er Spielzeug, das Kinder glücklich macht.",p:[
       {x:48,y:43,t:"Die Lampe ist noch an. Er war eben noch hier.",s:"teleskop",f:"glut"},
-      {x:54,y:40,t:"Der Hammer hängt schief. Eben hat er noch geklopft.",s:"hammer",f:"funken"},
-      {x:51.5,y:52,t:"Die kleine Eisenbahn ist fast fertig.",s:"zug",f:"ring"},
-      {x:75.5,y:46,t:"Der Nussknacker passt auf die Werkstatt auf.",s:"truhe",f:"ring"},
+      {x:54,y:40,t:"Der Hammer hängt schief. Eben hat er noch geklopft.",s:"hammer2",f:"funken"},
+      {x:51.5,y:52,t:"Die kleine Eisenbahn ist fast fertig.",s:"dampflok",f:"ring"},
+      {x:75.5,y:46,t:"Der Nussknacker passt auf die Werkstatt auf.",s:"nuss",f:"ring"},
       {x:67,y:53.5,t:"Noch eine Tasse. Beim Bauen trinkt er nebenbei.",s:"schluerfen",f:"dampf"},
-      {x:36.5,y:49,t:"In der Maschine wächst ein kleiner Stern.",s:"glitzer",f:"funken"},
-      {x:73,y:70,t:"Lauter Päckchen. Für wen die wohl sind?",s:"blaettern",f:"funken"}]},
+      {x:36.5,y:49,t:"In der Maschine wächst ein kleiner Stern.",s:"maschine",f:"funken"},
+      {x:73,y:70,t:"Lauter Päckchen. Für wen die wohl sind?",s:"geschenk",f:"funken"}]},
     {id:"schreibstube",ort:"Schreibstube",text:"Hier schreibt Tomte seine Briefe.",p:[
-      {x:47,y:47,t:"Die Feder ist noch nass. Er hat gerade geschrieben.",s:"feder",f:"ring"},
+      {x:47,y:47,t:"Die Feder ist noch nass. Er hat gerade geschrieben.",s:"feder2",f:"ring"},
       {x:54,y:41,t:"Ein Brief mit rotem Siegel. Noch nicht ganz fertig.",s:"blaettern",f:"funken"},
-      {x:49,y:35,t:"Die Glöckchen läuten, wenn Post kommt.",s:"gloeckchen",f:"funken"},
-      {x:66,y:61,t:"Das Grammophon spielt sein Lieblingslied.",s:"grammophon",f:"noten"},
-      {x:80,y:60,t:"Fump! Durchs Rohr kommt ein neuer Brief.",s:"rohrpost",f:"ring"}]},
+      {x:49,y:35,t:"Die Glöckchen läuten, wenn Post kommt.",s:"glocken",f:"funken"},
+      {x:66,y:61,t:"Das Grammophon spielt sein Lieblingslied.",s:"grammophon2",f:"noten"},
+      {x:80,y:60,t:"Fump! Durchs Rohr kommt ein neuer Brief.",s:"rohrpost2",f:"ring"}]},
     {id:"vorratskammer",ort:"Vorratskammer",text:"Kisten, Wolle, Kerzen. Tomte hebt alles auf.",p:[
-      {x:71,y:74,t:"Ein Wollfaden quer durchs Zimmer. Tomte hatte es eilig.",s:"bett",f:"ring"},
+      {x:71,y:74,t:"Ein Knäuel Schnur ist vom Regal gerollt. Tomte hatte es eilig.",s:"bett",f:"ring"},
       {x:72.5,y:36,t:"Hier brennt nur diese eine Laterne.",s:"kerze",f:"glut"},
-      {x:54,y:56,t:"Kerzen für den ganzen Dezember.",s:"glitzer",f:"glut"},
-      {x:79,y:62,t:"Die Leiter steht noch da. Er musste ganz nach oben.",s:"tuer",f:"ring"}]},
+      {x:54,y:56,t:"Kerzen für den ganzen Dezember.",s:"streichholz",f:"glut"},
+      {x:79,y:62,t:"Die Leiter steht noch da. Er musste ganz nach oben.",s:"leiter",f:"ring"}]},
     {id:"schlafzimmer",ort:"Schlafzimmer",text:"Hier schläft er. Wenn er mal schläft.",p:[
       {x:46,y:56,t:"Das Bett ist zerwühlt. Er ist schnell aufgestanden.",s:"bett",f:"ring"},
       {x:61.5,y:54,t:"Das Buch liegt offen. Er liest gern vor dem Schlafen.",s:"blaettern",f:"glut"},
-      {x:71,y:24.5,t:"Tick, tack. Bald ist es Morgen.",s:"uhr",f:"ring"},
+      {x:71,y:24.5,t:"Tick, tack. Bald ist es Morgen.",s:"uhr2",f:"ring"},
       {x:55,y:66.5,t:"Seine Hausschuhe. So klein.",s:"glitzer",f:"funken"},
-      {x:72,y:47,t:"Im Schrank hängt seine Ersatzmütze.",s:"truhe",f:"ring"},
+      {x:72,y:47,t:"Im Schrank hängt seine Ersatzmütze.",s:"schrank",f:"ring"},
       {x:82,y:57,t:"Aus der Schüssel steigt noch Dampf.",s:null,f:"dampf"}]},
     {id:"dachkammer",ort:"Dachkammer",text:"Ganz oben. Das Fenster steht offen.",p:[
       {x:52.5,y:43,t:"Durch dieses Fenster ist er hinaus. Draußen schneit es.",s:"tuer",f:"flocken"},
@@ -270,7 +270,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
       {x:74,y:62,t:"In der Kiste sammelt er Dinge, die er unterwegs findet.",s:"truhe",f:"funken"},
       {x:61,y:40,t:"Den hellsten Stern hat er für euch aufgehängt.",s:"glitzer",f:"funken"},
       {x:42,y:43,t:"Getrocknete Äpfel. Sein Vorrat für den Winter.",s:"bett",f:"ring"},
-      {x:38,y:66,t:"Hier oben schläft Mimi, wenn sie müde ist. Also fast immer.",s:"schnarchen",f:"zzz"}]}
+      {x:42,y:61,t:"Hier oben schläft Mimi, wenn sie müde ist. Also fast immer.",s:"schnarchen",f:"zzz"}]}
   ];
 
   var $=function(s){return document.getElementById(s)};
