@@ -73,6 +73,13 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
 .heim{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:5;height:44px;display:flex;align-items:center;padding:0 12px;border-radius:22px;border:2px solid rgba(255,255,255,.7);background:rgba(15,20,48,.72);color:#fff;text-decoration:none;font-size:14px;font-weight:600}
 
 /* Leuchtpunkte */
+#spots.weg .spot{opacity:0!important;transition:opacity .3s ease}
+.rahmen svg{transition:opacity .4s ease}
+.rahmen svg.aus{opacity:0}
+.kopf p,.kopf .ort,.kopf .tipp{transition:opacity .4s ease}
+.kopf.wechsel p,.kopf.wechsel .ort,.kopf.wechsel .tipp{opacity:0}
+.spot{opacity:0;transform:scale(.6);transition:opacity .45s ease,transform .45s cubic-bezier(.3,1.4,.5,1)}
+.spot.da{opacity:1;transform:none}
 .spot{position:absolute;width:48px;height:48px;margin:-24px 0 0 -24px;border:0;background:none;border-radius:50%;z-index:2}
 .spot::before{content:"";position:absolute;inset:15px;border-radius:50%;background:var(--gelb);box-shadow:0 0 0 3px rgba(15,20,48,.55),0 0 14px 4px rgba(255,210,63,.75)}
 .spot::after{content:"";position:absolute;inset:12px;border-radius:50%;border:2px solid var(--gelb);animation:puls 2.2s ease-out infinite;animation-delay:var(--d,0s)}
@@ -142,6 +149,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   .punkte button{height:34px}
 }
 @media (prefers-reduced-motion:reduce){
+  .spot,.rahmen svg,.kopf p,.kopf .ort,.kopf .tipp{transition:none}
   .spot::after,.dreh .handy{animation:none}
   .fx{display:none}
   .zettel,.ende,.ende .innen{transition:none}
@@ -343,7 +351,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
 
   /* ---- Bilder ---- */
   function laden(i){if(i<0||i>=ZIMMER.length)return Promise.resolve();var u=src(i);if(!cache[u]){cache[u]=new Promise(function(ok){var im=new Image();im.onload=im.onerror=function(){ok()};im.src=u;});}return cache[u];}
-  function setz(el,u){el.setAttribute("href",u);el.setAttributeNS(NS,"xlink:href",u);}
+  function setz(el,u){if(!u){el.removeAttribute("href");el.removeAttributeNS(NS,"href");return;}el.setAttribute("href",u);el.setAttributeNS(NS,"xlink:href",u);}
 
   /* Aquarell: ausfransende Kreise wachsen von der Mitte */
   var KREISE=[[896,506,1],[560,420,.8],[1240,560,.85],[700,760,.7],[1100,300,.75],[320,600,.6],[1500,400,.6]];
@@ -360,18 +368,35 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   function zeigen(i,ohneUebergang){
     if(laeuft||i<0||i>=ZIMMER.length)return;
     zettelWeg();laeuft=true;var z=ZIMMER[i];
-    laden(i).then(function(){
+    var svg=$("rahmen").querySelector("svg"), kopf=document.querySelector(".kopf");
+    var sanft=!(ohneUebergang||still);
+    /* 1. Altes Zimmer sanft ausblenden: Punkte, Text und Bild */
+    if(sanft){$("spots").classList.add("weg");kopf.classList.add("wechsel");svg.classList.add("aus");}
+    Promise.all([laden(i),new Promise(function(ok){setTimeout(ok,sanft?420:0)})]).then(function(){
       var neu=src(i);
-      if(ohneUebergang||still){setz(bildNeu,neu);setz(bildAlt,neu);voll();fertig();}
-      else{setz(bildAlt,bildNeu.getAttribute("href")||neu);setz(bildNeu,neu);aquarell(function(){setz(bildAlt,neu);voll();});setTimeout(fertig,350);}
       nr=i;$("ort").textContent=(i+1)+" von "+ZIMMER.length+" · "+z.ort;$("text").textContent=z.text;
       $("tipp").hidden=i>1;
       spotsBauen(z);punkteSetzen();
       $("zur").hidden=i===0;$("vor").setAttribute("aria-label",i===ZIMMER.length-1?"Licht aus":"Weiter");
+      if(!sanft){setz(bildNeu,neu);setz(bildAlt,neu);voll();punkteZeigen(false);laeuft=false;}
+      else{
+        /* 2. Neues Zimmer einblenden: Bild läuft wie Aquarell ein, Text kommt mit */
+        setz(bildAlt,"");setz(bildNeu,neu);kreise.innerHTML="";
+        svg.classList.remove("aus");kopf.classList.remove("wechsel");
+        aquarell(function(){setz(bildAlt,neu);voll();});
+        /* 3. Erst wenn das Bild steht, erscheinen die Punkte */
+        setTimeout(function(){punkteZeigen(true);laeuft=false;},950);
+      }
       laden(i+1);toeneLaden(i);
       try{history.replaceState(null,"","#"+z.id)}catch(e){}
     });
-    function fertig(){laeuft=false;}
+  }
+  function punkteZeigen(nacheinander){
+    var box=$("spots");box.classList.remove("weg");
+    [].forEach.call(box.children,function(b,j){
+      if(!nacheinander){b.classList.add("da");return;}
+      setTimeout(function(){b.classList.add("da")},j*90);
+    });
   }
 
   function spotsBauen(z){
