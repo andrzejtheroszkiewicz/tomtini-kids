@@ -9,3 +9,7 @@ Die ungekürzten Originale liegen im Flow und im Arbeitsordner (stand/sfx/orig).
 
 Nutzung: Ob die Geräusche kommerziell genutzt werden dürfen, richtet sich nach dem ElevenLabs-Tarif des Kontos.
 Bei einem bezahlten Tarif ist das erlaubt.
+
+## Hintergrundmusik
+musik.flac (und musik.mp3 als Ersatz): eigens erzeugt mit ElevenLabs Music v2.5 am 23.11.2026 („Weihnachtswalzer mit Glockenspiel“, 30 s), zu einer nahtlosen Schleife von 27,25 s verblendet.
+Die Musik wird über Web Audio als lückenlose Schleife abgespielt, leise im Hintergrund, und beim Abspielen eines Geräuschs kurz leiser.

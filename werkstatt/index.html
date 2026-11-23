@@ -289,9 +289,32 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   var ICON_AUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
   function tonZeigen(){$("tonIcon").innerHTML=tonAn?ICON_AN:ICON_AUS;$("tonText").textContent=tonAn?"Ton an":"Ton aus";$("ton").setAttribute("aria-pressed",String(tonAn));}
   function ton(n){if(!n)return null;if(!toene[n]){var a=new Audio("ton/"+n+".mp3");a.preload="auto";toene[n]=a;}return toene[n];}
-  function spiel(n){if(!tonAn||!n)return;Object.keys(toene).forEach(function(k){var x=toene[k];if(!x.paused){x.pause();}});var a=ton(n);try{a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
+  /* ---- Hintergrundmusik: verlustfreie Schleife über Web Audio (lückenlos, Lautstärke auch auf dem iPhone regelbar) ---- */
+  var LEISE=0.2, GEDUCKT=0.05, actx=null, mGain=null, mQuelle=null, mLaedt=false, mEl=null;
+  function musikAn(){
+    if(!tonAn)return;
+    try{
+      if(!actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw 0;actx=new AC();mGain=actx.createGain();mGain.gain.value=0;mGain.connect(actx.destination);}
+      if(actx.state==="suspended")actx.resume();
+      if(!mQuelle&&!mLaedt){mLaedt=true;
+        fetch("ton/musik.flac").then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,nein){actx.decodeAudioData(b,ok,nein)})})
+        .catch(function(){return fetch("ton/musik.mp3").then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,nein){actx.decodeAudioData(b,ok,nein)})})})
+        .then(function(buf){mQuelle=actx.createBufferSource();mQuelle.buffer=buf;mQuelle.loop=true;mQuelle.connect(mGain);mQuelle.start();blende(LEISE,1.5);})
+        .catch(function(){mLaedt=false;});
+      } else blende(LEISE,0.8);
+    }catch(e){ /* sehr alte Browser: einfache Schleife */
+      if(!mEl){mEl=new Audio("ton/musik.mp3");mEl.loop=true;mEl.volume=LEISE;}
+      var p=mEl.play();if(p&&p.catch)p.catch(function(){});
+    }
+  }
+  function blende(z,dauer){if(!mGain)return;var g=mGain.gain,t=actx.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(z,t+dauer);}
+  function musikAus(){if(mEl)mEl.pause();if(!actx)return;blende(0,0.4);setTimeout(function(){if(!tonAn&&actx)actx.suspend();},450);}
+  function ducken(){if(!tonAn||!mGain)return;var g=mGain.gain,t=actx.currentTime;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(GEDUCKT,t+0.15);g.setValueAtTime(GEDUCKT,t+2.2);g.linearRampToValueAtTime(LEISE,t+3.4);}
+  document.addEventListener("visibilitychange",function(){if(!actx)return;if(document.hidden)actx.suspend();else if(tonAn)actx.resume();});
+
+  function spiel(n){if(!tonAn||!n)return;ducken();Object.keys(toene).forEach(function(k){var x=toene[k];if(!x.paused){x.pause();}});var a=ton(n);try{a.currentTime=0;var p=a.play();if(p&&p.catch)p.catch(function(){});}catch(e){}}
   function toeneLaden(i){if(!tonAn)return;(ZIMMER[i].p||[]).forEach(function(h){ton(h.s)});}
-  $("ton").onclick=function(){tonAn=!tonAn;if(!tonAn)Object.keys(toene).forEach(function(k){toene[k].pause()});else toeneLaden(nr);tonZeigen();try{localStorage.setItem("tomtini-werkstatt-ton",tonAn?"1":"0")}catch(e){}};
+  $("ton").onclick=function(){tonAn=!tonAn;if(!tonAn){Object.keys(toene).forEach(function(k){toene[k].pause()});musikAus();}else{toeneLaden(nr);musikAn();}tonZeigen();try{localStorage.setItem("tomtini-werkstatt-ton",tonAn?"1":"0")}catch(e){}};
 
   /* ---- Vollbild (iPhone kann das für Webseiten nicht, dort bleibt der Knopf weg) ---- */
   var de=document.documentElement, fsAn=de.requestFullscreen||de.webkitRequestFullscreen;
@@ -449,7 +472,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   var start=(function(){var h=location.hash.slice(1);for(var i=0;i<ZIMMER.length;i++)if(ZIMMER[i].id===h)return i;return 0;})();
   laden(start);
   function los(mit){tonAn=mit;tonZeigen();try{localStorage.setItem("tomtini-werkstatt-ton",mit?"1":"0")}catch(e){}
-    if(mit){spiel("tuer");}
+    if(mit){musikAn();spiel("tuer");}
     $("start").hidden=true;sperre(false);zeigen(start,true);wischPruefen();setTimeout(function(){$("vor").focus({preventScroll:true})},50);}
   $("mitTon").onclick=function(){los(true)};$("ohneTon").onclick=function(){los(false)};
   $(tonAn?"mitTon":"ohneTon").focus({preventScroll:true});
