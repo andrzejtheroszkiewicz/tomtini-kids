@@ -482,6 +482,12 @@ html.ks-lock,html.ks-lock body{overflow:hidden}
 .fenster-box li.an::before{content:"";position:absolute;left:0;top:.52em;width:.5em;height:.5em;background:var(--yellow)}
 .fenster-box button.zeile{display:block;width:100%;text-align:left;background:none;border:0;border-radius:0;padding:0;font:inherit;color:inherit;cursor:pointer;min-height:0}
 .fenster-ende{border:2px solid var(--yellow);background:var(--ink-night);color:#fff;padding:18px 20px;display:grid;gap:12px;justify-items:start;font-size:19px;line-height:1.3}
+.fenster-teaser{position:relative;display:block;border:2px solid var(--line);overflow:hidden;background:var(--ink-night)}
+.fenster-teaser img{display:block;width:100%;height:auto;aspect-ratio:1600/904;transition:transform .6s ease}
+.fenster-teaser .btn{position:absolute;left:50%;bottom:clamp(14px,4%,28px);transform:translateX(-50%);white-space:nowrap}
+@media (hover:hover){.fenster-teaser:hover img{transform:scale(1.03)}}
+@media (prefers-reduced-motion:reduce){.fenster-teaser img{transition:none}}
+.stueck-fuss{font-size:15px;color:var(--mist)}
 .stueck-knoepfe{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .wortfeld{display:flex;flex-wrap:wrap;gap:8px 24px;border:2px solid var(--line);background:#fff;padding:clamp(18px,3vw,32px);font-size:clamp(17px,1.9vw,23px);line-height:1.3}
 .wortfeld button{background:none;border:0;border-radius:0;padding:10px 6px;margin:-4px 0;font:inherit;color:var(--snow);cursor:pointer;min-height:44px}
@@ -520,7 +526,7 @@ footer ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 footer strong{color:var(--snow)}
 
 /* Impressum, Datenschutz */
-.legal{padding:clamp(36px,6vw,80px) 0 clamp(60px,9vw,120px)}
+.legal{padding-top:clamp(36px,6vw,80px);padding-bottom:clamp(60px,9vw,120px)}
 .legal article{max-width:42em;display:grid;gap:14px}
 .legal .legal-titel{font-size:clamp(40px,7vw,84px);line-height:.95;letter-spacing:-.035em;margin:18px 0 10px}
 .legal h2{font-size:24px;font-weight:700;margin-top:18px}
@@ -932,6 +938,11 @@ html.magie-zweifinger, html.magie-zweifinger body{touch-action:none}
 .streich-vorher{margin-top:32px;border:2px solid var(--line);padding:14px 18px;font-size:16.5px;line-height:1.4;max-width:52em}
 .streich-tabs{margin-top:0}
 .streich-lbl{margin:18px 0 8px;font-size:15px;font-weight:700}
+.streich-filter{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
+.streich-reset{appearance:none;background:none;border:0;min-height:44px;padding:0 4px;font:600 15px/1 var(--body);color:var(--mist);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.streich-reset:hover{color:var(--snow)}
+.streich-reset:focus-visible{outline:3px solid var(--lamp);outline-offset:2px}
+
 .streich-tabs i{font-style:normal;font-weight:400;opacity:.6;margin-left:6px;font-variant-numeric:tabular-nums}
 .streich .marken{display:flex;flex-wrap:wrap;gap:6px;margin:0}
 .frech{font-size:12.5px;font-weight:700;padding:1px 9px;line-height:1.35;border:1px solid currentColor}
@@ -1279,18 +1290,15 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap stack">
     <div class="split">
       <h2>Tomte wird gehört, nie gesehen.</h2>
-      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann nehmt heute das Fenster: drei Minuten Tomtes Werkstatt, ganz aus Schrift. Hörstücke und Lieder stehen im Plan am passenden Tag.</p>
+      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann öffnet heute das Fenster in Tomtes Werkstatt. Hörstücke und Lieder stehen im Plan am passenden Tag.</p>
     </div>
     <div class="stuecke">
       <article class="stueck">
-        <p class="eyebrow">Fenster · drei Minuten</p>
+        <p class="eyebrow">Fenster · acht Zimmer</p>
         <h3>In Tomtes Werkstatt</h3>
-        <p class="stueck-sub">Er ist gerade draußen, aber alles ist noch warm. Tippt euch durch, so langsam ihr wollt.</p>
-        <div class="fenster-box"><ol id="fensterText"></ol></div>
-        <div class="stueck-knoepfe">
-          <button class="btn btn-primary" id="fensterWeiter">Weiter</button>
-          <button class="btn btn-ghost" id="fensterKurz">Kürzere Fassung</button>
-        </div>
+        <p class="stueck-sub">Er ist gerade draußen, aber alles ist noch warm. Klickt euch durch seine Zimmer und tippt auf die leuchtenden Punkte.</p>
+        <a class="fenster-teaser" href="werkstatt/index.html"><img src="werkstatt/bild/wohnzimmer-960.webp" srcset="werkstatt/bild/wohnzimmer-960.webp 960w, werkstatt/bild/wohnzimmer-1600.webp 1600w" sizes="(max-width:1100px) 100vw, 1100px" width="1600" height="904" loading="lazy" alt="Tomtes Wohnzimmer mit Weihnachtsbaum, Sessel und dampfender Tasse"><span class="btn btn-primary">Fenster öffnen</span></a>
+        <p class="stueck-fuss">Auf dem Handy quer halten. Mit oder ohne Ton.</p>
       </article>
 
     </div>
@@ -1302,12 +1310,12 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap">
     <div class="split">
       <h2><span id="streichZahl">84</span> Streiche. Von leicht bis aufwändig, von lieb bis frech.</h2>
-      <p class="sub" style="margin-top:0">Kein Tag braucht einen, die Geschichte trägt allein. Wer an einem Abend Lust hat, nimmt einen von hier: was zu tun ist, wie lange es dauert, wie frech er ist, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Wo morgens aufzuräumen ist, steht es dabei. Was hoch oben passiert ist, war Rubi.</p>
+      <p class="sub" style="margin-top:0">Kein Tag braucht einen, die Geschichte trägt allein. Wer an einem Abend Lust hat, nimmt einen von hier: was zu tun ist, wie lange es dauert, wie frech er ist, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Wo morgens aufzuräumen ist, steht es dabei.</p>
     </div>
-    <p class="streich-vorher"><b>Vorher kurz prüfen.</b> Kind unter 3, Haustier, Allergie? Dann Kleinteile und Essbares weglassen oder erst morgens hinstellen. Alles dicht an die Fußleiste, nicht in den Laufweg. Nie das Schlaftier nehmen. Wer nachts etwas aus einem Kinderzimmer holt: leise, und nichts aufs Bett legen.</p>
     <p class="streich-lbl">Wie frech darf es sein? <span class="streich-sync">Gilt auch für euren Kalender im Generator.</span></p>
-    <div class="seg" id="streichFrech" role="radiogroup" aria-label="Frechheit"></div>
+    <div class="streich-filter"><div class="seg" id="streichFrech" role="radiogroup" aria-label="Frechheit"></div><button type="button" class="streich-reset" id="streichReset" hidden>× Zurücksetzen</button></div>
     <div class="streich-stufen" id="streichGrid"></div>
+    <p class="streich-vorher"><b>Vorher kurz prüfen.</b> Kind unter 3, Haustier, Allergie? Dann Kleinteile und Essbares weglassen oder erst morgens hinstellen. Alles dicht an die Fußleiste, nicht in den Laufweg. Nie das Schlaftier nehmen. Wer nachts etwas aus einem Kinderzimmer holt: leise, und nichts aufs Bett legen.</p>
     <p class="streich-fuss">Die Zettel von Hand abschreiben, in Druckbuchstaben mit der „anderen“ Hand, dann sieht es nicht nach euch aus. Mit dem Haken „Haustier“ im Generator stehen die Tier-Hinweise direkt am Streich.</p>
   </div>
 </section>
@@ -1758,8 +1766,8 @@ details.streich[open]>summary::after{content:"–"}
   window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
 })();
 </script>
-<script src="content.js?v=20261118b"></script>
-<script src="app.js?v=20261118b"></script>
+<script src="content.js?v=20261123a"></script>
+<script src="app.js?v=20261123a"></script>
 <script src="z.js?v=20261117" defer></script>
 <script>
 (function(){
@@ -1969,6 +1977,7 @@ details.streich[open]>summary::after{content:"–"}
       "Seine Mütze liegt auf dem Stuhl. Sehen wirst du ihn nicht.",
       "Er ist gerade nicht da."
     ];
+    if(!document.getElementById('fensterText')) return;
     var ol=$('#fensterText'), weiter=$('#fensterWeiter'), kurzBtn=$('#fensterKurz'),
         zeilen=LANG, i=0, kurzAn=false, ende=null;
     function zeichne(){
