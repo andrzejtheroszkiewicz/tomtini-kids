@@ -278,7 +278,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   var $=function(s){return document.getElementById(s)};
   var still=matchMedia("(prefers-reduced-motion: reduce)").matches;
   var gross=(Math.min(screen.width,screen.height)*(devicePixelRatio||1))>820 || innerWidth*(devicePixelRatio||1)>1500;
-  var src=function(i){return "bild/"+ZIMMER[i].id+"-"+(gross?"1600":"960")+".webp"};
+  var src=function(i){return "bild/"+ZIMMER[i].id+"-"+(gross?"1600":"960")+".webp?v=20261123c"};
   var NS="http://www.w3.org/1999/xlink";
   var bildAlt=$("bildAlt"), bildNeu=$("bildNeu"), kreise=$("maskeKreise");
   var nr=0, tonAn=true, laeuft=false, zettelTimer=null, cache={}, toene={};
@@ -287,7 +287,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   var ICON_AN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
   var ICON_AUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
   function tonZeigen(){$("tonIcon").innerHTML=tonAn?ICON_AN:ICON_AUS;$("tonText").textContent=tonAn?"Ton an":"Ton aus";$("ton").setAttribute("aria-pressed",String(tonAn));}
-  function ton(n){if(!n)return null;if(!toene[n]){var a=new Audio("ton/"+n+".mp3");a.preload="auto";toene[n]=a;}return toene[n];}
+  function ton(n){if(!n)return null;if(!toene[n]){var a=new Audio("ton/"+n+".mp3?v=20261123c");a.preload="auto";toene[n]=a;}return toene[n];}
   /* ---- Hintergrundmusik: verlustfreie Schleife über Web Audio (lückenlos, Lautstärke auch auf dem iPhone regelbar) ---- */
   var LEISE=0.2, GEDUCKT=0.05, actx=null, mGain=null, mQuelle=null, mLaedt=false, mEl=null;
   function musikAn(){
@@ -296,13 +296,13 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
       if(!actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw 0;actx=new AC();mGain=actx.createGain();mGain.gain.value=0;mGain.connect(actx.destination);}
       if(actx.state==="suspended")actx.resume();
       if(!mQuelle&&!mLaedt){mLaedt=true;
-        fetch("ton/musik.flac").then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,nein){actx.decodeAudioData(b,ok,nein)})})
-        .catch(function(){return fetch("ton/musik.mp3").then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,nein){actx.decodeAudioData(b,ok,nein)})})})
+        fetch("ton/musik.flac?v=20261123c").then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,nein){actx.decodeAudioData(b,ok,nein)})})
+        .catch(function(){return fetch("ton/musik.mp3?v=20261123c").then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(ok,nein){actx.decodeAudioData(b,ok,nein)})})})
         .then(function(buf){mQuelle=actx.createBufferSource();mQuelle.buffer=buf;mQuelle.loop=true;mQuelle.connect(mGain);mQuelle.start();blende(LEISE,1.5);})
         .catch(function(){mLaedt=false;});
       } else blende(LEISE,0.8);
     }catch(e){ /* sehr alte Browser: einfache Schleife */
-      if(!mEl){mEl=new Audio("ton/musik.mp3");mEl.loop=true;mEl.volume=LEISE;}
+      if(!mEl){mEl=new Audio("ton/musik.mp3?v=20261123c");mEl.loop=true;mEl.volume=LEISE;}
       var p=mEl.play();if(p&&p.catch)p.catch(function(){});
     }
   }
