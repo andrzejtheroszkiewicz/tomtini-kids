@@ -1,0 +1,27 @@
+/* Gemeinsame Farben und Schrift für die Bauanleitungen (Tomtes Haus aus Klemmbausteinen, Tomtes Haus aus Papier).
+   Gleiche Farbwelt wie die Startseite: hell weiß/Nachtblau/Rubis Rot, dunkel die blaugrüne Palette vom 12. Nov 2026. */
+@font-face{font-family:"Switzer";src:url("fonts/switzer.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+:root{
+  --paper:#ffffff;      /* Seite */
+  --ink:#0f1430;        /* Schrift */
+  --olive:#555b73;      /* leise Schrift, Eyebrow */
+  --sage:#f2f0ea;
+  --card:#f2f0ea;       /* Karten */
+  --box:#ffffff;        /* weiße Felder in Karten (Teile, Liste) */
+  --pic:#fcf9f2;        /* Grund hinter den Renderbildern (gleich dem Bildgrund) */
+  --line:rgba(15,20,48,.16);
+  --gold:#ffd23f;       /* Fokusrahmen */
+  --btn:#db3820; --btn-text:#ffffff;
+  --hl:#D9480F;
+  --font:"Switzer","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+html.dunkel{
+  --paper:#05161a; --ink:#6da5c0; --olive:#6da5c0; --sage:#072e33; --card:#072e33;
+  --box:#05161a; --pic:#fcf9f2; --line:#294d61; --gold:#0f969c;
+  --btn:#0f969c; --btn-text:#05161a; --hl:#f08a5d;
+  color-scheme:dark;
+}
+html.dunkel ::selection{background:#0c7075;color:#fff}
+.btn{background:var(--btn)!important;color:var(--btn-text)!important}
+.pic{background:var(--pic);border-radius:0}
