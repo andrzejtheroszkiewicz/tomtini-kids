@@ -84,6 +84,9 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
 /* Sprechzettel */
 .zettel{position:absolute;z-index:3;max-width:min(300px,42vw);background:#fffdf6;color:#27306b;border:2px solid var(--nacht);box-shadow:6px 6px 0 rgba(15,20,48,.6);padding:12px 15px;font-size:clamp(15px,1.6vw,19px);line-height:1.28;font-weight:600;pointer-events:none;opacity:0;transform:translateY(6px) scale(.97);transition:opacity .25s,transform .25s}
 .zettel.an{opacity:1;transform:none}
+.zettel.oben{transform:translate(-50%,-4px);z-index:4;max-width:min(600px,calc(100vw - 280px));font-size:14px;line-height:1.2;padding:5px 12px;text-align:center;box-shadow:4px 4px 0 rgba(15,20,48,.6)}
+.zettel.oben.an{transform:translate(-50%,0)}
+.kopf{transition:opacity .2s}.kopf.still{opacity:0}
 
 /* Mikroaktionen */
 .fx{position:absolute;z-index:2;pointer-events:none;width:0;height:0}
@@ -220,7 +223,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   /* x,y in Prozent des Bildes. s = Geräusch, f = Mikroaktion */
   var ZIMMER=[
     {id:"flur",ort:"Die Tür",text:"Das ist Tomtes Tür. Dahinter geht es hinein, Zimmer für Zimmer.",p:[
-      {x:49.5,y:54,t:"Im Fensterchen ist Licht. So findet Mimi nach der Post heim.",s:"tuer",f:"glut"},
+      {x:49.5,y:54,t:"Im Fensterchen ist Licht. So findet Mimi nach der Post heim.",s:"streichholz",f:"glut"},
       {x:65.5,y:62,t:"Im Briefkasten liegt Post. Mimi war schon da.",s:"briefkasten",f:"ring"},
       {x:57,y:64.5,t:"Die erste Zahl hängt noch hier. Die anderen zählt er drinnen.",s:"glitzer",f:"funken"},
       {x:68.5,y:72,t:"Die Laterne ist noch warm.",s:"laterne",f:"glut"},
@@ -255,7 +258,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
     {id:"vorratskammer",ort:"Vorratskammer",text:"Kisten, Wolle, Kerzen. Tomte hebt alles auf.",p:[
       {x:71,y:74,t:"Ein Knäuel Schnur ist vom Regal gerollt. Tomte hatte es eilig.",s:"bett",f:"ring"},
       {x:72.5,y:36,t:"Hier brennt nur diese eine Laterne.",s:"kerze",f:"glut"},
-      {x:54,y:56,t:"Kerzen für den ganzen Dezember.",s:"streichholz",f:"glut"},
+      {x:54,y:56,t:"Kerzen für den ganzen Dezember.",s:"kerzen",f:"glut"},
       {x:79,y:62,t:"Die Leiter steht noch da. Er musste ganz nach oben.",s:"leiter",f:"ring"}]},
     {id:"schlafzimmer",ort:"Schlafzimmer",text:"Hier schläft er. Wenn er mal schläft.",p:[
       {x:46,y:56,t:"Das Bett ist zerwühlt. Er ist schnell aufgestanden.",s:"bett",f:"ring"},
@@ -364,17 +367,36 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   }
   function zettel(h){
     var el=$("zettel");el.textContent=h.t;el.classList.remove("an");
+    if(innerHeight<520){ /* Handy quer: Zettel ersetzt oben den Zimmertext, dort liegt nie ein Punkt */
+      var rr=$("rahmen").getBoundingClientRect();
+      el.classList.add("oben");el.style.left=(innerWidth/2-rr.left)+"px";el.style.top=(Math.max(4,parseFloat(getComputedStyle(document.querySelector(".kopf")).paddingTop)-4)-rr.top)+"px";el.style.visibility="";document.querySelector(".kopf").classList.add("still");
+      requestAnimationFrame(function(){el.classList.add("an")});return;
+    }
+    el.classList.remove("oben");
     var r=$("rahmen").getBoundingClientRect();
     el.style.left="0px";el.style.top="0px";el.style.visibility="hidden";el.style.display="block";
-    var w=el.offsetWidth,hh=el.offsetHeight;
+    var w=el.offsetWidth,hh=el.offsetHeight,g=26;
     var px=h.x/100*r.width,py=h.y/100*r.height;
-    var x=h.x>58?px-w-22:px+22, y=py-hh/2;
-    var minY=Math.max(0,(innerHeight>500?90:64)-r.top), maxY=Math.min(r.height,innerHeight-r.top-50)-hh;
-    y=Math.max(minY,Math.min(maxY,y));x=Math.max(8-r.left+70,Math.min(r.width+(innerWidth-r.right)-w-78,x));
-    el.style.left=x+"px";el.style.top=y+"px";el.style.visibility="";
+    /* sichtbarer Bereich in Rahmen-Koordinaten, frei von Kopfzeile, Pfeilen und Fortschrittspunkten */
+    var minX=Math.max(0,-r.left)+78, maxX=Math.min(r.width,innerWidth-r.left)-78-w;
+    var minY=Math.max(0,-r.top)+(innerHeight>500?90:56), maxY=Math.min(r.height,innerHeight-r.top)-50-hh;
+    var kand=[];[g,70,120].forEach(function(d){kand.push([px+d,py-hh/2],[px-d-w,py-hh/2],[px-w/2,py-d-hh],[px-w/2,py+d],[px+d,py-hh+12],[px+d,py-12],[px-d-w,py-hh+12],[px-d-w,py-12]);});
+    if(h.x>58){var t=kand[0];kand[0]=kand[1];kand[1]=t;}
+    var andere=ZIMMER[nr].p.filter(function(p){return p!==h}).map(function(p){return [p.x/100*r.width,p.y/100*r.height]});
+    var best=null;
+    kand.forEach(function(k,i){
+      var x=Math.max(minX,Math.min(maxX,k[0])), y=Math.max(minY,Math.min(maxY,k[1]));
+      var zaehl=function(cx,cy,rad){return cx+rad>x&&cx-rad<x+w&&cy+rad>y&&cy-rad<y+hh};
+      var score=0;
+      andere.forEach(function(p){if(zaehl(p[0],p[1],28))score+=10;});
+      if(zaehl(px,py,22))score+=25;          /* eigenen Punkt nie verdecken */
+      score+=i*0.1;                          /* bei Gleichstand die natürliche Lage */
+      if(!best||score<best.s)best={s:score,x:x,y:y};
+    });
+    el.style.left=best.x+"px";el.style.top=best.y+"px";el.style.visibility="";
     requestAnimationFrame(function(){el.classList.add("an")});
   }
-  function zettelWeg(){clearTimeout(zettelTimer);$("zettel").classList.remove("an");}
+  function zettelWeg(){clearTimeout(zettelTimer);$("zettel").classList.remove("an");document.querySelector(".kopf").classList.remove("still");}
 
   function effekt(h){
     if(still)return;
