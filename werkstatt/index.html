@@ -317,19 +317,21 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
       {x:55,y:66.5,t:"Seine Hausschuhe. So klein.",s:"glitzer",f:"funken"},
       {x:72,y:47,t:"Im Schrank hängt seine Ersatzmütze.",s:"schrank",f:"ring"},
       {x:82,y:57,t:"Aus der Schüssel steigt noch Dampf.",s:null,f:"dampf"}]},
-    {id:"dachkammer",m:true,basis:false,a:[["p",54,85,34,6],["u",53,89,7],["f",66,51,1.4],["f",72,59,1.4],["l",[[62.8,29.3],[64.7,31.2],[68.7,32.0],[13.6,45.7],[88.6,46.2],[22.7,47.3],[15.1,47.5],[21.0,48.3],[30.4,49.2],[81.3,49.2],[75.8,49.2],[85.5,50.1],[19.4,50.3],[17.1,50.3],[24.1,50.4],[86.5,50.8],[31.0,50.9],[83.2,50.9],[27.8,51.1],[84.5,51.3],[78.3,51.5],[26.1,51.8],[76.7,51.7],[79.4,52.0],[77.8,52.5]]],["w",50.4,38.4,5.8,10.4,11,1],["lw",[[54,40.6],[51.6,39.2],[55.2,44.2],[52.7,47.4]]],["f",61,39.6,2.8],["f",69,33,2.2],["f",76.3,29,2.4],["f",70.5,43,1.8],["f",36.6,41.8,1.8],["g",60.5,63.8,5.5],["n",43,58,"zZz",5]],ort:"Dachkammer",text:"Ganz oben. Das Fenster steht offen.",p:[
+    {id:"dachkammer",m:true,basis:false,a:[["p",54,85,34,6],["u",53,89,7],["f",66,51,1.4],["f",72,59,1.4],["l",[[64.7,31.2],[68.7,32.0],[88.6,46.3],[23.1,46.7],[15.1,47.4],[81.7,47.2],[21.0,48.2],[81.3,49.1],[75.8,49.2],[82.5,49.4],[85.5,50.1],[19.4,50.3],[17.1,50.3],[86.5,50.7],[83.2,50.8],[84.5,51.3],[76.7,51.7],[79.5,52.0],[77.8,52.5]]],["w",50.4,38.4,5.8,10.4,11,1],["lw",[[54,40.6],[51.6,39.2],[55.2,44.2],[52.7,47.4]]],["f",61,39.6,2.8],["f",69,33,2.2],["f",76.3,29,2.4],["f",70.5,43,1.8],["f",36.6,41.8,1.8],["g",60.5,63.8,5.5],["n",43,58,"zZz",5]],ort:"Dachkammer",text:"Ganz oben. Das Fenster steht offen.",p:[
       {x:52.5,y:43,t:"Durch dieses Fenster ist er hinaus. Draußen schneit es.",s:"tuer",f:"flocken"},
       {x:66.5,y:57,t:"Mit dem Fernrohr zählt er die Sterne.",s:"teleskop",f:"funken"},
       {x:74,y:62,t:"In der Kiste sammelt er Dinge, die er unterwegs findet.",s:"truhe",f:"funken"},
       {x:61,y:40,t:"Den hellsten Stern hat er für euch aufgehängt.",s:"glitzer",f:"funken"},
       {x:42,y:43,t:"Getrocknete Äpfel. Sein Vorrat für den Winter.",s:"bett",f:"ring"},
-      {x:42,y:61,t:"Hier oben schläft Mimi, wenn sie müde ist. Also fast immer.",s:"schnarchen",f:"zzz"}]}
+      {x:42,y:61,t:"Hier oben schläft Mimi, wenn sie müde ist. Also fast immer.",s:"schnarchen",f:"zzz"},
+      {x:24.5,y:53,t:"Der Teddy brummt, wenn man ihn kippt.",s:"teddy",f:"ring"},
+      {x:22.3,y:74.5,t:"Ein Kreisel. Er hat ihn heute schon ausprobiert.",s:"kreisel",f:"funken"}]}
   ];
 
   var $=function(s){return document.getElementById(s)};
   var still=matchMedia("(prefers-reduced-motion: reduce)").matches;
   var gross=(Math.min(screen.width,screen.height)*(devicePixelRatio||1))>820 || innerWidth*(devicePixelRatio||1)>1500;
-  var src=function(i){return "bild/"+ZIMMER[i].id+"-"+(gross?"1600":"960")+".webp?v=20261126a"};
+  var src=function(i){return "bild/"+ZIMMER[i].id+"-"+(gross?"1600":"960")+".webp?v=20261126b"};
   var NS="http://www.w3.org/1999/xlink";
   var bildAlt=$("bildAlt"), bildNeu=$("bildNeu");
   var nr=0, tonAn=true, laeuft=false, zettelTimer=null, cache={}, toene={};
