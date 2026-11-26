@@ -257,7 +257,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
     <div class="handy" aria-hidden="true"></div>
     <p>Dreht das Handy, dann öffnet sich das Fenster.</p>
     <small>Dreht sich nichts? Dann die Drehsperre ausschalten.</small>
-    <a class="k" href="../index.html">Zurück zu Tomtini</a>
+    <a class="k" href="../#medien" data-zurueck>Zurück zu Tomtini</a>
   </div>
 </div>
 
@@ -266,7 +266,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
     <p style="font-size:clamp(22px,3vw,34px);font-weight:700;color:#fff;line-height:1.2">Er kommt zurück.<br>Er geht nie weit.</p>
     <div class="knoepfe">
       <button class="k voll" id="nochmal" type="button">Noch einmal schauen</button>
-      <a class="k" href="../index.html">Zurück zu Tomtini</a>
+      <a class="k" href="../#medien" data-zurueck>Zurück zu Tomtini</a>
     </div>
   </div>
 </div>
@@ -570,5 +570,6 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   $(tonAn?"mitTon":"ohneTon").focus({preventScroll:true});
 })();
 </script>
+<script src="../zurueck.js"></script>
 </body>
 </html>

@@ -25,3 +25,18 @@ html.dunkel{
 html.dunkel ::selection{background:#0c7075;color:#fff}
 .btn{background:var(--btn)!important;color:var(--btn-text)!important}
 .pic{background:var(--pic);border-radius:0}
+
+/* Klappbereiche (Teileliste, Bauschritte): gleiche Logik wie die Streiche auf der Startseite, + öffnet, – schließt */
+:root{interpolate-size:allow-keywords}
+details.klapp{border-top:2px solid var(--line);border-bottom:2px solid var(--line)}
+details.klapp>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:16px;padding:16px 0 14px}
+details.klapp>summary::-webkit-details-marker{display:none}
+details.klapp>summary h2{margin:0}
+details.klapp>summary .klapp-z{margin-left:auto;font-size:15px;color:var(--olive);white-space:nowrap;font-variant-numeric:tabular-nums}
+details.klapp>summary::after{content:"+";font:700 30px/1 var(--font);color:var(--btn);width:.7em;text-align:center}
+details.klapp[open]>summary::after{content:"–"}
+details.klapp .klapp-in{padding:4px 0 24px}
+details.klapp::details-content{block-size:0;overflow:hidden;transition:block-size .5s cubic-bezier(.22,.61,.36,1),content-visibility .5s allow-discrete}
+details.klapp[open]::details-content{block-size:auto}
+@media(prefers-reduced-motion:reduce){details.klapp::details-content{transition:none}}
+@media print{details.klapp>summary::after{content:""}}

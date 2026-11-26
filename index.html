@@ -2010,5 +2010,31 @@ details.streich[open]>summary::after{content:"–"}
   })();
 })();
 </script>
+<script>
+/* Zurück aus Werkstatt, Tomtes Haus oder Papierhaus: wieder genau dort stehen, wo man war (nicht am Hero).
+   Gemerkt wird der Abschnitt plus Abstand darin, damit es auch passt, wenn sich darüber etwas verschiebt. */
+(function(){
+  var KEY='tomtiniZurueck', UNTER=/(^|\/)(werkstatt|tomtes-haus|papierhaus)\//;
+  function abschnitt(){ var s=document.querySelectorAll('#site section[id]'), b=null; for(var i=0;i<s.length;i++){ if(s[i].getBoundingClientRect().top<=innerHeight*.35) b=s[i]; } return b; }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href]'); if(!a||!UNTER.test(a.getAttribute('href'))) return;
+    var b=abschnitt();
+    try{ sessionStorage.setItem(KEY,JSON.stringify({id:b?b.id:'',dy:b?-b.getBoundingClientRect().top:0,y:scrollY,t:Date.now()})); }catch(err){}
+  },true);
+  var d=null; try{ d=JSON.parse(sessionStorage.getItem(KEY)||'null'); }catch(e){}
+  addEventListener('pageshow',function(e){ if(e.persisted){ try{ sessionStorage.removeItem(KEY); }catch(err){} } });
+  if(!d||Date.now()-d.t>6*3600*1000) return;
+  var nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+  var zurueck=(nav&&nav.type==='back_forward')||UNTER.test(document.referrer||'');
+  if(!zurueck) return;
+  try{ sessionStorage.removeItem(KEY); }catch(e){}
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+  var aus=false; ['wheel','touchstart','keydown','pointerdown'].forEach(function(t){ addEventListener(t,function(){ aus=true; },{once:true,passive:true}); });
+  function setzen(){ if(aus) return; var t=d.id&&document.getElementById(d.id); var y=t?t.getBoundingClientRect().top+scrollY+d.dy:d.y; window.scrollTo(0,Math.max(0,y)); }
+  setzen(); requestAnimationFrame(setzen); setTimeout(setzen,150); setTimeout(setzen,500);
+  addEventListener('load',function(){ setzen(); setTimeout(setzen,200); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setzen);
+})();
+</script>
 </body>
 </html>
