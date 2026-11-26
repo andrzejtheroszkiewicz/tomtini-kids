@@ -156,6 +156,10 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
 .a-funkel.laut{animation-name:aFunkelL}
 .a-funkel.laut::before,.a-funkel.laut::after{width:.26cqw;margin-left:-.13cqw}
 @keyframes aFunkelL{0%,50%,100%{opacity:0;transform:scale(.2) rotate(0)}68%{opacity:1;transform:scale(1.1) rotate(45deg)}84%{opacity:.5;transform:scale(.7) rotate(80deg)}}
+.a-stern{width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);background:radial-gradient(circle,#fff 0,rgba(255,255,255,.6) 6%,rgba(255,255,255,0) 14%);opacity:0;animation:aStern var(--t) ease-in-out var(--d) infinite}
+.a-stern::before,.a-stern::after{content:"";position:absolute;left:50%;top:0;width:.11cqw;height:100%;margin-left:-.055cqw;background:linear-gradient(rgba(255,255,255,0),#fff 50%,rgba(255,255,255,0))}
+.a-stern::after{transform:rotate(90deg)}
+@keyframes aStern{0%,100%{opacity:.1;transform:scale(.5)}50%{opacity:1;transform:scale(1)}}
 .a-schweb{width:2cqw;margin:-1cqw 0 0 -1cqw;text-align:center;font-weight:800;font-size:1.45cqw;line-height:1;color:var(--gelb);text-shadow:0 0 .4cqw rgba(15,20,48,.85);opacity:0;animation:aSchweb var(--t) ease-out var(--d) infinite}
 .a-schweb.zz{color:#fff;font-size:1.2cqw}
 @keyframes aSchweb{0%{opacity:0;transform:translate(0,0) rotate(0)}8%{opacity:.95}40%{opacity:0;transform:translate(var(--x),-5cqw) rotate(var(--r))}100%{opacity:0;transform:translate(var(--x),-5cqw) rotate(var(--r))}}
@@ -410,7 +414,8 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
       var mz=a[a.length-1],mod=mz==="-"?" leise":mz==="+"?" laut":"",fak=mz==="-"?1.45:mz==="+"?.8:1;
       var el0=el;el=function(c,x,y,v,zi){if(v&&v["--t"]&&/^[\d.]+s$/.test(v["--t"]))v["--t"]=f2(parseFloat(v["--t"])*fak)+"s";return el0(c+(/a-(licht|glut|puls|dampf|funkel)/.test(c)?mod:""),x,y,v,zi);};
       switch(a[0]){
-        case "l":case "lw":a[1].forEach(function(p){el("a-licht"+(a[0]==="lw"?" weiss":""),X(p[0]),p[1],{"--t":f2(R(.9,2.4))+"s","--d":f2(-R(0,4))+"s"});});break;
+        case "lw":a[1].forEach(function(p){el("a-stern",X(p[0]),p[1],{"--s":f2(R(.9,1.3))+"cqw","--t":f2(R(1.6,3.2))+"s","--d":f2(-R(0,3))+"s"});});break;
+        case "l":a[1].forEach(function(p){el("a-licht",X(p[0]),p[1],{"--t":f2(R(.9,2.4))+"s","--d":f2(-R(0,4))+"s"});});break;
         case "g":el("a-glut",X(a[1]),a[2],{"--s":(a[3]*(mod===" leise"?1:mod===" laut"?1.9:1.5))+"cqw","--t":f2(R(2.2,3.6))+"s","--d":f2(-R(0,3))+"s"});break;
         case "p":el("a-puls",X(a[1]),a[2],{"--s":(a[3]*(mod?1.4:1))+"cqw","--t":(typeof a[4]==="number"?a[4]:6)+"s","--d":f2(-R(0,6))+"s"});break;
         case "d":var nd=mod?7:5;for(var k=0;k<nd;k++)el("a-dampf",X(a[1]),a[2],{"--x":f2(R(-1.8,1.8))+"cqw","--d":f2(k*4.8/nd)+"s"});break;
