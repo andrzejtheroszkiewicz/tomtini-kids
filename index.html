@@ -8,6 +8,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="bild/touch-icon.png">
 <meta name="theme-color" content="#db3820">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1226">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tomtini">
 <meta property="og:locale" content="de_DE">
@@ -61,16 +62,17 @@
    (Hintergrund, Fließtext) - Tomtes Briefpapier und die farbigen Themenblöcke
    (Hero, Zahlentafel, Kalender) bleiben bewusst wie sie sind. */
 html.dunkel{color-scheme:dark}
-/* Dunkelmodus-Palette (12. Nov 2026, 1:1 aus der Vorlage): 05161A, 072E33, 0C7075, 0F969C, 6DA5C0, 294D61.
-   Grund 05161A · Flächen 072E33 · Linien 294D61 · Schrift 6DA5C0 (6,9:1 auf Grund, 5,4:1 auf Fläche) · Akzent 0F969C · Hervorhebung 0C7075 */
+/* Dunkelmodus-Palette (27. Nov 2026): Nachtblau mit Laternen-Gold statt der blaugrünen Palette.
+   Grund 0B1226 · Flächen 131C3A · Hero 16204A · Blöcke 1B2654 · Linien 2B3A66 · Hover 3A4C80
+   Schrift E6EBF7 (15,6:1 auf Grund) · leise A3B0D1 (8,6:1) · Akzent Gold F5C84C (11,7:1) */
 html.dunkel body{
-  --night:#05161a; --deep:#072e33; --dusk:#072e33;
-  --line:#294d61; --snow:#6da5c0; --mist:#6da5c0; --lamp:#0f969c; --lamp-text:#6da5c0; --hover:#0c7075;
-  --ink-night:#294d61; /* die nachtblauen Blöcke (Aufbau, Werkstatt, Fuß) nehmen im Dunkelmodus den sechsten Palettenton */
+  --night:#0b1226; --deep:#131c3a; --dusk:#131c3a;
+  --line:#2b3a66; --snow:#e6ebf7; --mist:#a3b0d1; --lamp:#f5c84c; --lamp-text:#f5c84c; --hover:#3a4c80;
+  --ink-night:#1b2654; /* die nachtblauen Blöcke (Aufbau, Werkstatt, Fuß) */
 }
-html.dunkel .zettel .who.tomte{color:#05161a}
-html.dunkel .btn-ghost:hover,html.dunkel .notfall-grid button:hover{border-color:#0c7075;background:rgba(12,112,117,.22)}
-html.dunkel ::selection{background:#0c7075;color:#fff}
+html.dunkel .zettel .who.tomte{color:#0b1226}
+html.dunkel .btn-ghost:hover,html.dunkel .notfall-grid button:hover{border-color:#3a4c80;background:rgba(58,76,128,.35)}
+html.dunkel ::selection{background:#f5c84c;color:#0b1226}
 body{transition:background-color .3s ease,color .3s ease}
 @media (prefers-reduced-motion:reduce){body{transition:none}}
 *{box-sizing:border-box}
@@ -110,8 +112,8 @@ button,input,select,textarea{font:inherit;color:inherit}
   width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;flex:none;
   display:inline-flex;align-items:center;justify-content:center}
 .modus-knopf:hover{background:rgba(242,235,219,.08)}
-html.dunkel .nav{background:rgba(5,22,26,.92)}
-html.dunkel .nav a:hover{background:rgba(12,112,117,.3)}
+html.dunkel .nav{background:rgba(11,18,38,.92)}
+html.dunkel .nav a:hover{background:rgba(58,76,128,.45)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
 /* Mobiles Menü (unter 600 px): Wort statt Burger, Vollbild-Panel in der Hero-Typo */
 .menue-knopf{display:none;border:2px solid var(--line);background:transparent;color:var(--snow);
@@ -137,7 +139,7 @@ html.dunkel .nav a:hover{background:rgba(12,112,117,.3)}
   letter-spacing:-.055em;text-transform:uppercase}
 .menue li a.aktiv{color:var(--lamp)}
 .menue li a.ziel{background:var(--lamp);color:#fff;margin:18px 0 0;padding:16px 16px 14px}
-html.dunkel .menue li a.ziel{color:#05161a}
+html.dunkel .menue li a.ziel{color:#0b1226}
 .menue li:last-child{border-bottom:0}
 html.menue-offen,html.menue-offen body{overflow:hidden}
 
@@ -965,21 +967,23 @@ html.dunkel .seg span{background:transparent}
 html.dunkel .seg input:checked+span{background:var(--snow);color:var(--night)}
 html.dunkel .minbadge{color:var(--snow);border-color:var(--lamp)}
 /* Dunkelmodus, zweite Lage: die Typo-Schicht setzt Weiß und Nachtblau fest, das wird hier auf die Palette gezogen. Farbige Themenblöcke (Hero, Gelb, Nachtblau) und Briefpapier bleiben. */
-html.dunkel .btn-primary,html.dunkel .btn-night{background:#0f969c;color:#05161a}
-html.dunkel .btn-primary:hover,html.dunkel .btn-night:hover{background:#6da5c0}
-html.dunkel .hero .btn-primary,html.dunkel .on-red .btn-primary,html.dunkel .on-yellow .btn-primary{background:var(--ink-night);color:#fff}
-html.dunkel .on-night .btn-primary{background:var(--yellow);color:var(--ink-night)}
+html.dunkel .btn-primary,html.dunkel .btn-night{background:#f5c84c;color:#0b1226}
+html.dunkel .btn-primary:hover,html.dunkel .btn-night:hover{background:#ffdb7a}
+html.dunkel .hero .btn-primary,html.dunkel .on-red .btn-primary,html.dunkel .on-yellow .btn-primary{background:#f5c84c;color:#0b1226}
+html.dunkel .on-night .btn-primary{background:#f5c84c;color:#0b1226}
 html.dunkel .pv-bar .btn-primary{background:#1f2437;color:#fff}
-html.dunkel input[type=text],html.dunkel input[type=date],html.dunkel textarea,html.dunkel select.inp{background:#05161a;color:var(--snow);border-color:#294d61}
-html.dunkel input::placeholder,html.dunkel textarea::placeholder{color:#6da5c0;opacity:.6}
+html.dunkel input[type=text],html.dunkel input[type=date],html.dunkel textarea,html.dunkel select.inp{background:#0b1226;color:var(--snow);border-color:#2b3a66}
+html.dunkel input::placeholder,html.dunkel textarea::placeholder{color:#a3b0d1;opacity:.75}
 html.dunkel .probe input,html.dunkel .on-yellow input[type=text],html.dunkel .on-red input[type=text]{background:#fff;color:var(--ink-night);border-color:var(--ink-night)}
 html.dunkel .notiz input[type=text]{background:none;color:var(--ink);border-color:#c9bfa8}
-html.dunkel .cal button,html.dunkel .day-head .mode button{background:#072e33;color:var(--snow)}
-html.dunkel .day-head .mode button[aria-pressed="true"]{background:var(--snow);color:#05161a}
-html.dunkel .heute{background:#072e33;border-color:#0f969c;box-shadow:10px 10px 0 #0c7075;--mist:var(--snow);--deep:#05161a}
-html.dunkel .skript,html.dunkel .wortfeld{background:#072e33}
-html.dunkel .on-yellow{--snow:#05161a;--line:#05161a;--mist:#05161a;--lamp:#05161a;color:#05161a}
-html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
+html.dunkel .cal button,html.dunkel .day-head .mode button{background:#131c3a;color:var(--snow)}
+html.dunkel .day-head .mode button[aria-pressed="true"]{background:var(--snow);color:#0b1226}
+html.dunkel .heute{background:#131c3a;border-color:#f5c84c;box-shadow:10px 10px 0 #2b3a66;--mist:var(--snow);--deep:#0b1226}
+html.dunkel .skript,html.dunkel .wortfeld{background:#131c3a}
+/* Nachts sind Hero (sonst Rot) und Brief-Bereich (sonst Gelb) ebenfalls Nachtblau */
+html.dunkel .on-red,html.dunkel .hero{background:#16204a;--dusk:#16204a;--lamp:#f5c84c}
+html.dunkel .on-yellow{background:#1b2654;--snow:#e6ebf7;--line:#e6ebf7;--mist:#a3b0d1;--lamp:#f5c84c;--deep:#131c3a;--dusk:#131c3a;color:#e6ebf7}
+html.dunkel .on-yellow .seg input:checked+span{background:#e6ebf7;color:#0b1226}
 
 /* Streiche nach Stufe zum Ausklappen */
 .streich-sync{font-weight:400;color:var(--mist);font-size:14px;margin-left:6px}
