@@ -6,7 +6,7 @@
   document.querySelectorAll('a[data-zurueck]').forEach(function(a){
     a.addEventListener('click',function(e){
       var vonStart=false;
-      try{ var u=new URL(document.referrer); vonStart=u.origin===location.origin&&(u.pathname===start||u.pathname===start+'index.html'); }catch(err){}
+      try{ var u=new URL(document.referrer); vonStart=u.origin===location.origin&&u.pathname.slice(0,u.pathname.lastIndexOf('/')+1)===start; /* auch Varianten wie schritte.html */ }catch(err){}
       if(vonStart&&history.length>1){ e.preventDefault(); history.back(); }
     });
   });

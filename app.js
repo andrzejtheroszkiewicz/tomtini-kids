@@ -348,8 +348,9 @@
   $('#ov').addEventListener('click',e=>{ if(e.target.id==="ov"){ onlyName=null; $('#ov').classList.remove('open'); } });
 
   // ---- Druck ----
-  function openPV(title,pagesHTML){ $('#pvTitle').textContent=title; $('#pvPages').innerHTML=pagesHTML; $('#pv').classList.add('open'); window.scrollTo(0,0); }
-  $('#pvClose').onclick=()=>$('#pv').classList.remove('open');
+  let pvY=0; /* Zurück aus der Druckansicht: wieder an die Stelle, an der man war */
+  function openPV(title,pagesHTML){ $('#pvTitle').textContent=title; $('#pvPages').innerHTML=pagesHTML; if(!$('#pv').classList.contains('open')) pvY=window.scrollY; $('#pv').classList.add('open'); window.scrollTo(0,0); }
+  $('#pvClose').onclick=()=>{ $('#pv').classList.remove('open'); window.scrollTo(0,pvY); };
   $('#pvPrint').onclick=()=>{ let ok=false; try{ const before=Date.now(); window.print(); ok=(Date.now()-before)>150 || !window.frameElement; }catch(e){ ok=false; } if(!ok){ $('#pvHint').style.display="block"; } };
   function cell(tag,paras,note,small,ps){ return `<div class="cell"><div class="tag"><span>${tag}</span><span>Tomtini</span></div><div class="body ${small?"small":""}">${paras.map(p=>fill(p)).filter(x=>x.trim()).map(x=>`<p>${x}</p>`).join("")}${ps&&showPS()?`<p style="font-size:11pt;margin-top:2mm">${fill(ps)}</p>`:""}</div>${(Array.isArray(note)?note:note?[note]:[]).map(n=>`<div class="note"><b>${vonName(n.von)}</b>„${fill(n.text)}“</div>`).join("")}</div>`; }
   function sheets(cells,cut){ let out=""; for(let i=0;i<cells.length;i+=4){ const chunk=cells.slice(i,i+4); while(chunk.length<4) chunk.push(`<div class="cell empty"></div>`); out+=`<div class="sheet"><div class="cut">${cut}</div><div class="grid4">${chunk.join("")}</div></div>`; } return out; }
