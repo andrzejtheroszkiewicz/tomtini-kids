@@ -15,8 +15,8 @@
   var w = document.createElement('div'); w.className = 'wege-box';
   w.innerHTML =
     '<div class="wahl" role="group" aria-label="Wie wollt ihr anfangen?">' +
-      '<button type="button" class="wahl-k" data-weg="muede"><b>Bin müde</b><span>Namen eintragen, drei Sachen drucken. Fertig.</span></button>' +
-      '<button type="button" class="wahl-k" data-weg="entdecken"><b>Entdecken</b><span>Euren Plan Schritt für Schritt bauen und alles über Tomte lesen.</span></button>' +
+      '<button type="button" class="wahl-k" data-weg="muede"><b>Feierabend</b><span>Ihr seid müde? Dann geht es hier ganz schnell.</span></button>' +
+      '<button type="button" class="wahl-k" data-weg="entdecken"><b>Abenteuer</b><span>Alles, mit allem Drum und Dran.</span></button>' +
     '</div>' +
     '<div class="muede" hidden>' +
       '<label class="muede-l" for="muedeName">Namen der Kinder</label>' +
