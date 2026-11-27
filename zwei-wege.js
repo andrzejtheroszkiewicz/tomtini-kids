@@ -14,9 +14,9 @@
 
   var w = document.createElement('div'); w.className = 'wege-box';
   w.innerHTML =
-    '<div class="wege" role="group" aria-label="Wie wollt ihr anfangen?">' +
-      '<button type="button" class="weg" data-weg="muede"><b>Bin müde</b><span>Namen eintragen, drei Sachen drucken. Fertig.</span></button>' +
-      '<button type="button" class="weg" data-weg="entdecken"><b>Entdecken</b><span>Euren Plan Schritt für Schritt bauen und alles über Tomte lesen.</span></button>' +
+    '<div class="wahl" role="group" aria-label="Wie wollt ihr anfangen?">' +
+      '<button type="button" class="wahl-k" data-weg="muede"><b>Bin müde</b><span>Namen eintragen, drei Sachen drucken. Fertig.</span></button>' +
+      '<button type="button" class="wahl-k" data-weg="entdecken"><b>Entdecken</b><span>Euren Plan Schritt für Schritt bauen und alles über Tomte lesen.</span></button>' +
     '</div>' +
     '<div class="muede" hidden>' +
       '<label class="muede-l" for="muedeName">Namen der Kinder</label>' +
@@ -32,7 +32,7 @@
   wrap.insertBefore(w, box);
   box.hidden = true;
 
-  var wege = w.querySelector('.wege'), muede = w.querySelector('.muede'), zur = w.querySelector('.wege-zurueck'), name = w.querySelector('#muedeName');
+  var wege = w.querySelector('.wahl'), muede = w.querySelector('.muede'), zur = w.querySelector('.wege-zurueck'), name = w.querySelector('#muedeName');
   function sanft(el) {
     var r = el.getBoundingClientRect();
     if (r.top < 60 || r.top > innerHeight * .6) window.scrollTo({ top: scrollY + r.top - 80, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
