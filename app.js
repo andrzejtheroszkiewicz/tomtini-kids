@@ -212,7 +212,7 @@
 
   function render(){ buildNotfall(); const out=$("#out"); out.dataset.built="1"; _sp=null; 
     const kapNames={1:"Kapitel 1 · Einzug",2:"Kapitel 2 · Hilfe, die schiefgeht",3:"Kapitel 3 · Tomtes Geheimnis",4:"Kapitel 4 · Abschied"};
-    let html=`<div class="out-head"><div><p class="eyebrow">Euer Plan</p><h3>24 Tage für ${names()}</h3></div><div class="actions"><button class="btn btn-primary" id="pBriefe">Briefe drucken</button><button class="btn btn-ghost" id="pPlan">Elternplan</button><button class="btn btn-ghost" id="pChronik">Chronik</button><button class="btn btn-ghost" id="pLink">Plan-Link</button></div></div>`;
+    let html=`<div class="out-head"><div><p class="eyebrow">Euer Plan</p><h3>24 Tage für ${names()}</h3></div><div class="actions"><button class="btn btn-primary" id="pBriefe">Briefe drucken</button><button class="btn btn-ghost" id="pPlan">Elternplan</button><a class="btn btn-ghost" id="pDruck" href="druckpaket/tomtini-druckpaket.pdf" download>Druckpaket</a><button class="btn btn-ghost" id="pChronik">Chronik</button><button class="btn btn-ghost" id="pLink">Plan-Link</button></div></div>`;
     { const sd=startDate(), letzter=dateOf(23); if(!(sd.getMonth()===11&&sd.getDate()===1)) html+=`<p class="tipp spaet"><b>Einzug am ${fmt(sd)}:</b> Der letzte Brief liegt am ${fmt(letzter)}. Die Zahlentafel zählt dann Tomtes Tage bei euch, nicht das Datum. Für das Finale an Heiligabend den Einzug auf den 1. Dezember stellen.</p>`; }
     if(todayIndex()< -2) html+=heuteHTML();
     html+=kalHTML();

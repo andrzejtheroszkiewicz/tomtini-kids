@@ -25,6 +25,7 @@
         '<button type="button" class="btn btn-primary" data-druck="pBriefe">Alle 24 Briefe drucken</button>' +
         '<button type="button" class="btn btn-primary" data-druck="pPlan">Elternplan drucken</button>' +
         '<a class="btn btn-primary" href="papierhaus/tomtes-haus-papier-boegen.pdf" download>Bastelbögen Tomtes Haus (PDF)</a>' +
+        '<a class="btn btn-primary" href="druckpaket/tomtini-druckpaket.pdf" download>Druckpaket (PDF)</a>' +
       '</div>' +
       '<p class="muede-fuss"><button type="button" class="wege-link" data-weg="entdecken">Doch alles ansehen</button> · <button type="button" class="wege-link" data-weg="zurueck">Andere Wahl</button></p>' +
     '</div>' +
