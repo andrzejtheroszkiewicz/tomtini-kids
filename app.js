@@ -316,9 +316,9 @@
     const upd=()=>{ const t=tafelObj(); $('#tafelHelp').innerHTML=t.x+' <span class="wer">'+t.wer+'</span>'; };
     sel.onchange=()=>{ upd(); rerender(); }; upd(); }
   function buildNotfall(){ const grid=$('#notfallGrid'); grid.innerHTML="";
-    const mk=(id,list)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); g.appendChild(b); }); };
-    mk('#tagGrid',C.tagsueber); mk('#hilfeGrid',C.hilfe);
-  C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
+    const mk=(id,list,art)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n,null,art); g.appendChild(b); }); };
+    mk('#tagGrid',C.tagsueber,'tag'); mk('#hilfeGrid',C.hilfe,'hilfe');
+  C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n,null,'nacht'); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
   const stOffen=new Set(), streichOffen=new Set();
   function buildStreiche(){ const grid=$('#streichGrid'), ft=$('#streichFrech'); if(!grid||!C.streiche) return;
     $('#streichZahl').textContent=C.streiche.length; const tier=$('#haustier').checked;
@@ -337,13 +337,26 @@
   }
   buildStreiche();
   function nfParas(n){ return kurz()&&n.kurz?n.kurz:n.brief; }
-  function openNotfall(n,who){ const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;
+  /* Notfall, Tagsüber und Tomte erzählt öffnen sich wie ein Kalendertag: wenige Zeilen zum Abhaken, der Brief darin */
+  function openNotfall(n,who,art){ art=art||'nacht'; const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;
     $('#ovTitle').textContent=n.titel;
-    let sel=""; if(n.einzeln&&all.length>1){ sel=`<p class="tipp" style="margin-bottom:12px"><b>An:</b> ${all.map(x=>`<button type="button" class="btn btn-ghost btn-mini" data-who="${x.replace(/"/g,'')}" aria-pressed="${x===who}">${x}</button>`).join(" ")} <span>Dieser Brief richtet sich an ein einzelnes Kind.</span></p>`; }
-    $('#ovLetter').innerHTML=sel+nfParas(n).map(p=>`<p>${fill(p)}</p>`).join("")+(n.auszug?`<p class="tipp"><b>Auszugs-Zettel (wenn das Kind es möchte):</b> ${fill(n.auszug.text)}</p>`:"");
-    $('#ovTipp').innerHTML=(n.elternskript?`<b>Zuerst ohne Tomte, außerhalb der Geschichte:</b> ${n.elternskript}<br><br>`:"")+(n.morgen?`<b>Morgens:</b> ${n.morgen}<br><br>`:"")+`<b>Für euch:</b> ${n.tipp}`;
-    $('#ovLetter').querySelectorAll('[data-who]').forEach(b=>b.onclick=()=>openNotfall(n,b.dataset.who));
-    $('#ov').classList.add('open'); $('#ovPrint').onclick=()=>{ $('#ov').classList.remove('open'); const paras=nfParas(n); printSingle(n.titel+(who?" · für "+who:""),paras,n.von); onlyName=null; }; }
+    let sel=""; if(n.einzeln&&all.length>1){ sel=`<p class="tipp" style="margin:0 0 12px"><b>An:</b> ${all.map(x=>`<button type="button" class="btn btn-ghost btn-mini" data-who="${x.replace(/"/g,'')}" aria-pressed="${x===who}">${x}</button>`).join(" ")}</p>`; }
+    const brief=`<div class="letter">${nfParas(n).map(p=>`<p>${fill(p)}</p>`).join("")}</div>`;
+    const kopf={nacht:"Heute Abend",tag:"Heute Nachmittag",hilfe:"Wenn es passt"}[art];
+    const hin={nacht:"An die Tür legen, bevor die Kinder aufwachen",tag:"Am Nachmittag an die Tür legen",hilfe:"An die Tür legen, wenn das Kind schläft"}[art];
+    const Z=[]; const N=900;
+    if(n.elternskript) Z.push(ckZeile(N,"vor","Zuerst","Ohne Tomte reden","",`<p>${n.elternskript}</p>`));
+    Z.push(ckZeile(N,"b","Brief","Drucken oder abschreiben","1 Min",sel+brief));
+    if(n.auszug) Z.push(ckZeile(N,"a","Zettel","Auszugs-Zettel, nur wenn das Kind es möchte","",`<p>${fill(n.auszug.text)}</p>`));
+    Z.push(ckZeile(N,"h","Hinlegen",hin,""));
+    if(n.morgen) Z.push(ckZeile(N,"m","Morgens","Das sagen, ohne Brief","",`<p>${n.morgen}</p>`));
+    $('#ovLetter').classList.remove('letter');
+    $('#ovLetter').innerHTML=`<p class="ck-kopf">${kopf}</p><ol class="cks">${Z.join("")}</ol>`;
+    $('#ovTipp').innerHTML=`<b>Für euch:</b> ${n.tipp}`;
+    const bd=$('#ovLetter').querySelector('[data-ckd="900:b"]'); if(bd) bd.open=true;
+    $('#ovLetter').querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{ const on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',on); b.closest('li').classList.toggle('an',on); });
+    $('#ovLetter').querySelectorAll('[data-who]').forEach(b=>b.onclick=()=>openNotfall(n,b.dataset.who,art));
+    $('#ov').classList.add('open'); const dlg=$('#ov .dialog'); if(dlg) dlg.scrollTop=0; $('#ovPrint').onclick=()=>{ $('#ov').classList.remove('open'); const paras=nfParas(n); printSingle(n.titel+(who?" · für "+who:""),paras,n.von); onlyName=null; }; }
   $('#ovClose').onclick=()=>{ onlyName=null; $('#ov').classList.remove('open'); };
   $('#ov').addEventListener('click',e=>{ if(e.target.id==="ov"){ onlyName=null; $('#ov').classList.remove('open'); } });
 

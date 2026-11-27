@@ -656,6 +656,23 @@ input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--lin
 .wiz-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
 .wiz-nav .btn{min-height:48px}
 @media(prefers-reduced-motion:reduce){.wiz-balken span{transition:none}}
+
+/* Variante „Zwei Wege“ (nur mit ?wege aktiv) */
+.wege-box{margin-top:28px}
+.wege{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.weg{text-align:left;background:none;color:var(--snow);border:2px solid var(--line);padding:clamp(22px,3vw,34px);display:grid;gap:10px;cursor:pointer;font:inherit;min-height:150px;align-content:start;transition:background .2s,border-color .2s}
+.weg b{font-family:var(--display);font-size:clamp(30px,3.6vw,46px);line-height:1;letter-spacing:-.03em}
+.weg span{font-size:17px;line-height:1.45;color:var(--mist)}
+.weg:hover{border-color:var(--snow)}
+.muede{display:grid;gap:12px;max-width:640px}
+.muede-l{font-weight:700;font-size:15px}
+#muedeName.fehlt{outline:3px solid var(--lamp);outline-offset:2px}
+.muede-druck{display:grid;gap:10px;margin-top:8px}
+.muede-druck .btn{justify-content:center;min-height:56px;font-size:18px}
+.muede-fuss,.wege-zurueck{font-size:15px;color:var(--mist);margin:6px 0 0}
+.wege-link{background:none;border:0;padding:8px 0;font:inherit;color:var(--snow);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
+body.weg-muede #site>section:not(#generator){display:none}
+@media(max-width:700px){.wege{grid-template-columns:1fr}.weg{min-height:0}}
 /* Notfall: Tagsüber und Tomte erzählt als eigene Kapitel, klar getrennt */
 #notfall .unter{margin-top:80px;padding-top:36px;border-top:2px solid var(--line);gap:14px}
 #notfall .unter .notfall-grid{margin-top:14px}
@@ -1790,6 +1807,7 @@ details.streich[open]>summary::after{content:"–"}
 <script src="content.js?v=20261127a"></script>
 <script src="app.js?v=20261127a"></script>
 <script src="schritte.js" defer></script>
+<script src="zwei-wege.js" defer></script>
 <script src="z.js?v=20261117" defer></script>
 <script>
 (function(){

@@ -59,7 +59,7 @@
   /* Enter in einem Textfeld führt zum nächsten Schritt, erst im letzten entsteht der Plan */
   document.addEventListener('submit', function (e) {
     if (e.target !== form) return;
-    if (i < N - 1 && !sofort) { e.preventDefault(); e.stopImmediatePropagation(); zeigen(i + 1, true); }
+    if (i < N - 1 && !sofort && !window.__tomtiniSofort) { e.preventDefault(); e.stopImmediatePropagation(); zeigen(i + 1, true); }
   }, true);
   if (hinweis && hinweis.classList.contains('help')) form.appendChild(hinweis);
   zeigen(0, false);
