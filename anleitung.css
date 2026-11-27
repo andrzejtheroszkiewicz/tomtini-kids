@@ -40,3 +40,7 @@ details.klapp::details-content{block-size:0;overflow:hidden;transition:block-siz
 details.klapp[open]::details-content{block-size:auto}
 @media(prefers-reduced-motion:reduce){details.klapp::details-content{transition:none}}
 @media print{details.klapp>summary::after{content:""}}
+
+/* Zurück als richtiger Knopf, gleiche Optik wie die Umriss-Knöpfe der Startseite */
+a.zurueck{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 20px;border:2px solid var(--ink);border-radius:99px;color:var(--ink);font:700 15px var(--font);text-decoration:none}
+a.zurueck:hover{background:var(--ink);color:var(--paper)}

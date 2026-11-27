@@ -171,7 +171,7 @@ html.menue-offen,html.menue-offen body{overflow:hidden}
 @media (max-width:620px){.zahlen{grid-template-columns:repeat(12,minmax(0,1fr));row-gap:6px;font-size:18px}}
 
 /* Abschnitte */
-section.block{padding:clamp(60px,9vw,128px) 0;scroll-margin-top:58px}
+section.block{padding:clamp(68px,10vw,144px) 0;scroll-margin-top:58px}
 section.quiet{background:var(--deep)}
 .split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,72px);align-items:start}
 @media (max-width:860px){.split{grid-template-columns:1fr}}
@@ -587,7 +587,11 @@ section.on-red,section.on-yellow,section.on-night{color:var(--snow)}
 .tafel-text b{color:#fff;font-size:1.3em}
 .zahlen{color:rgba(255,255,255,.5);font-weight:700}
 .zahlen li.war{color:#fff}
-.zahlen li.heute{background:var(--ink-night);color:#fff;text-shadow:none}
+.zahlen li{display:flex;align-items:center;justify-content:center;aspect-ratio:1;max-width:2.1em;justify-self:center;width:100%}
+/* Heute (oder vor dem 1. Dezember: die 1 als nächster Tag) bekommt einen Kreis, damit man sieht, wo man steht */
+#zahlen li.heute,#zahlen li.bald{border:0;margin:0;padding:0;border-radius:50%;box-shadow:inset 0 0 0 2.5px #fff;color:#fff;text-shadow:none;background:none}
+#zahlen li.heute{background:#fff;color:var(--red)}
+html.dunkel #zahlen li.heute{background:#fff;color:#16204a}
 .block h2{font-size:clamp(36px,5.6vw,84px);line-height:.94;letter-spacing:-.05em}
 .block .sub{color:var(--snow);font-size:clamp(19px,2vw,26px);line-height:1.25;letter-spacing:-.012em;max-width:30em}
 .unter .sub{font-size:18px;line-height:1.4;letter-spacing:0;max-width:40em}
@@ -641,6 +645,20 @@ input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--lin
 .notfall-grid button:hover{background:var(--yellow);border-color:var(--line)}
 .notfall-grid button small{font-size:15px;letter-spacing:0}
 .unter h3{font-size:clamp(28px,3.4vw,44px)}
+
+/* Generator in Schritten (Variante, nur mit ?schritte aktiv) */
+.wiz{display:grid;gap:18px}
+.wiz-kopf{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;font-weight:700;color:var(--mist)}
+.wiz-gleich{background:none;border:0;padding:6px 0;font:inherit;color:var(--snow);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
+.wiz-balken{height:4px;background:var(--line);opacity:.9}.wiz-balken span{display:block;height:100%;width:0;background:var(--lamp);transition:width .45s cubic-bezier(.22,.61,.36,1)}
+.wiz-frage{font-size:clamp(22px,2.4vw,28px);line-height:1.15;letter-spacing:-.02em;margin:4px 0 6px}
+.wiz-step{display:grid;gap:18px}
+.wiz-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+.wiz-nav .btn{min-height:48px}
+@media(prefers-reduced-motion:reduce){.wiz-balken span{transition:none}}
+/* Notfall: Tagsüber und Tomte erzählt als eigene Kapitel, klar getrennt */
+#notfall .unter{margin-top:80px;padding-top:36px;border-top:2px solid var(--line);gap:14px}
+#notfall .unter .notfall-grid{margin-top:14px}
 .kodex-liste b{font-size:clamp(24px,2.8vw,36px);letter-spacing:-.04em;line-height:1.02;margin-bottom:6px}
 footer{background:var(--ink-night);--snow:#fff;--mist:#cfd3e6;--lamp:var(--yellow);color:#cfd3e6;border-top:0}
 footer .brand{font-size:44px;letter-spacing:-.055em}
@@ -1247,10 +1265,10 @@ details.streich[open]>summary::after{content:"–"}
         <div class="field"><label for="start">Einzug (erster Brief am Morgen des)</label><input type="date" id="start" value="2026-12-01"><p class="help">Für das Finale am 24. Dezember: 1. Dezember wählen.</p></div>
         <div class="field"><span class="lbl">Aufwand</span>
           <div class="seg">
-            <label><input type="radio" name="aufwand" id="auf1" value="briefe"><span>Nur Briefe</span></label>
-            <label><input type="radio" name="aufwand" id="auf2" value="basis" checked><span>Das Nötige</span></label>
-            <label><input type="radio" name="aufwand" id="auf3" value="we"><span>Plus Wochenend-Zugaben</span></label>
-          </div><p class="help">„Nur Briefe“: jeden Abend Brief hinlegen und Zahl umstecken, 1 Minute, keine Requisiten; die vier Bauteile sind dann freiwillig. „Das Nötige“: was der Brief braucht, meist 1–5 Minuten. Ehrliche Gesamtsumme im Dezember: etwa 2 Stunden Vorbereitung (Drucken, Tür, Kiste), dazu die Abende. Chronik-Einträge sind freiwillig.</p></div>
+            <label><input type="radio" name="aufwand" id="auf1" value="briefe"><span>Nur Brief</span></label>
+            <label><input type="radio" name="aufwand" id="auf2" value="basis" checked><span>Normal</span></label>
+            <label><input type="radio" name="aufwand" id="auf3" value="we"><span>Mehr am Wochenende</span></label>
+          </div><p class="help"><b>Nur Brief:</b> Brief hinlegen, Zahl umstecken, 1 Minute.<br><b>Normal:</b> was der Brief braucht, ein paar Minuten.<br><b>Mehr am Wochenende:</b> dazu samstags und sonntags eine Extra-Idee.</p></div>
         <div class="field"><span class="lbl">Streiche im Plan</span>
           <div class="seg">
             <label><input type="radio" name="streichPlan" value="lieb" checked><span>Liebe</span></label>
@@ -1294,7 +1312,7 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap stack">
     <div class="split">
       <h2>Tomte wird gehört, nie gesehen.</h2>
-      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann öffnet heute das Fenster in Tomtes Werkstatt. Hörstücke und Lieder stehen im Plan am passenden Tag.</p>
+      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann öffnet heute das Fenster in Tomtes Werkstatt. Im Plan steht es an den passenden Tagen.</p>
     </div>
     <div class="stuecke">
       <article class="stueck">
@@ -1769,8 +1787,9 @@ details.streich[open]>summary::after{content:"–"}
   window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
 })();
 </script>
-<script src="content.js?v=20261126c"></script>
-<script src="app.js?v=20261126a"></script>
+<script src="content.js?v=20261127a"></script>
+<script src="app.js?v=20261127a"></script>
+<script src="schritte.js" defer></script>
 <script src="z.js?v=20261117" defer></script>
 <script>
 (function(){
@@ -1921,7 +1940,7 @@ details.streich[open]>summary::after{content:"–"}
       var n=Math.round((start-now)/86400000);
       text=(n===1?'Noch <b>1</b> Nacht':'Noch <b>'+n+'</b> Nächte')+' bis zum ersten Brief am 1. Dezember. Dann baut Tomte jede Nacht die Zahl des Tages auf seine Tafel. Das ist euer Adventskalender.'; }
     $('#tafelText').innerHTML=text;
-    var h=''; for(var i=1;i<=24;i++) h+='<li'+(i===tag?' class="heute" aria-current="date"':i<tag?' class="war"':'')+'>'+i+'</li>';
+    var h=''; for(var i=1;i<=24;i++) h+='<li'+(i===tag?' class="heute" aria-current="date"':(tag===0&&i===1)?' class="bald"':i<tag?' class="war"':'')+'>'+i+'</li>';
     ol.innerHTML=h;
   })();
 
@@ -2027,7 +2046,7 @@ details.streich[open]>summary::after{content:"–"}
   addEventListener('pageshow',function(e){ if(e.persisted){ try{ sessionStorage.removeItem(KEY); }catch(err){} } });
   if(!d||Date.now()-d.t>6*3600*1000) return;
   var nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
-  var zurueck=(nav&&nav.type==='back_forward')||UNTER.test(document.referrer||'');
+  var zurueck=(nav&&nav.type==='back_forward')||UNTER.test(document.referrer||'')||(/^#(medien|material)$/.test(location.hash)&&Date.now()-d.t<1800000);
   if(!zurueck) return;
   try{ sessionStorage.removeItem(KEY); }catch(e){}
   if('scrollRestoration' in history) history.scrollRestoration='manual';
