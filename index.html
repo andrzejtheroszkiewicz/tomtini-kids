@@ -664,9 +664,10 @@ input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--lin
 .wahl-k b{font-family:var(--display);font-size:clamp(30px,3.6vw,46px);line-height:1;letter-spacing:-.03em}
 .wahl-k span{font-size:17px;line-height:1.45;color:var(--mist)}
 .wahl-k:hover{border-color:var(--snow)}
-/* Plus zeigt: die Kachel ist zum Antippen; gleiches Plus wie bei den Streiche-Stufen */
-.wahl-k{position:relative;padding-right:clamp(60px,6vw,76px)}
-.wahl-plus{position:absolute;right:clamp(20px,2.6vw,30px);top:clamp(24px,3.2vw,38px);font:700 30px/1 var(--display);font-style:normal;color:var(--lamp);width:.7em;text-align:center}
+/* Plus zeigt: die Kachel ist zum Antippen; gleiches Plus wie bei den Streiche-Stufen, bündig mit der ersten Zeile der Unterzeile */
+.wahl-k{grid-template-columns:1fr auto;column-gap:16px}
+.wahl-k b{grid-column:1/-1}
+.wahl-plus{grid-column:2;grid-row:2;align-self:start;font:700 30px/24.65px var(--display);height:24.65px;font-style:normal;color:var(--lamp);width:.7em;text-align:center}
 .muede{display:grid;gap:12px;max-width:640px}
 .muede-l{font-weight:700;font-size:15px}
 #muedeName.fehlt{outline:3px solid var(--lamp);outline-offset:2px}
