@@ -29,24 +29,28 @@
       '</div>' +
       '<p class="muede-fuss"><button type="button" class="wege-link" data-weg="entdecken">Doch alles ansehen</button> · <button type="button" class="wege-link" data-weg="zurueck">Andere Wahl</button></p>' +
     '</div>' +
-    '<p class="wege-zurueck" hidden><button type="button" class="wege-link" data-weg="zurueck">‹ Andere Wahl</button></p>';
+    '<p class="wege-zurueck" hidden><button type="button" class="wege-link" data-weg="zurueck">‹ Andere Wahl</button></p>' +
+    '<p class="wege-wieder" hidden>Schön, dass ihr wieder da seid. Hier ist euer Plan. <button type="button" class="wege-link" data-weg="entdecken">Plan ändern</button></p>';
   wrap.insertBefore(w, box);
   box.hidden = true;
 
-  var wege = w.querySelector('.wahl'), muede = w.querySelector('.muede'), zur = w.querySelector('.wege-zurueck'), name = w.querySelector('#muedeName');
+  var wege = w.querySelector('.wahl'), muede = w.querySelector('.muede'), zur = w.querySelector('.wege-zurueck'), wieder = w.querySelector('.wege-wieder'), name = w.querySelector('#muedeName'), form = document.getElementById('form');
   function sanft(el) {
     var r = el.getBoundingClientRect();
     if (r.top < 60 || r.top > innerHeight * .6) window.scrollTo({ top: scrollY + r.top - 80, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }
-  function setze(weg) {
+  /* „wieder“: Wer schon einen Plan hat, sieht beim nächsten Besuch gleich den Plan mit dem heutigen Abend, ohne erneute Wahl */
+  function setze(weg, still) {
     document.body.classList.toggle('weg-muede', weg === 'muede');
     wege.hidden = weg !== 'zurueck';
     muede.hidden = weg !== 'muede';
-    box.hidden = weg !== 'entdecken';
+    box.hidden = !(weg === 'entdecken' || weg === 'wieder');
     zur.hidden = weg !== 'entdecken';
-    if (weg === 'muede') { name.value = kinder.value; sanft(gen); if (matchMedia('(hover: hover)').matches) name.focus({ preventScroll: true }); }
-    if (weg === 'entdecken') { sanft(gen); }
-    if (weg === 'zurueck') { sanft(gen); }
+    wieder.hidden = weg !== 'wieder';
+    if (form) form.hidden = weg === 'wieder';
+    if (still) return;
+    if (weg === 'muede') { name.value = kinder.value; if (matchMedia('(hover: hover)').matches) name.focus({ preventScroll: true }); }
+    sanft(gen);
   }
   w.addEventListener('click', function (e) {
     var b = e.target.closest('[data-weg]'); if (b) { setze(b.dataset.weg); return; }
@@ -71,5 +75,6 @@
     var a = e.target.closest('a[href^="#"]');
     if (a && document.body.classList.contains('weg-muede') && a.getAttribute('href') !== '#generator') setze('entdecken');
   }, true);
-  setze('zurueck');
+  var out = document.getElementById('out');
+  setze(out && out.dataset.built ? 'wieder' : 'zurueck', true);   /* beim Laden nie scrollen */
 })();

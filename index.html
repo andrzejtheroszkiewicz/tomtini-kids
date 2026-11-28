@@ -673,7 +673,7 @@ input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--lin
 #muedeName.fehlt{outline:3px solid var(--lamp);outline-offset:2px}
 .muede-druck{display:grid;gap:10px;margin-top:8px}
 .muede-druck .btn{justify-content:center;min-height:56px;font-size:18px}
-.muede-fuss,.wege-zurueck{font-size:15px;color:var(--mist);margin:6px 0 0}
+.muede-fuss,.wege-zurueck,.wege-wieder{font-size:15px;color:var(--mist);margin:6px 0 0}
 .wege-link{background:none;border:0;padding:8px 0;font:inherit;color:var(--snow);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
 body.weg-muede #site>section:not(#generator){display:none}
 @media(max-width:700px){.wahl{grid-template-columns:1fr}.wahl-k{min-height:0}}
@@ -1810,7 +1810,7 @@ details.streich[open]>summary::after{content:"–"}
 </script>
 <script src="content.js?v=20261127c"></script>
 <script src="app.js?v=20261127c"></script>
-<script src="schritte.js" defer></script>
+<script>window.TOMTINI_SCHRITTE=true;window.TOMTINI_WEGE=true</script><script src="schritte.js" defer></script>
 <script src="zwei-wege.js" defer></script>
 <script src="z.js?v=20261117" defer></script>
 <script>
