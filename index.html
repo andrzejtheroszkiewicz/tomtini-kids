@@ -21,17 +21,9 @@
 <meta property="og:image:alt" content="Tomtini. Der freche Wichtel mit Plan.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Tomtini ist ein Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief, jede Nacht eine neue Zahl auf seiner Tafel. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
-<script>
-/* So früh wie möglich setzen, damit die Seite nicht erst hell aufblitzt und dann umschaltet. */
-(function(){
-  try{
-    var g=localStorage.getItem('tomtiniModus');
-    var dunkel=g?g==='dunkel':(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    if(dunkel) document.documentElement.classList.add('dunkel');
-  }catch(e){}
-})();
-</script>
+<script src="modus.js?v=1"></script>
 <style>
+html.modus-wechsel,html.modus-wechsel *,html.modus-wechsel *::before,html.modus-wechsel *::after{transition:background-color 2s ease,color 2s ease,border-color 2s ease,fill 2s ease,stroke 2s ease,box-shadow 2s ease,outline-color 2s ease,text-decoration-color 2s ease!important}
 /* Layout: weiße Seite, fette Switzer, vollflächige Farbblöcke (Rot, Gelb, Nachtblau), dicke Linien zwischen Zeilen.
    Links ausgerichtet, alles eckig, nur Knöpfe sind Pillen. Tomtes Briefe bleiben Handschrift auf Papier. */
 @font-face{font-family:"Switzer";src:url("fonts/switzer.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
@@ -1863,16 +1855,11 @@ details.streich[open]>summary::after{content:"–"}
 
   /* Dunkelmodus umschalten */
   (function(){
-    var knopf=$('#modusKnopf'); if(!knopf) return;
-    function stand(){ return document.documentElement.classList.contains('dunkel'); }
-    function beschriften(){ knopf.textContent=stand()?'☀':'☽'; }
+    var knopf=$('#modusKnopf'); if(!knopf || !window.tomtiniModus) return;
+    function beschriften(){ knopf.textContent=window.tomtiniModus.ist()?'☀':'☽'; }
     beschriften();
-    knopf.addEventListener('click',function(){
-      var neu=!stand();
-      document.documentElement.classList.toggle('dunkel',neu);
-      try{ localStorage.setItem('tomtiniModus',neu?'dunkel':'hell'); }catch(e){}
-      beschriften();
-    });
+    knopf.addEventListener('click',function(){ window.tomtiniModus.umschalten(); });
+    document.addEventListener('tomtini-modus',beschriften);
   })();
 
   /* Mobiles Menü */
