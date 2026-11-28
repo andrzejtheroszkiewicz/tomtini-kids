@@ -44,4 +44,4 @@ details.klapp[open]::details-content{block-size:auto}
 /* Zurück als richtiger Knopf, gleiche Optik wie die Umriss-Knöpfe der Startseite */
 a.zurueck{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 20px;border:2px solid var(--ink);border-radius:99px;color:var(--ink);font:700 15px var(--font);text-decoration:none}
 a.zurueck:hover{background:var(--ink);color:var(--paper)}
-html.modus-wechsel,html.modus-wechsel *,html.modus-wechsel *::before,html.modus-wechsel *::after{transition:background-color 2s ease,color 2s ease,border-color 2s ease,fill 2s ease,stroke 2s ease,box-shadow 2s ease,outline-color 2s ease,text-decoration-color 2s ease!important}
+html.modus-wechsel,html.modus-wechsel *,html.modus-wechsel *::before,html.modus-wechsel *::after{transition:background-color 1s ease,color 1s ease,border-color 1s ease,fill 1s ease,stroke 1s ease,box-shadow 1s ease,outline-color 1s ease,text-decoration-color 1s ease!important}

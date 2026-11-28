@@ -1,7 +1,7 @@
 /* Tag und Nacht: Die Seite ist hell zwischen Sonnenaufgang und Sonnenuntergang und nachts dunkel (Nachtblau mit Gold).
    Die Sonnenzeiten werden hier selbst berechnet, für Mitteleuropa (Köln), ohne Standortabfrage.
    Wer mit dem Mond-Knopf umschaltet, behält seine Wahl bis zum nächsten Wechsel von Tag zu Nacht; danach gilt wieder die Automatik.
-   Ein Wechsel bei offener Seite blendet in 2 Sekunden über (nicht bei „Bewegung reduzieren“).
+   Ein Wechsel bei offener Seite blendet in 1 Sekunde über (nicht bei „Bewegung reduzieren“).
    Wird im <head> geladen, damit die Seite nicht erst im falschen Modus aufblitzt. */
 (function () {
   var LAT = 50.94, LON = 6.96, KEY = 'tomtiniModus2', html = document.documentElement;
@@ -34,7 +34,7 @@
     if (dunkel === ist()) return;
     if (sanft && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
       html.classList.add('modus-wechsel');
-      clearTimeout(setzen.t); setzen.t = setTimeout(function () { html.classList.remove('modus-wechsel'); }, 2100);
+      clearTimeout(setzen.t); setzen.t = setTimeout(function () { html.classList.remove('modus-wechsel'); }, 1100);
     }
     html.classList.toggle('dunkel', dunkel);
     try { document.dispatchEvent(new CustomEvent('tomtini-modus', { detail: { dunkel: dunkel } })); } catch (e) {}
