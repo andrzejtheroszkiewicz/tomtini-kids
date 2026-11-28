@@ -212,7 +212,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
 </head>
 <body>
 
-<a class="heim" href="../index.html">← Tomtini</a>
+<a class="heim" href="../#medien" data-zurueck>← Tomtini</a>
 <button class="vbild" id="voll" type="button" aria-label="Vollbild" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 <button class="ton" id="ton" type="button" aria-pressed="true" aria-label="Ton"><span id="tonIcon"></span><span id="tonText">Ton an</span></button>
 
@@ -257,7 +257,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
     <div class="handy" aria-hidden="true"></div>
     <p>Dreht das Handy, dann öffnet sich das Fenster.</p>
     <small>Dreht sich nichts? Dann die Drehsperre ausschalten.</small>
-    <a class="k" href="../index.html">Zurück zu Tomtini</a>
+    <a class="k" href="../#medien" data-zurueck>Zurück zu Tomtini</a>
   </div>
 </div>
 
@@ -266,7 +266,7 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
     <p style="font-size:clamp(22px,3vw,34px);font-weight:700;color:#fff;line-height:1.2">Er kommt zurück.<br>Er geht nie weit.</p>
     <div class="knoepfe">
       <button class="k voll" id="nochmal" type="button">Noch einmal schauen</button>
-      <a class="k" href="../index.html">Zurück zu Tomtini</a>
+      <a class="k" href="../#medien" data-zurueck>Zurück zu Tomtini</a>
     </div>
   </div>
 </div>
@@ -570,5 +570,6 @@ html.wisch body{min-height:calc(100vh + 90px);min-height:calc(100lvh + 90px)}
   $(tonAn?"mitTon":"ohneTon").focus({preventScroll:true});
 })();
 </script>
+<script src="../zurueck.js"></script>
 </body>
 </html>

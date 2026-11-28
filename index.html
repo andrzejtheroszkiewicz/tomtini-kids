@@ -3,21 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tomtini – der Wichtel, den man nicht sieht</title>
+<title>Tomtini – der freche Wichtel mit Plan</title>
 <link rel="canonical" href="https://tomtini.kids/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="bild/touch-icon.png">
 <meta name="theme-color" content="#db3820">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b1226">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tomtini">
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://tomtini.kids/">
-<meta property="og:title" content="Tomtini – der Wichtel, den man nicht sieht">
+<meta property="og:title" content="Tomtini – der freche Wichtel mit Plan">
 <meta property="og:description" content="Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
-<meta property="og:image" content="https://tomtini.kids/bild/teilen.png">
+<meta property="og:image" content="https://tomtini.kids/bild/teilen.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Tomtini. Der Wichtel, den man nicht sieht.">
+<meta property="og:image:alt" content="Tomtini. Der freche Wichtel mit Plan.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="Tomtini ist ein Wichtel-Generator für Eltern: 24 Tage mit Tomte, jeden Morgen ein Brief, jede Nacht eine neue Zahl auf seiner Tafel. Fertig geplant, zum Ausdrucken, kostenlos, ohne Konto.">
 <script>
@@ -61,16 +62,17 @@
    (Hintergrund, Fließtext) - Tomtes Briefpapier und die farbigen Themenblöcke
    (Hero, Zahlentafel, Kalender) bleiben bewusst wie sie sind. */
 html.dunkel{color-scheme:dark}
-/* Dunkelmodus-Palette (12. Nov 2026, 1:1 aus der Vorlage): 05161A, 072E33, 0C7075, 0F969C, 6DA5C0, 294D61.
-   Grund 05161A · Flächen 072E33 · Linien 294D61 · Schrift 6DA5C0 (6,9:1 auf Grund, 5,4:1 auf Fläche) · Akzent 0F969C · Hervorhebung 0C7075 */
+/* Dunkelmodus-Palette (27. Nov 2026): Nachtblau mit Laternen-Gold statt der blaugrünen Palette.
+   Grund 0B1226 · Flächen 131C3A · Hero 16204A · Blöcke 1B2654 · Linien 2B3A66 · Hover 3A4C80
+   Schrift E6EBF7 (15,6:1 auf Grund) · leise A3B0D1 (8,6:1) · Akzent Gold F5C84C (11,7:1) */
 html.dunkel body{
-  --night:#05161a; --deep:#072e33; --dusk:#072e33;
-  --line:#294d61; --snow:#6da5c0; --mist:#6da5c0; --lamp:#0f969c; --lamp-text:#6da5c0; --hover:#0c7075;
-  --ink-night:#294d61; /* die nachtblauen Blöcke (Aufbau, Werkstatt, Fuß) nehmen im Dunkelmodus den sechsten Palettenton */
+  --night:#0b1226; --deep:#131c3a; --dusk:#131c3a;
+  --line:#2b3a66; --snow:#e6ebf7; --mist:#a3b0d1; --lamp:#f5c84c; --lamp-text:#f5c84c; --hover:#3a4c80;
+  --ink-night:#1b2654; /* die nachtblauen Blöcke (Aufbau, Werkstatt, Fuß) */
 }
-html.dunkel .zettel .who.tomte{color:#05161a}
-html.dunkel .btn-ghost:hover,html.dunkel .notfall-grid button:hover{border-color:#0c7075;background:rgba(12,112,117,.22)}
-html.dunkel ::selection{background:#0c7075;color:#fff}
+html.dunkel .zettel .who.tomte{color:#0b1226}
+html.dunkel .btn-ghost:hover,html.dunkel .notfall-grid button:hover{border-color:#3a4c80;background:rgba(58,76,128,.35)}
+html.dunkel ::selection{background:#f5c84c;color:#0b1226}
 body{transition:background-color .3s ease,color .3s ease}
 @media (prefers-reduced-motion:reduce){body{transition:none}}
 *{box-sizing:border-box}
@@ -110,8 +112,8 @@ button,input,select,textarea{font:inherit;color:inherit}
   width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;flex:none;
   display:inline-flex;align-items:center;justify-content:center}
 .modus-knopf:hover{background:rgba(242,235,219,.08)}
-html.dunkel .nav{background:rgba(5,22,26,.92)}
-html.dunkel .nav a:hover{background:rgba(12,112,117,.3)}
+html.dunkel .nav{background:rgba(11,18,38,.92)}
+html.dunkel .nav a:hover{background:rgba(58,76,128,.45)}
 @media (max-width:600px){.nav a:not(.brand):not(.to-gen){display:none}}
 /* Mobiles Menü (unter 600 px): Wort statt Burger, Vollbild-Panel in der Hero-Typo */
 .menue-knopf{display:none;border:2px solid var(--line);background:transparent;color:var(--snow);
@@ -137,7 +139,7 @@ html.dunkel .nav a:hover{background:rgba(12,112,117,.3)}
   letter-spacing:-.055em;text-transform:uppercase}
 .menue li a.aktiv{color:var(--lamp)}
 .menue li a.ziel{background:var(--lamp);color:#fff;margin:18px 0 0;padding:16px 16px 14px}
-html.dunkel .menue li a.ziel{color:#05161a}
+html.dunkel .menue li a.ziel{color:#0b1226}
 .menue li:last-child{border-bottom:0}
 html.menue-offen,html.menue-offen body{overflow:hidden}
 
@@ -169,7 +171,7 @@ html.menue-offen,html.menue-offen body{overflow:hidden}
 @media (max-width:620px){.zahlen{grid-template-columns:repeat(12,minmax(0,1fr));row-gap:6px;font-size:18px}}
 
 /* Abschnitte */
-section.block{padding:clamp(60px,9vw,128px) 0;scroll-margin-top:58px}
+section.block{padding:clamp(68px,10vw,144px) 0;scroll-margin-top:58px}
 section.quiet{background:var(--deep)}
 .split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,72px);align-items:start}
 @media (max-width:860px){.split{grid-template-columns:1fr}}
@@ -585,7 +587,11 @@ section.on-red,section.on-yellow,section.on-night{color:var(--snow)}
 .tafel-text b{color:#fff;font-size:1.3em}
 .zahlen{color:rgba(255,255,255,.5);font-weight:700}
 .zahlen li.war{color:#fff}
-.zahlen li.heute{background:var(--ink-night);color:#fff;text-shadow:none}
+.zahlen li{display:flex;align-items:center;justify-content:center;aspect-ratio:1;max-width:2.1em;justify-self:center;width:100%}
+/* Heute (oder vor dem 1. Dezember: die 1 als nächster Tag) bekommt einen Kreis, damit man sieht, wo man steht */
+#zahlen li.heute,#zahlen li.bald{border:0;margin:0;padding:0;border-radius:50%;box-shadow:inset 0 0 0 2.5px #fff;color:#fff;text-shadow:none;background:none}
+#zahlen li.heute{background:#fff;color:var(--red)}
+html.dunkel #zahlen li.heute{background:#fff;color:#16204a}
 .block h2{font-size:clamp(36px,5.6vw,84px);line-height:.94;letter-spacing:-.05em}
 .block .sub{color:var(--snow);font-size:clamp(19px,2vw,26px);line-height:1.25;letter-spacing:-.012em;max-width:30em}
 .unter .sub{font-size:18px;line-height:1.4;letter-spacing:0;max-width:40em}
@@ -639,6 +645,42 @@ input[type=text],input[type=date],textarea,select.inp{border:2px solid var(--lin
 .notfall-grid button:hover{background:var(--yellow);border-color:var(--line)}
 .notfall-grid button small{font-size:15px;letter-spacing:0}
 .unter h3{font-size:clamp(28px,3.4vw,44px)}
+
+/* Generator in Schritten (Variante, nur mit ?schritte aktiv) */
+.wiz{display:grid;gap:18px}
+.wiz-kopf{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;font-weight:700;color:var(--mist)}
+.wiz-gleich{background:none;border:0;padding:6px 0;font:inherit;color:var(--snow);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
+.wiz-balken{height:4px;background:var(--line);opacity:.9}.wiz-balken span{display:block;height:100%;width:0;background:var(--lamp);transition:width .45s cubic-bezier(.22,.61,.36,1)}
+.wiz-frage{font-size:clamp(22px,2.4vw,28px);line-height:1.15;letter-spacing:-.02em;margin:4px 0 6px}
+.wiz-step{display:grid;gap:18px}
+.wiz-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+.wiz-nav .btn{min-height:48px}
+@media(prefers-reduced-motion:reduce){.wiz-balken span{transition:none}}
+
+/* Variante „Zwei Wege“ (nur mit ?wege aktiv) */
+.wege-box{margin-top:28px}
+.wahl{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wahl-k{text-align:left;background:none;color:var(--snow);border:2px solid var(--line);padding:clamp(22px,3vw,34px);display:grid;gap:10px;cursor:pointer;font:inherit;min-height:150px;align-content:start;transition:background .2s,border-color .2s}
+.wahl-k b{font-family:var(--display);font-size:clamp(30px,3.6vw,46px);line-height:1;letter-spacing:-.03em}
+.wahl-k span{font-size:17px;line-height:1.45;color:var(--mist)}
+.wahl-k:hover{border-color:var(--snow)}
+/* Plus zeigt: die Kachel ist zum Antippen; gleiches Plus wie bei den Streiche-Stufen, bündig mit der ersten Zeile der Unterzeile */
+.wahl-k{grid-template-columns:1fr auto;column-gap:16px}
+.wahl-k b{grid-column:1/-1}
+.wahl-plus{grid-column:2;grid-row:2;align-self:start;font:700 30px/24.65px var(--display);height:24.65px;font-style:normal;color:var(--lamp);width:.7em;text-align:center}
+.muede{display:grid;gap:12px;max-width:640px}
+.muede-l{font-weight:700;font-size:15px}
+#muedeName.fehlt{outline:3px solid var(--lamp);outline-offset:2px}
+.muede-druck{display:grid;gap:10px;margin-top:8px}
+.muede-druck .btn{justify-content:center;min-height:56px;font-size:18px}
+.muede-fuss,.wege-zurueck,.wege-wieder{font-size:15px;color:var(--mist);margin:6px 0 0}
+.wege-link{background:none;border:0;padding:8px 0;font:inherit;color:var(--snow);text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:44px}
+body.weg-muede #site>section:not(#generator){display:none}
+@media(max-width:700px){.wahl{grid-template-columns:1fr}.wahl-k{min-height:0}}
+.st-zahl{font-size:15px;color:var(--mist);margin:0 0 10px}
+/* Notfall: Tagsüber und Tomte erzählt als eigene Kapitel, klar getrennt */
+#notfall .unter{margin-top:80px;padding-top:36px;border-top:2px solid var(--line);gap:14px}
+#notfall .unter .notfall-grid{margin-top:14px}
 .kodex-liste b{font-size:clamp(24px,2.8vw,36px);letter-spacing:-.04em;line-height:1.02;margin-bottom:6px}
 footer{background:var(--ink-night);--snow:#fff;--mist:#cfd3e6;--lamp:var(--yellow);color:#cfd3e6;border-top:0}
 footer .brand{font-size:44px;letter-spacing:-.055em}
@@ -965,21 +1007,23 @@ html.dunkel .seg span{background:transparent}
 html.dunkel .seg input:checked+span{background:var(--snow);color:var(--night)}
 html.dunkel .minbadge{color:var(--snow);border-color:var(--lamp)}
 /* Dunkelmodus, zweite Lage: die Typo-Schicht setzt Weiß und Nachtblau fest, das wird hier auf die Palette gezogen. Farbige Themenblöcke (Hero, Gelb, Nachtblau) und Briefpapier bleiben. */
-html.dunkel .btn-primary,html.dunkel .btn-night{background:#0f969c;color:#05161a}
-html.dunkel .btn-primary:hover,html.dunkel .btn-night:hover{background:#6da5c0}
-html.dunkel .hero .btn-primary,html.dunkel .on-red .btn-primary,html.dunkel .on-yellow .btn-primary{background:var(--ink-night);color:#fff}
-html.dunkel .on-night .btn-primary{background:var(--yellow);color:var(--ink-night)}
+html.dunkel .btn-primary,html.dunkel .btn-night{background:#f5c84c;color:#0b1226}
+html.dunkel .btn-primary:hover,html.dunkel .btn-night:hover{background:#ffdb7a}
+html.dunkel .hero .btn-primary,html.dunkel .on-red .btn-primary,html.dunkel .on-yellow .btn-primary{background:#f5c84c;color:#0b1226}
+html.dunkel .on-night .btn-primary{background:#f5c84c;color:#0b1226}
 html.dunkel .pv-bar .btn-primary{background:#1f2437;color:#fff}
-html.dunkel input[type=text],html.dunkel input[type=date],html.dunkel textarea,html.dunkel select.inp{background:#05161a;color:var(--snow);border-color:#294d61}
-html.dunkel input::placeholder,html.dunkel textarea::placeholder{color:#6da5c0;opacity:.6}
+html.dunkel input[type=text],html.dunkel input[type=date],html.dunkel textarea,html.dunkel select.inp{background:#0b1226;color:var(--snow);border-color:#2b3a66}
+html.dunkel input::placeholder,html.dunkel textarea::placeholder{color:#a3b0d1;opacity:.75}
 html.dunkel .probe input,html.dunkel .on-yellow input[type=text],html.dunkel .on-red input[type=text]{background:#fff;color:var(--ink-night);border-color:var(--ink-night)}
 html.dunkel .notiz input[type=text]{background:none;color:var(--ink);border-color:#c9bfa8}
-html.dunkel .cal button,html.dunkel .day-head .mode button{background:#072e33;color:var(--snow)}
-html.dunkel .day-head .mode button[aria-pressed="true"]{background:var(--snow);color:#05161a}
-html.dunkel .heute{background:#072e33;border-color:#0f969c;box-shadow:10px 10px 0 #0c7075;--mist:var(--snow);--deep:#05161a}
-html.dunkel .skript,html.dunkel .wortfeld{background:#072e33}
-html.dunkel .on-yellow{--snow:#05161a;--line:#05161a;--mist:#05161a;--lamp:#05161a;color:#05161a}
-html.dunkel .on-yellow .seg input:checked+span{background:#05161a;color:#fff}
+html.dunkel .cal button,html.dunkel .day-head .mode button{background:#131c3a;color:var(--snow)}
+html.dunkel .day-head .mode button[aria-pressed="true"]{background:var(--snow);color:#0b1226}
+html.dunkel .heute{background:#131c3a;border-color:#f5c84c;box-shadow:10px 10px 0 #2b3a66;--mist:var(--snow);--deep:#0b1226}
+html.dunkel .skript,html.dunkel .wortfeld{background:#131c3a}
+/* Nachts sind Hero (sonst Rot) und Brief-Bereich (sonst Gelb) ebenfalls Nachtblau */
+html.dunkel .on-red,html.dunkel .hero{background:#16204a;--dusk:#16204a;--lamp:#f5c84c}
+html.dunkel .on-yellow{background:#1b2654;--snow:#e6ebf7;--line:#e6ebf7;--mist:#a3b0d1;--lamp:#f5c84c;--deep:#131c3a;--dusk:#131c3a;color:#e6ebf7}
+html.dunkel .on-yellow .seg input:checked+span{background:#e6ebf7;color:#0b1226}
 
 /* Streiche nach Stufe zum Ausklappen */
 .streich-sync{font-weight:400;color:var(--mist);font-size:14px;margin-left:6px}
@@ -1080,7 +1124,6 @@ details.streich[open]>summary::after{content:"–"}
     <a href="#streiche">Streiche</a>
     <a href="#notfall">Notfall</a>
     <a class="to-gen" href="#generator">Generator</a>
-    <button class="magie-knopf" id="magieKnopf" type="button">✦ Tomtes Welt</button>
     <button type="button" class="menue-knopf" id="menueKnopf" aria-expanded="false" aria-controls="menue">Menü</button>
     <button type="button" class="modus-knopf" id="modusKnopf" aria-label="Dunkelmodus umschalten" title="Dunkelmodus umschalten">☽</button>
   </div>
@@ -1112,7 +1155,7 @@ details.streich[open]>summary::after{content:"–"}
           <a class="btn btn-primary" href="#generator">Euren Dezember planen</a>
           <a class="btn btn-ghost" href="#brief">Erst einen Brief lesen</a>
         </div>
-        <p class="facts">Kein Konto. Keine App. Abends eine bis fünf Minuten.</p>
+        <p class="facts">Kein Konto. Keine App. Abends in wenigen Minuten.</p>
       </div>
       <div class="hero-magie">
         <p class="rubi-note" id="rubiNote">Zeigt mal auf ihn. Er ist schneller.<small>Rubi, das Rotkehlchen</small></p>
@@ -1210,9 +1253,9 @@ details.streich[open]>summary::after{content:"–"}
         <p class="sub">Kinder brauchen am 1. Dezember das ganze Bild. Danach wächst nicht mehr die Kulisse, sondern das Leben darin. Der Aufbau dauert zwei kurze Abende.</p>
       </div>
       <ol class="abende">
-        <li><p class="wann">29. November<small>abends, 8 Minuten</small></p><p><b>Rubi fragt an.</b> Briefkasten an die Fußleiste, Mimi schlafend darauf, Rubis Zettel davor. Er fragt, ob jemand sehr Kleines einziehen darf.</p></li>
+        <li><p class="wann">29. November<small>abends, 8 Minuten</small></p><p><b>Rubi fragt an.</b> Briefkasten an die Fußleiste, Rubis Zettel davor. Er fragt, ob jemand sehr Kleines einziehen darf.</p></li>
         <li><p class="wann">30. November<small>tagsüber</small></p><p><b>Die Kinder legen ihr JA hin.</b> Bei Nein oder Zögern baut ihr nichts auf. Rubi wartet, niemand ist beleidigt.</p></li>
-        <li><p class="wann">30. November<small>abends, 15 Minuten</small></p><p><b>Tomte zieht ein.</b> Tür, Zahlentafel mit der 1, Bänkchen. Dazu vier kleine Fußspuren aus Mehl.</p></li>
+        <li><p class="wann">30. November<small>abends, 15 Minuten</small></p><p><b>Tomte zieht ein.</b> Tür, Zahlentafel mit der 1, Bänkchen, Mimi schlafend auf dem Briefkasten. Dazu vier kleine Fußspuren aus Mehl.</p></li>
         <li><p class="wann">1. Dezember<small>morgens</small></p><p><b>Der erste Brief liegt da.</b> Ab jetzt ändert sich jede Nacht eine Kleinigkeit. Der Elternplan nennt für jeden Abend, was und wie viele Minuten.</p></li>
       </ol>
     </div>
@@ -1244,10 +1287,10 @@ details.streich[open]>summary::after{content:"–"}
         <div class="field"><label for="start">Einzug (erster Brief am Morgen des)</label><input type="date" id="start" value="2026-12-01"><p class="help">Für das Finale am 24. Dezember: 1. Dezember wählen.</p></div>
         <div class="field"><span class="lbl">Aufwand</span>
           <div class="seg">
-            <label><input type="radio" name="aufwand" id="auf1" value="briefe"><span>Nur Briefe</span></label>
-            <label><input type="radio" name="aufwand" id="auf2" value="basis" checked><span>Das Nötige</span></label>
-            <label><input type="radio" name="aufwand" id="auf3" value="we"><span>Plus Wochenend-Zugaben</span></label>
-          </div><p class="help">„Nur Briefe“: jeden Abend Brief hinlegen und Zahl umstecken, 1 Minute, keine Requisiten; die vier Bauteile sind dann freiwillig. „Das Nötige“: was der Brief braucht, meist 1–5 Minuten. Ehrliche Gesamtsumme im Dezember: etwa 2 Stunden Vorbereitung (Drucken, Tür, Kiste), dazu die Abende. Chronik-Einträge sind freiwillig.</p></div>
+            <label><input type="radio" name="aufwand" id="auf1" value="briefe"><span>Nur Brief</span></label>
+            <label><input type="radio" name="aufwand" id="auf2" value="basis" checked><span>Normal</span></label>
+            <label><input type="radio" name="aufwand" id="auf3" value="we"><span>Mehr am Wochenende</span></label>
+          </div><p class="help"><b>Nur Brief:</b> Brief hinlegen, Zahl umstecken, 1 Minute.<br><b>Normal:</b> was der Brief braucht, ein paar Minuten.<br><b>Mehr am Wochenende:</b> dazu samstags und sonntags eine Extra-Idee.</p></div>
         <div class="field"><span class="lbl">Streiche im Plan</span>
           <div class="seg">
             <label><input type="radio" name="streichPlan" value="lieb" checked><span>Liebe</span></label>
@@ -1291,7 +1334,7 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap stack">
     <div class="split">
       <h2>Tomte wird gehört, nie gesehen.</h2>
-      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann öffnet heute das Fenster in Tomtes Werkstatt. Hörstücke und Lieder stehen im Plan am passenden Tag.</p>
+      <p class="sub" style="margin-top:0">Kein Brief fertig? Dann öffnet heute das Fenster in Tomtes Werkstatt. Im Plan steht es an den passenden Tagen.</p>
     </div>
     <div class="stuecke">
       <article class="stueck">
@@ -1311,12 +1354,11 @@ details.streich[open]>summary::after{content:"–"}
   <div class="wrap">
     <div class="split">
       <h2><span id="streichZahl">84</span> Streiche. Von leicht bis aufwändig, von lieb bis frech.</h2>
-      <p class="sub" style="margin-top:0">Kein Tag braucht einen, die Geschichte trägt allein. Wer an einem Abend Lust hat, nimmt einen von hier: was zu tun ist, wie lange es dauert, wie frech er ist, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Wo morgens aufzuräumen ist, steht es dabei.</p>
+      <p class="sub" style="margin-top:0">Zu jedem Streich steht hier, was zu tun ist, wie lange es dauert, wie frech er ist, und der Zettel, der morgens dabei liegt. Die Minuten rechnen das Abschreiben mit. Wo morgens aufzuräumen ist, steht es dabei.</p>
     </div>
     <p class="streich-lbl">Wie frech darf es sein? <span class="streich-sync">Gilt auch für euren Kalender im Generator.</span></p>
     <div class="streich-filter"><div class="seg" id="streichFrech" role="radiogroup" aria-label="Frechheit"></div><button type="button" class="streich-reset" id="streichReset" hidden>× Zurücksetzen</button></div>
     <div class="streich-stufen" id="streichGrid"></div>
-    <p class="streich-vorher"><b>Vorher kurz prüfen.</b> Kind unter 3, Haustier, Allergie? Dann Kleinteile und Essbares weglassen oder erst morgens hinstellen. Alles dicht an die Fußleiste, nicht in den Laufweg. Nie das Schlaftier nehmen. Wer nachts etwas aus einem Kinderzimmer holt: leise, und nichts aufs Bett legen.</p>
     <p class="streich-fuss">Die Zettel von Hand abschreiben, in Druckbuchstaben mit der „anderen“ Hand, dann sieht es nicht nach euch aus. Mit dem Haken „Haustier“ im Generator stehen die Tier-Hinweise direkt am Streich.</p>
   </div>
 </section>
@@ -1419,7 +1461,7 @@ details.streich[open]>summary::after{content:"–"}
 
 <footer>
   <div class="wrap cols">
-    <div><p class="brand">Tomtini</p><p>Der Wichtel, den man nicht sieht. Ein Schwesterprojekt von <a href="https://fundini.kids">Fundini</a>.</p></div>
+    <div><p class="brand">Tomtini</p><p>Der freche Wichtel mit Plan. Ein Schwesterprojekt von <a href="https://fundini.kids">Fundini</a>.</p></div>
     <div><p><strong>Im Dezember 2026 für alle kostenlos.</strong></p></div>
     <ul>
       <li><a href="#impressum">Impressum</a></li>
@@ -1767,8 +1809,10 @@ details.streich[open]>summary::after{content:"–"}
   window.addEventListener('blur', function(){ schliessen(); clearTimeout(timer); });
 })();
 </script>
-<script src="content.js?v=20261126c"></script>
-<script src="app.js?v=20261126a"></script>
+<script src="content.js?v=20261127c"></script>
+<script src="app.js?v=20261128a"></script>
+<script>window.TOMTINI_SCHRITTE=true;window.TOMTINI_WEGE=true</script><script src="schritte.js" defer></script>
+<script src="zwei-wege.js" defer></script>
 <script src="z.js?v=20261117" defer></script>
 <script>
 (function(){
@@ -1919,7 +1963,7 @@ details.streich[open]>summary::after{content:"–"}
       var n=Math.round((start-now)/86400000);
       text=(n===1?'Noch <b>1</b> Nacht':'Noch <b>'+n+'</b> Nächte')+' bis zum ersten Brief am 1. Dezember. Dann baut Tomte jede Nacht die Zahl des Tages auf seine Tafel. Das ist euer Adventskalender.'; }
     $('#tafelText').innerHTML=text;
-    var h=''; for(var i=1;i<=24;i++) h+='<li'+(i===tag?' class="heute" aria-current="date"':i<tag?' class="war"':'')+'>'+i+'</li>';
+    var h=''; for(var i=1;i<=24;i++) h+='<li'+(i===tag?' class="heute" aria-current="date"':(tag===0&&i===1)?' class="bald"':i<tag?' class="war"':'')+'>'+i+'</li>';
     ol.innerHTML=h;
   })();
 
@@ -2008,6 +2052,32 @@ details.streich[open]>summary::after{content:"–"}
     }
 
   })();
+})();
+</script>
+<script>
+/* Zurück aus Werkstatt, Tomtes Haus oder Papierhaus: wieder genau dort stehen, wo man war (nicht am Hero).
+   Gemerkt wird der Abschnitt plus Abstand darin, damit es auch passt, wenn sich darüber etwas verschiebt. */
+(function(){
+  var KEY='tomtiniZurueck', UNTER=/(^|\/)(werkstatt|tomtes-haus|papierhaus)\//;
+  function abschnitt(){ var s=document.querySelectorAll('#site section[id]'), b=null; for(var i=0;i<s.length;i++){ if(s[i].getBoundingClientRect().top<=innerHeight*.35) b=s[i]; } return b; }
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a[href]'); if(!a||!UNTER.test(a.getAttribute('href'))) return;
+    var b=abschnitt();
+    try{ sessionStorage.setItem(KEY,JSON.stringify({id:b?b.id:'',dy:b?-b.getBoundingClientRect().top:0,y:scrollY,t:Date.now()})); }catch(err){}
+  },true);
+  var d=null; try{ d=JSON.parse(sessionStorage.getItem(KEY)||'null'); }catch(e){}
+  addEventListener('pageshow',function(e){ if(e.persisted){ try{ sessionStorage.removeItem(KEY); }catch(err){} } });
+  if(!d||Date.now()-d.t>6*3600*1000) return;
+  var nav=performance.getEntriesByType&&performance.getEntriesByType('navigation')[0];
+  var zurueck=(nav&&nav.type==='back_forward')||UNTER.test(document.referrer||'')||(/^#(medien|material)$/.test(location.hash)&&Date.now()-d.t<1800000);
+  if(!zurueck) return;
+  try{ sessionStorage.removeItem(KEY); }catch(e){}
+  if('scrollRestoration' in history) history.scrollRestoration='manual';
+  var aus=false; ['wheel','touchstart','keydown','pointerdown'].forEach(function(t){ addEventListener(t,function(){ aus=true; },{once:true,passive:true}); });
+  function setzen(){ if(aus) return; var t=d.id&&document.getElementById(d.id); var y=t?t.getBoundingClientRect().top+scrollY+d.dy:d.y; window.scrollTo(0,Math.max(0,y)); }
+  setzen(); requestAnimationFrame(setzen); setTimeout(setzen,150); setTimeout(setzen,500);
+  addEventListener('load',function(){ setzen(); setTimeout(setzen,200); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setzen);
 })();
 </script>
 </body>

@@ -1,5 +1,5 @@
 /* Gemeinsame Farben und Schrift für die Bauanleitungen (Tomtes Haus aus Klemmbausteinen, Tomtes Haus aus Papier).
-   Gleiche Farbwelt wie die Startseite: hell weiß/Nachtblau/Rubis Rot, dunkel die blaugrüne Palette vom 12. Nov 2026. */
+   Gleiche Farbwelt wie die Startseite: hell weiß/Nachtblau/Rubis Rot, dunkel Nachtblau mit Laternen-Gold (27. Nov 2026). */
 @font-face{font-family:"Switzer";src:url("fonts/switzer.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 :root{
   --paper:#ffffff;      /* Seite */
@@ -17,11 +17,30 @@
   color-scheme:light;
 }
 html.dunkel{
-  --paper:#05161a; --ink:#6da5c0; --olive:#6da5c0; --sage:#072e33; --card:#072e33;
-  --box:#05161a; --pic:#fcf9f2; --line:#294d61; --gold:#0f969c;
-  --btn:#0f969c; --btn-text:#05161a; --hl:#f08a5d;
+  --paper:#0b1226; --ink:#e6ebf7; --olive:#a3b0d1; --sage:#131c3a; --card:#131c3a;
+  --box:#0b1226; --pic:#fcf9f2; --line:#2b3a66; --gold:#f5c84c;
+  --btn:#f5c84c; --btn-text:#0b1226; --hl:#f08a5d;
   color-scheme:dark;
 }
-html.dunkel ::selection{background:#0c7075;color:#fff}
+html.dunkel ::selection{background:#f5c84c;color:#0b1226}
 .btn{background:var(--btn)!important;color:var(--btn-text)!important}
 .pic{background:var(--pic);border-radius:0}
+
+/* Klappbereiche (Teileliste, Bauschritte): gleiche Logik wie die Streiche auf der Startseite, + öffnet, – schließt */
+:root{interpolate-size:allow-keywords}
+details.klapp{border-top:2px solid var(--line);border-bottom:2px solid var(--line)}
+details.klapp>summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:16px;padding:16px 0 14px}
+details.klapp>summary::-webkit-details-marker{display:none}
+details.klapp>summary h2{margin:0}
+details.klapp>summary .klapp-z{margin-left:auto;font-size:15px;color:var(--olive);white-space:nowrap;font-variant-numeric:tabular-nums}
+details.klapp>summary::after{content:"+";font:700 30px/1 var(--font);color:var(--btn);width:.7em;text-align:center}
+details.klapp[open]>summary::after{content:"–"}
+details.klapp .klapp-in{padding:4px 0 24px}
+details.klapp::details-content{block-size:0;overflow:hidden;transition:block-size .5s cubic-bezier(.22,.61,.36,1),content-visibility .5s allow-discrete}
+details.klapp[open]::details-content{block-size:auto}
+@media(prefers-reduced-motion:reduce){details.klapp::details-content{transition:none}}
+@media print{details.klapp>summary::after{content:""}}
+
+/* Zurück als richtiger Knopf, gleiche Optik wie die Umriss-Knöpfe der Startseite */
+a.zurueck{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 20px;border:2px solid var(--ink);border-radius:99px;color:var(--ink);font:700 15px var(--font);text-decoration:none}
+a.zurueck:hover{background:var(--ink);color:var(--paper)}

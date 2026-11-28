@@ -82,7 +82,7 @@
   function suessHTML(day){ if(!$('#suess').checked) return ""; const x=C.suess.tage[day.n]; if(!x) return "";
     return `<div class="zug"><span class="t">Etwas Süßes <span class="minbadge">dazu</span></span><span>${x}${plural()?" Bei mehreren Kindern pro Kind dasselbe.":""} Steht nicht im Brief.</span></div>`; }
   function basisHTML(day,i){ const b=day.basis; if(!b) return ""; const mode=state.modes[i];
-    if(val('aufwand')==="briefe"&&!mode&&day.n){ return `<div class="zug"><span class="t">Nur-Briefe-Modus <span class="minbadge">1 Min · abends</span></span><span>Brief hinlegen, Zahl umstecken, fertig. Die Requisite dieses Tages entfällt, der Brief funktioniert ohne.${BAUTEILE.has(day.n)?" Dieser Tag hat ein Bauteil fürs Finale ("+b.t+"); freiwillig, das Finale geht auch ohne: Dann ist die Chronik allein das Geschenk.":""}</span></div>`; }
+    if(val('aufwand')==="briefe"&&!mode&&day.n){ return `<div class="zug"><span class="t">Nur Brief <span class="minbadge">1 Min · abends</span></span><span>Brief hinlegen, Zahl umstecken, fertig. Die Requisite dieses Tages entfällt, der Brief funktioniert ohne.${BAUTEILE.has(day.n)?" Dieser Tag hat ein Bauteil fürs Finale ("+b.t+"); freiwillig, das Finale geht auch ohne: Dann ist die Chronik allein das Geschenk.":""}</span></div>`; }
     let x=lego(b.x); const pf = PROPFREI.has(day.n);
     let head = `<span class="t">Das braucht der Brief: ${b.t} <span class="minbadge">${b.min} Min · ${b.zeit}</span></span>`;
     if(mode==="wenig") head += pf ? `<span class="m">Wenig Zeit: Dieser Brief funktioniert auch ganz ohne Vorbereitung.</span>` : `<span class="m">Wenig Zeit: Heute nur das Nötigste, kein Extra.</span>`;
@@ -212,7 +212,7 @@
 
   function render(){ buildNotfall(); const out=$("#out"); out.dataset.built="1"; _sp=null; 
     const kapNames={1:"Kapitel 1 · Einzug",2:"Kapitel 2 · Hilfe, die schiefgeht",3:"Kapitel 3 · Tomtes Geheimnis",4:"Kapitel 4 · Abschied"};
-    let html=`<div class="out-head"><div><p class="eyebrow">Euer Plan</p><h3>24 Tage für ${names()}</h3></div><div class="actions"><button class="btn btn-primary" id="pBriefe">Briefe drucken</button><button class="btn btn-ghost" id="pPlan">Elternplan</button><button class="btn btn-ghost" id="pChronik">Chronik</button><button class="btn btn-ghost" id="pLink">Plan-Link</button></div></div>`;
+    let html=`<div class="out-head"><div><p class="eyebrow">Euer Plan</p><h3>24 Tage für ${names()}</h3></div><div class="actions"><button class="btn btn-primary" id="pBriefe">Briefe drucken</button><button class="btn btn-ghost" id="pPlan">Elternplan</button><a class="btn btn-ghost" id="pDruck" href="druckpaket/tomtini-druckpaket.pdf" download>Druckpaket</a><button class="btn btn-ghost" id="pChronik">Chronik</button><button class="btn btn-ghost" id="pLink">Plan-Link</button></div></div>`;
     { const sd=startDate(), letzter=dateOf(23); if(!(sd.getMonth()===11&&sd.getDate()===1)) html+=`<p class="tipp spaet"><b>Einzug am ${fmt(sd)}:</b> Der letzte Brief liegt am ${fmt(letzter)}. Die Zahlentafel zählt dann Tomtes Tage bei euch, nicht das Datum. Für das Finale an Heiligabend den Einzug auf den 1. Dezember stellen.</p>`; }
     if(todayIndex()< -2) html+=heuteHTML();
     html+=kalHTML();
@@ -229,7 +229,7 @@
   let openDay=null, openInit=false, prevSig=null;
   const kalView="a"; try{ localStorage.removeItem("tomtini-ansicht"); }catch(e){}
   function vorabendHTML(){ const v=C.vorabend;
-    const steps=`<p class="ck-kopf">Zwei Abende vor dem ersten Brief</p><ol class="cks">${ckZeile(-1,"auf","Aufbau","Briefkasten an die Fußleiste, Mimi drauf","5 Min",`<p>Davor mit einer Gabel drei Vogelspuren in einen Teelöffel Mehl auf Backpapier drücken. Mehr nicht.</p><p class="m">Material: Briefkasten, Mimi-Bild, Mehl, Backpapier, Gabel</p>`)}${ckZeile(-1,"zet","Zettel","Rubis Zettel davorlegen","1 Min",letterHTML(vorabendParas()))}${ckZeile(-1,"ja","Nach dem JA","Tür und Zahlentafel mit der 1",`${v.ja.min} Min`,`<p>${lego(v.ja.x)}</p><p class="m">Material: ${lego(v.ja.m)}</p>`)}</ol>`; const core="";
+    const steps=`<p class="ck-kopf">Zwei Abende vor dem ersten Brief</p><ol class="cks">${ckZeile(-1,"auf","Aufbau","Briefkasten an die Fußleiste","5 Min",`<p>Davor mit einer Gabel drei Vogelspuren in einen Teelöffel Mehl auf Backpapier drücken. Mehr nicht.</p><p class="m">Material: Briefkasten, Mehl, Backpapier, Gabel</p>`)}${ckZeile(-1,"zet","Zettel","Rubis Zettel davorlegen","1 Min",letterHTML(vorabendParas()))}${ckZeile(-1,"ja","Nach dem JA","Tür und Zahlentafel mit der 1",`${v.ja.min} Min`,`<p>${lego(v.ja.x)}</p><p class="m">Material: ${lego(v.ja.m)}</p>`)}</ol>`; const core="";
     const more=`${wantsExtra(-1)||val('aufwand')==="we"?`<div class="zug"><span class="t">Wochenend-Zugabe: ${v.extra.t} <span class="minbadge">${v.extra.min} Min · tagsüber</span></span><span>${v.extra.x}</span><span class="m">Material: ${v.extra.m}</span></div>`:""}<p class="tipp"><b>Vorher vorlesen:</b> „Wie Tomte zu euch kam“, Kapitel 1, 2, 3 und 6 (<a href="#geschichte">hier</a>). Danach weiß das Kind, wer da fragt und warum ihn niemand sehen darf.</p><p class="tipp"><b>Wenn das Kind Nein sagt oder zögert:</b> Rubis Warte-Zettel hinlegen, nichts montieren, später oder nächstes Jahr wieder fragen. Zettel: „${fill(v.nein.text)}“</p><p class="tipp"><b>Für euch:</b> ${v.tipp}</p>`;
     return {steps:steps, core:core, more:more, labels:["Vorlesen","Nein-Pfad","Tipps"]}; }
   function eveningMin(i){ if(i<0) return C.vorabend.basis.min; const day=C.tage[i], mode=state.modes[i];
@@ -316,9 +316,9 @@
     const upd=()=>{ const t=tafelObj(); $('#tafelHelp').innerHTML=t.x+' <span class="wer">'+t.wer+'</span>'; };
     sel.onchange=()=>{ upd(); rerender(); }; upd(); }
   function buildNotfall(){ const grid=$('#notfallGrid'); grid.innerHTML="";
-    const mk=(id,list)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); g.appendChild(b); }); };
-    mk('#tagGrid',C.tagsueber); mk('#hilfeGrid',C.hilfe);
-  C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
+    const mk=(id,list,art)=>{ const g=$(id); g.innerHTML=""; list.forEach(n=>{ if(n.id==="streit"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n,null,art); g.appendChild(b); }); };
+    mk('#tagGrid',C.tagsueber,'tag'); mk('#hilfeGrid',C.hilfe,'hilfe');
+  C.notfall.forEach(n=>{ if(n.id==="geschwister"&&!plural()) return; const b=document.createElement('button'); b.innerHTML=`<span>${n.titel}</span><small>Brief von ${vonName(n.von)}</small>`; b.onclick=()=>openNotfall(n,null,'nacht'); grid.appendChild(b); }); } buildTafel(); buildNotfall(); buildGeschichte(); buildMedien();
   const stOffen=new Set(), streichOffen=new Set();
   function buildStreiche(){ const grid=$('#streichGrid'), ft=$('#streichFrech'); if(!grid||!C.streiche) return;
     $('#streichZahl').textContent=C.streiche.length; const tier=$('#haustier').checked;
@@ -329,7 +329,8 @@
     ft.querySelectorAll('input').forEach(r=>{ r.onchange=()=>{ setRadio('streichPlan',r.value); C.streicheStufen.forEach(st=>stOffen.add(st.s)); rerender(); }; }); const rs=$('#streichReset'); if(rs){ rs.hidden=(planV==="lieb"&&!stOffen.size); rs.onclick=()=>{ setRadio('streichPlan','lieb'); stOffen.clear(); streichOffen.clear(); rerender(); const f=document.querySelector('#streichFrech input:checked'); if(f) f.focus({preventScroll:true}); }; }
     const fname=f=>C.streicheFrech.find(o=>o.f===f).t;
     const badge=(x,st)=>[x.zwei?`2 Abende, je ${x.min} Min`:(x.mk?`abends ${x.min} · mit Kind ${x.mk} Min`:`${x.min} Min`), x.we&&st.s<4?"Wochenende":"", x.ab?`ab Tag ${x.ab}`:""].filter(Boolean).join(" · ");
-    const hinweis="";
+    const sichtbar=C.streiche.filter(pass).length, alle=C.streiche.length, wahl=(C.streichePlan.find(o=>o.v===planV)||{t:""}).t;
+    const hinweis=`<p class="st-zahl">${ziel?`${sichtbar} von ${alle} Streichen, Auswahl „${wahl.charAt(0).toUpperCase()+wahl.slice(1)}“`:`Alle ${alle} Streiche`}</p>`;
     grid.innerHTML=hinweis+C.streicheStufen.map(st=>{ const list=C.streiche.filter(x=>x.s===st.s&&pass(x)).sort((a,b)=>(a.min+(a.mk||0))-(b.min+(b.mk||0))||a.f-b.f); const leer=!list.length;
       return `<details class="st-stufe ${leer?"leer":""}" data-s="${st.s}" ${!leer&&stOffen.has(st.s)?"open":""}><summary><span class="st-n">${st.s}</span><span class="st-t">${st.kurz}<small>${st.t}</small></span><span class="st-z">${leer?"keine":list.length+" "+(list.length===1?"Streich":"Streiche")}</span></summary><div class="streich-grid">${list.map(x=>`<details class="streich" data-id="${x.id}" ${streichOffen.has(x.id)?"open":""}><summary><h4><span>${x.t}</span></h4><p class="mo">Morgens: ${x.mo}</p><p class="marken"><span class="minbadge">${badge(x,st)}</span><span class="frech f${x.f}">${fname(x.f)}</span></p></summary><div class="streich-in"><p class="tun">${x.x}</p>${x.m&&x.m!=="–"?`<p class="m">Material: ${x.m}</p>`:""}${x.auf?`<p class="m">Aufräumen am Morgen: ${x.auf}</p>`:""}${zettelHTML({von:x.von,text:x.z})}${x.z2?zettelHTML({von:x.von,text:x.z2}):""}${tier&&x.tier?`<p class="m">Haustier: ${x.tier}</p>`:""}</div></details>`).join("")}</div></details>`; }).join("");
     grid.querySelectorAll('details.st-stufe').forEach(d=>{ const sm=d.querySelector(':scope>summary'); if(d.classList.contains('leer')){ sm.setAttribute('aria-disabled','true'); sm.onclick=e=>e.preventDefault(); return; } d.addEventListener('toggle',()=>{ const k=+d.dataset.s; d.open?stOffen.add(k):stOffen.delete(k); const rs=$('#streichReset'); if(rs) rs.hidden=((val('streichPlan')||'lieb')==='lieb'&&!stOffen.size); }); });
@@ -337,19 +338,33 @@
   }
   buildStreiche();
   function nfParas(n){ return kurz()&&n.kurz?n.kurz:n.brief; }
-  function openNotfall(n,who){ const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;
+  /* Notfall, Tagsüber und Tomte erzählt öffnen sich wie ein Kalendertag: wenige Zeilen zum Abhaken, der Brief darin */
+  function openNotfall(n,who,art){ art=art||'nacht'; const all=allNames(); if(n.einzeln&&all.length>1&&!who){ who=all[0]; } onlyName=who||null;
     $('#ovTitle').textContent=n.titel;
-    let sel=""; if(n.einzeln&&all.length>1){ sel=`<p class="tipp" style="margin-bottom:12px"><b>An:</b> ${all.map(x=>`<button type="button" class="btn btn-ghost btn-mini" data-who="${x.replace(/"/g,'')}" aria-pressed="${x===who}">${x}</button>`).join(" ")} <span>Dieser Brief richtet sich an ein einzelnes Kind.</span></p>`; }
-    $('#ovLetter').innerHTML=sel+nfParas(n).map(p=>`<p>${fill(p)}</p>`).join("")+(n.auszug?`<p class="tipp"><b>Auszugs-Zettel (wenn das Kind es möchte):</b> ${fill(n.auszug.text)}</p>`:"");
-    $('#ovTipp').innerHTML=(n.elternskript?`<b>Zuerst ohne Tomte, außerhalb der Geschichte:</b> ${n.elternskript}<br><br>`:"")+(n.morgen?`<b>Morgens:</b> ${n.morgen}<br><br>`:"")+`<b>Für euch:</b> ${n.tipp}`;
-    $('#ovLetter').querySelectorAll('[data-who]').forEach(b=>b.onclick=()=>openNotfall(n,b.dataset.who));
-    $('#ov').classList.add('open'); $('#ovPrint').onclick=()=>{ $('#ov').classList.remove('open'); const paras=nfParas(n); printSingle(n.titel+(who?" · für "+who:""),paras,n.von); onlyName=null; }; }
+    let sel=""; if(n.einzeln&&all.length>1){ sel=`<p class="tipp" style="margin:0 0 12px"><b>An:</b> ${all.map(x=>`<button type="button" class="btn btn-ghost btn-mini" data-who="${x.replace(/"/g,'')}" aria-pressed="${x===who}">${x}</button>`).join(" ")}</p>`; }
+    const brief=`<div class="letter">${nfParas(n).map(p=>`<p>${fill(p)}</p>`).join("")}</div>`;
+    const kopf={nacht:"Heute Abend",tag:"Heute Nachmittag",hilfe:"Wenn es passt"}[art];
+    const hin={nacht:"An die Tür legen, bevor die Kinder aufwachen",tag:"Am Nachmittag an die Tür legen",hilfe:"An die Tür legen, wenn das Kind schläft"}[art];
+    const Z=[]; const N=900;
+    if(n.elternskript) Z.push(ckZeile(N,"vor","Zuerst","Ohne Tomte reden","",`<p>${n.elternskript}</p>`));
+    Z.push(ckZeile(N,"b","Brief","Drucken oder abschreiben","1 Min",sel+brief));
+    if(n.auszug) Z.push(ckZeile(N,"a","Zettel","Auszugs-Zettel, nur wenn das Kind es möchte","",`<p>${fill(n.auszug.text)}</p>`));
+    Z.push(ckZeile(N,"h","Hinlegen",hin,""));
+    if(n.morgen) Z.push(ckZeile(N,"m","Morgens","Das sagen, ohne Brief","",`<p>${n.morgen}</p>`));
+    $('#ovLetter').classList.remove('letter');
+    $('#ovLetter').innerHTML=`<p class="ck-kopf">${kopf}</p><ol class="cks">${Z.join("")}</ol>`;
+    $('#ovTipp').innerHTML=`<b>Für euch:</b> ${n.tipp}`;
+    const bd=$('#ovLetter').querySelector('[data-ckd="900:b"]'); if(bd) bd.open=true;
+    $('#ovLetter').querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{ const on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',on); b.closest('li').classList.toggle('an',on); });
+    $('#ovLetter').querySelectorAll('[data-who]').forEach(b=>b.onclick=()=>openNotfall(n,b.dataset.who,art));
+    $('#ov').classList.add('open'); const dlg=$('#ov .dialog'); if(dlg) dlg.scrollTop=0; $('#ovPrint').onclick=()=>{ $('#ov').classList.remove('open'); const paras=nfParas(n); printSingle(n.titel+(who?" · für "+who:""),paras,n.von); onlyName=null; }; }
   $('#ovClose').onclick=()=>{ onlyName=null; $('#ov').classList.remove('open'); };
   $('#ov').addEventListener('click',e=>{ if(e.target.id==="ov"){ onlyName=null; $('#ov').classList.remove('open'); } });
 
   // ---- Druck ----
-  function openPV(title,pagesHTML){ $('#pvTitle').textContent=title; $('#pvPages').innerHTML=pagesHTML; $('#pv').classList.add('open'); window.scrollTo(0,0); }
-  $('#pvClose').onclick=()=>$('#pv').classList.remove('open');
+  let pvY=0; /* Zurück aus der Druckansicht: wieder an die Stelle, an der man war */
+  function openPV(title,pagesHTML){ $('#pvTitle').textContent=title; $('#pvPages').innerHTML=pagesHTML; if(!$('#pv').classList.contains('open')) pvY=window.scrollY; $('#pv').classList.add('open'); window.scrollTo(0,0); }
+  $('#pvClose').onclick=()=>{ $('#pv').classList.remove('open'); window.scrollTo(0,pvY); };
   $('#pvPrint').onclick=()=>{ let ok=false; try{ const before=Date.now(); window.print(); ok=(Date.now()-before)>150 || !window.frameElement; }catch(e){ ok=false; } if(!ok){ $('#pvHint').style.display="block"; } };
   function cell(tag,paras,note,small,ps){ return `<div class="cell"><div class="tag"><span>${tag}</span><span>Tomtini</span></div><div class="body ${small?"small":""}">${paras.map(p=>fill(p)).filter(x=>x.trim()).map(x=>`<p>${x}</p>`).join("")}${ps&&showPS()?`<p style="font-size:11pt;margin-top:2mm">${fill(ps)}</p>`:""}</div>${(Array.isArray(note)?note:note?[note]:[]).map(n=>`<div class="note"><b>${vonName(n.von)}</b>„${fill(n.text)}“</div>`).join("")}</div>`; }
   function sheets(cells,cut){ let out=""; for(let i=0;i<cells.length;i+=4){ const chunk=cells.slice(i,i+4); while(chunk.length<4) chunk.push(`<div class="cell empty"></div>`); out+=`<div class="sheet"><div class="cut">${cut}</div><div class="grid4">${chunk.join("")}</div></div>`; } return out; }
@@ -374,7 +389,7 @@
     januarList().forEach(j=>rows.push(row(janDate(j),"Januar · "+j.titel,j.basis,null,null,0)));
     const total=rows.length; const head=`<h3 class="pt">Elternplan · 24 Tage mit Tomte</h3><p class="pt-sub">Für ${names()} · Minuten sind ehrlich geschätzt, „abends vorher“ heißt: am Abend vor dem Brief. Vergessen? Notfall-Brief aus der Kiste. Kalender nie verschieben: Tag = Datum.</p>`;
     const table=r=>`<table><thead><tr><th></th><th>Datum</th><th>Brief und Vorbereitung</th><th>Material</th><th>Min</th></tr></thead><tbody>${r.join("")}</tbody></table>`;
-    openPV("Elternplan",`<div class="sheet">${head}${table(rows.slice(0,13))}</div><div class="sheet"><h3 class="pt">Elternplan · Teil 2</h3><p class="pt-sub">Ab Tag 13. Alles ab Tag 15 bleibt neben der Tür oder in der Kiste. Chronik an Tag 21 drucken, Finale an Tag 22 packen, der 23. bleibt leicht.</p>${table(rows.slice(13))}</div>${medienSheet()}${hilfeSheet()}<div class="sheet"><h3 class="pt">Einkaufsliste · einmal, nicht 24-mal</h3><p class="pt-sub">Alles andere ist Papier, Drucker und Wohnung. Haken, was schon da ist.</p>${einkauf()}</div>`); }
+    openPV("Elternplan",`<div class="sheet">${head}${table(rows.slice(0,13))}</div><div class="sheet"><h3 class="pt">Elternplan · Teil 2</h3><p class="pt-sub">Ab Tag 13. Alles ab Tag 15 bleibt neben der Tür oder in der Kiste. Chronik an Tag 21 drucken, Finale an Tag 22 packen, der 23. bleibt leicht.</p>${table(rows.slice(13))}</div>${hilfeSheet()}<div class="sheet"><h3 class="pt">Einkaufsliste · einmal, nicht 24-mal</h3><p class="pt-sub">Alles andere ist Papier, Drucker und Wohnung. Haken, was schon da ist.</p>${einkauf()}</div>`); }
   function medienSheet(){
     const o=MED.map(m=>`<tr><td><strong>${m.t}</strong></td><td class="mat">${m.wann}</td><td class="mat">${m.typ}</td></tr>`).join("");
     return `<div class="sheet"><h3 class="pt">Hören und sehen</h3><p class="pt-sub">Kein Konto, keine App. Das Handy liegt neben der Tür, der Bildschirm zeigt keine Knöpfe. Erst ab 5 Jahren, nicht bei Kindern, die abends ängstlich sind. Auf tomtini.kids stehen außerdem drei Textstücke: das Fenster in Tomtes Werkstatt, das Suchbild „Wo ist Mimi?“ und sein Notizbuch.</p><table><thead><tr><th>Text zum Vorlesen</th><th>Wann</th><th>Was</th></tr></thead><tbody>${o}</tbody></table></div>`; }
